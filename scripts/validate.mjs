@@ -27,7 +27,8 @@ for (const htmlPath of ['dist/index.html', 'dist/admin/index.html']) {
   const refs = [...html.matchAll(/(?:src|href)="([^"]+)"/g)].map(match => match[1]);
   for (const ref of refs) {
     if (/^(?:https?:|data:|#)/.test(ref)) continue;
-    await access(resolve(dirname(absolute), ref));
+    const localPath = ref.split(/[?#]/, 1)[0];
+    await access(resolve(dirname(absolute), localPath));
   }
 }
 
