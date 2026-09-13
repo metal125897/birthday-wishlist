@@ -279,14 +279,6 @@ elements.confirmUnreserve.addEventListener('click', event => {
 });
 elements.dialog.addEventListener('click', event => {if (event.target === elements.dialog) elements.dialog.close();});
 
-document.addEventListener('pointermove', event => {
-  document.querySelectorAll('.gift-card:not(.is-reserved)').forEach(card => {
-    const rect = card.getBoundingClientRect();
-    card.style.setProperty('--spot-x', `${event.clientX - rect.left}px`);
-    card.style.setProperty('--spot-y', `${event.clientY - rect.top}px`);
-  });
-});
-
 if (!firebaseConfigured) {
   elements.loading.hidden = true;
   elements.error.hidden = false;
