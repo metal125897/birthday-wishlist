@@ -1,0 +1,18 @@
+.sites-runtime/
+node_modules/
+.firebase/
+firebase-debug.log
+*.log
+site-package.tar.gz
+
+# Локальные исходники и рабочие материалы: не публиковать в открытом репозитории.
+/assets/
+/fonts/
+/screens/
+/uploads/
+/wishlist-mockup/
+/build.py
+/shoot.py
+/template.html
+/PROJECT_DESCRIPTION_SITES_GITHUB.md
+/TZ.md

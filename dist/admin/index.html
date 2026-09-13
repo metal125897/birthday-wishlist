@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#06070a">
+  <title>Админ-панель — Список желаний</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2306070a'/%3E%3Cpath d='M18 29h28v24H18z' fill='%23d9c08c'/%3E%3Cpath d='M23 29v-7a9 9 0 0 1 18 0v7' fill='none' stroke='%23fff' stroke-width='5'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="admin-body">
+  <main class="admin-shell">
+    <section id="admin-loading" class="admin-loading" aria-live="polite">Проверяем сессию…</section>
+
+    <section id="login-view" class="login-view" hidden>
+      <div class="login-card">
+        <a class="back-link" href="../">← К списку подарков</a>
+        <p class="eyebrow">Скрытая страница</p>
+        <h1>Админ-панель</h1>
+        <p class="login-copy">Вход только для владельца списка.</p>
+        <form id="login-form" class="form-stack">
+          <label>Пароль
+            <input id="password" name="password" type="password" autocomplete="current-password" required>
+          </label>
+          <p id="login-error" class="form-error" role="alert" hidden>Неверный пароль.</p>
+          <button class="glass-button" type="submit">Войти</button>
+        </form>
+      </div>
+    </section>
+
+    <section id="admin-view" hidden>
+      <header class="admin-header">
+        <div>
+          <p class="eyebrow">Скрытая страница</p>
+          <h1>Админ-панель</h1>
+        </div>
+        <div class="admin-header__actions">
+          <a class="glass-button glass-button--quiet" href="../" target="_blank" rel="noopener">Открыть сайт</a>
+          <button class="glass-button glass-button--quiet" id="logout-button" type="button">Выйти</button>
+        </div>
+      </header>
+
+      <div id="admin-notice" class="notice" role="status" aria-live="polite" hidden></div>
+
+      <div class="admin-grid">
+        <section class="admin-panel form-panel">
+          <p class="eyebrow">Управление</p>
+          <h2 id="form-title">Новый подарок</h2>
+          <form id="gift-form" class="form-stack">
+            <input id="gift-id" type="hidden">
+            <label>Название подарка <span aria-hidden="true">*</span>
+              <input id="gift-title" maxlength="120" required>
+            </label>
+            <fieldset>
+              <legend>Уровень желания</legend>
+              <div class="desire-picker">
+                <label><input type="radio" name="desire" value="1" checked><span>1</span></label>
+                <label><input type="radio" name="desire" value="2"><span>2</span></label>
+                <label><input type="radio" name="desire" value="3"><span>3</span></label>
+                <label><input type="radio" name="desire" value="4"><span>4</span></label>
+                <label><input type="radio" name="desire" value="5"><span>5</span></label>
+              </div>
+            </fieldset>
+            <label>Примерная цена, ₽
+              <input id="gift-price" type="number" min="1" max="99999999" inputmode="numeric" placeholder="Необязательно">
+            </label>
+            <label>Описание
+              <textarea id="gift-description" maxlength="4000" rows="7" placeholder="Необязательно"></textarea>
+              <small>Ссылку можно вставить прямо в текст — в списке она станет кликабельной.</small>
+            </label>
+            <div class="form-actions">
+              <button class="glass-button" id="submit-gift" type="submit">Добавить подарок</button>
+              <button class="glass-button glass-button--quiet" id="cancel-edit" type="button" hidden>Отменить</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="admin-panel list-panel">
+          <div class="list-panel__heading">
+            <div>
+              <p class="eyebrow">Коллекция</p>
+              <h2>Подарки в списке · <span id="admin-count">0</span></h2>
+            </div>
+          </div>
+          <div id="admin-gifts" class="admin-gifts" aria-live="polite"></div>
+        </section>
+      </div>
+    </section>
+  </main>
+  <script type="module" src="../assets/admin.js"></script>
+</body>
+</html>

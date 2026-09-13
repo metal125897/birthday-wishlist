@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Личный список желаний ко дню рождения — выберите и забронируйте подарок, чтобы сюрпризы не повторялись.">
+  <meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#06070a">
+  <title>Список желаний</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2306070a'/%3E%3Cpath d='M15 28h34v24H15z' fill='%23d9c08c'/%3E%3Cpath d='M32 22v30M13 22h38v10H13z' fill='none' stroke='%23fff' stroke-width='4'/%3E%3Cpath d='M32 22c-11 0-12-14-5-14 5 0 5 7 5 14Zm0 0c11 0 12-14 5-14-5 0-5 7-5 14Z' fill='none' stroke='%23d9c08c' stroke-width='4'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./assets/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#wishlist">К списку подарков</a>
+
+  <header class="hero shell" aria-labelledby="page-title">
+    <div class="hero__copy">
+      <p class="eyebrow">День рождения</p>
+      <h1 id="page-title"><span>Список</span><span>желаний</span></h1>
+      <p class="hero__lead">Выберите подарок и нажмите «Забронировать», чтобы сюрпризы не повторялись.</p>
+      <div class="hero__note"><span aria-hidden="true">✦</span> Цены — лишь ориентир, выбирайте подарок с удовольствием.</div>
+    </div>
+    <figure class="portrait" aria-label="Фото именинника">
+      <div class="portrait__aura"></div>
+      <img src="./assets/hero.jpg" alt="Именинник среди переливающихся стеклянных форм" fetchpriority="high">
+      <div class="portrait__veil"></div>
+    </figure>
+  </header>
+
+  <main class="shell main" id="wishlist">
+    <img class="ambient ambient--sphere" src="./assets/float_sphere.jpg" alt="" aria-hidden="true">
+    <img class="ambient ambient--torus" src="./assets/float_torus.jpg" alt="" aria-hidden="true">
+
+    <section class="toolbar" aria-label="Управление списком">
+      <div class="toolbar__meta">
+        <p class="counter" id="counter" aria-live="polite">Загружаем подарки…</p>
+        <div class="status-filter" role="group" aria-label="Фильтр по статусу">
+          <button class="chip is-active" type="button" data-filter="all" aria-pressed="true">Все</button>
+          <button class="chip" type="button" data-filter="available" aria-pressed="false">Доступно</button>
+          <button class="chip" type="button" data-filter="reserved" aria-pressed="false">Забронировано</button>
+        </div>
+      </div>
+      <div class="sort-control">
+        <span class="sort-label" id="sort-label">Сортировка</span>
+        <button class="sort-trigger" id="sort-trigger" type="button" aria-haspopup="listbox" aria-expanded="false" aria-controls="sort-menu">
+          <span id="sort-value">Уровень желания: по убыванию</span>
+          <span class="sort-chevron" aria-hidden="true"></span>
+        </button>
+        <div class="sort-menu" id="sort-menu" role="listbox" aria-labelledby="sort-label" hidden>
+          <button class="sort-option is-selected" type="button" role="option" aria-selected="true" data-sort="desire-desc">Уровень желания: по убыванию</button>
+          <button class="sort-option" type="button" role="option" aria-selected="false" data-sort="desire-asc">Уровень желания: по возрастанию</button>
+          <button class="sort-option" type="button" role="option" aria-selected="false" data-sort="price-asc">Цена: по возрастанию</button>
+          <button class="sort-option" type="button" role="option" aria-selected="false" data-sort="price-desc">Цена: по убыванию</button>
+        </div>
+      </div>
+    </section>
+
+    <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+
+    <section id="loading" class="gift-list" aria-label="Загрузка списка">
+      <div class="gift-card skeleton"></div>
+      <div class="gift-card skeleton"></div>
+      <div class="gift-card skeleton"></div>
+    </section>
+
+    <section id="error-state" class="state-card" hidden>
+      <p class="eyebrow">Связь прервалась</p>
+      <h2>Не удалось загрузить подарки</h2>
+      <p>Проверьте интернет-соединение и попробуйте снова.</p>
+      <button class="glass-button" id="retry-button" type="button">Повторить</button>
+    </section>
+
+    <section id="empty-state" class="state-card" hidden>
+      <p class="eyebrow">Скоро здесь станет интереснее</p>
+      <h2>Пока нет подарков</h2>
+      <p>Список ещё наполняется. Загляните чуть позже.</p>
+    </section>
+
+    <section id="gift-list" class="gift-list" aria-label="Подарки" hidden></section>
+  </main>
+
+  <footer class="footer shell">Спасибо, что помогаете с подарками <span aria-hidden="true">♥</span></footer>
+
+  <dialog class="reserve-dialog" id="unreserve-dialog" aria-labelledby="dialog-title">
+    <form method="dialog" class="dialog-card">
+      <button class="dialog-close" value="cancel" aria-label="Закрыть">×</button>
+      <p class="eyebrow">Проверим намерение</p>
+      <h2 id="dialog-title">Снять бронь?</h2>
+      <p id="dialog-copy"></p>
+      <div class="dialog-actions">
+        <button class="glass-button glass-button--quiet" value="cancel">Отмена</button>
+        <button class="glass-button" id="confirm-unreserve" value="confirm">Снять бронь</button>
+      </div>
+    </form>
+  </dialog>
+
+  <noscript><div class="noscript">Для работы списка нужен JavaScript.</div></noscript>
+  <script type="module" src="./assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email == 'admin@birthday-wishlist.local';
+    }
+
+    function hasGiftShape(data) {
+      return data.keys().hasAll([
+          'title', 'description', 'desireLevel', 'price', 'status', 'createdAt'
+        ])
+        && data.keys().hasOnly([
+          'title', 'description', 'desireLevel', 'price', 'status', 'createdAt'
+        ]);
+    }
+
+    function isValidGift(data) {
+      return hasGiftShape(data)
+        && data.title is string
+        && data.title.size() > 0
+        && data.title.size() <= 120
+        && data.description is string
+        && data.description.size() <= 4000
+        && data.desireLevel is int
+        && data.desireLevel >= 1
+        && data.desireLevel <= 5
+        && (data.price == null || (
+          data.price is int
+          && data.price >= 1
+          && data.price <= 99999999
+        ))
+        && data.status in ['available', 'reserved']
+        && data.createdAt is timestamp;
+    }
+
+    match /gifts/{giftId} {
+      allow read: if true;
+      allow create, delete: if isAdmin() && isValidGift(request.resource.data);
+      allow update: if (
+          isAdmin()
+          || request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])
+        )
+        && isValidGift(request.resource.data);
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
