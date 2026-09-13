@@ -28,7 +28,8 @@ dist/
     seed-data.js             57 стартовых подарков
     styles.css               общие стили
     hero.jpg                 фото пользователя
-    float_*.jpg              декоративные референс-объекты
+    float_sphere.jpg         декоративная сфера у списка
+    float_torus.jpg          декоративный тор у списка
     fonts/                   локальные начертания Inter
 firestore.rules              серверные правила
 firebase.json                конфигурация правил для CLI

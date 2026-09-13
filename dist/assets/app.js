@@ -89,7 +89,6 @@ function giftCard(gift) {
     const chevron = document.createElement('span');
     chevron.className = 'gift-chevron';
     chevron.setAttribute('aria-hidden', 'true');
-    chevron.textContent = '⌄';
     titleRow.append(chevron);
   }
   main.append(titleRow);
