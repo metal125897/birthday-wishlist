@@ -54,6 +54,7 @@ function resetForm() {
   elements.form.reset();
   elements.giftId.value = '';
   elements.formTitle.textContent = 'Новый подарок';
+  elements.submit.disabled = false;
   elements.submit.textContent = 'Добавить подарок';
   elements.cancel.hidden = true;
 }
@@ -65,6 +66,7 @@ function startEdit(gift) {
   elements.description.value = gift.description || '';
   document.querySelector(`input[name="desire"][value="${gift.desireLevel}"]`).checked = true;
   elements.formTitle.textContent = 'Редактирование подарка';
+  elements.submit.disabled = false;
   elements.submit.textContent = 'Сохранить изменения';
   elements.cancel.hidden = false;
   elements.title.focus();

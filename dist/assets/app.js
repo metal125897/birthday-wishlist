@@ -1,4 +1,4 @@
-import {collection, onSnapshot, updateDoc, doc} from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js';
+import {collection, onSnapshot, updateDoc, doc, waitForPendingWrites} from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js';
 import {db, firebaseConfigured} from './firebase-client.js';
 
 const elements = {
@@ -12,7 +12,10 @@ const elements = {
   confirmUnreserve: document.querySelector('#confirm-unreserve')
 };
 
-const state = {gifts: [], filter: 'all', sort: 'desire-desc', expanded: new Set(), pendingUnreserve: null, unsubscribe: null};
+const state = {
+  gifts: [], filter: 'all', sort: 'desire-desc', expanded: new Set(), pendingUnreserve: null,
+  unsubscribe: null, pendingStatusIds: new Set(), confirmedStatuses: new Map()
+};
 
 function plural(number, forms) {
   const n10 = number % 10;
@@ -68,9 +71,12 @@ function appendLinkedText(container, text) {
 
 function giftCard(gift) {
   const hasDescription = Boolean(gift.description?.trim());
+  const hasPrice = Number.isFinite(gift.price);
+  const statusPending = state.pendingStatusIds.has(gift.id);
   const card = document.createElement('article');
-  card.className = `gift-card${hasDescription ? ' has-description' : ''}${gift.status === 'reserved' ? ' is-reserved' : ''}${gift.desireLevel === 5 ? ' is-desire-5' : ''}${state.expanded.has(gift.id) ? ' is-open' : ''}`;
+  card.className = `gift-card${hasDescription ? ' has-description' : ''}${hasPrice ? ' has-price' : ''}${gift.status === 'reserved' ? ' is-reserved' : ''}${gift.desireLevel === 5 ? ' is-desire-5' : ''}${state.expanded.has(gift.id) ? ' is-open' : ''}${statusPending ? ' is-saving' : ''}`;
   card.dataset.id = gift.id;
+  if (statusPending) card.setAttribute('aria-busy', 'true');
   if (hasDescription) {
     card.tabIndex = 0;
     card.setAttribute('role', 'button');
@@ -92,7 +98,7 @@ function giftCard(gift) {
     titleRow.append(chevron);
   }
   main.append(titleRow);
-  if (Number.isFinite(gift.price)) {
+  if (hasPrice) {
     const price = document.createElement('p');
     price.className = 'price';
     price.textContent = `≈ ${new Intl.NumberFormat('ru-RU').format(gift.price)} ₽`;
@@ -105,12 +111,13 @@ function giftCard(gift) {
   const reserve = document.createElement('button');
   reserve.type = 'button';
   reserve.className = `glass-button${gift.status === 'reserved' ? ' glass-button--quiet' : ''}`;
-  reserve.textContent = gift.status === 'reserved' ? 'Снять бронь' : 'Забронировать';
+  reserve.textContent = statusPending ? 'Сохраняем…' : gift.status === 'reserved' ? 'Снять бронь' : 'Забронировать';
+  reserve.disabled = statusPending;
   reserve.setAttribute('aria-label', `${reserve.textContent}: ${gift.title}`);
   reserve.addEventListener('click', event => {
     event.stopPropagation();
     if (gift.status === 'reserved') openUnreserveDialog(gift);
-    else changeStatus(gift, 'reserved', reserve);
+    else changeStatus(gift, 'reserved');
   });
   side.append(reserve);
   card.append(main, side);
@@ -123,7 +130,7 @@ function giftCard(gift) {
     appendLinkedText(inner, gift.description);
     description.append(inner);
     card.append(description);
-    if (state.expanded.has(gift.id)) requestAnimationFrame(() => description.style.height = `${inner.scrollHeight + 20}px`);
+    if (state.expanded.has(gift.id)) requestAnimationFrame(() => description.style.height = `${inner.scrollHeight}px`);
   }
 
   card.addEventListener('click', event => {
@@ -166,16 +173,25 @@ function showNotice(message, isError = false) {
   showNotice.timer = setTimeout(() => elements.notice.hidden = true, 5000);
 }
 
-async function changeStatus(gift, status, button) {
-  button.disabled = true;
-  button.textContent = 'Сохраняем…';
+async function changeStatus(gift, status) {
+  if (state.pendingStatusIds.has(gift.id)) return;
+  const previousStatus = gift.status;
+  state.pendingStatusIds.add(gift.id);
+  render();
   try {
     await updateDoc(doc(db, 'gifts', gift.id), {status});
+    await waitForPendingWrites(db);
+    state.confirmedStatuses.set(gift.id, status);
+    state.gifts = state.gifts.map(item => item.id === gift.id ? {...item, status} : item);
+    state.pendingStatusIds.delete(gift.id);
+    render();
     showNotice(status === 'reserved' ? 'Подарок забронирован.' : 'Бронь снята.');
   } catch (error) {
     console.error(error);
-    button.disabled = false;
-    button.textContent = gift.status === 'reserved' ? 'Снять бронь' : 'Забронировать';
+    state.confirmedStatuses.set(gift.id, previousStatus);
+    state.gifts = state.gifts.map(item => item.id === gift.id ? {...item, status: previousStatus} : item);
+    state.pendingStatusIds.delete(gift.id);
+    render();
     showNotice('Не удалось сохранить бронь. Попробуйте ещё раз.', true);
   }
 }
@@ -190,8 +206,16 @@ function subscribe() {
   elements.loading.hidden = false;
   elements.error.hidden = true;
   state.unsubscribe?.();
-  state.unsubscribe = onSnapshot(collection(db, 'gifts'), snapshot => {
-    state.gifts = snapshot.docs.map(item => ({id: item.id, ...item.data()}));
+  state.unsubscribe = onSnapshot(collection(db, 'gifts'), {includeMetadataChanges: true}, snapshot => {
+    const currentIds = new Set(snapshot.docs.map(item => item.id));
+    for (const id of state.confirmedStatuses.keys()) {
+      if (!currentIds.has(id)) state.confirmedStatuses.delete(id);
+    }
+    state.gifts = snapshot.docs.map(item => {
+      const gift = {id: item.id, ...item.data()};
+      if (!item.metadata.hasPendingWrites) state.confirmedStatuses.set(item.id, gift.status);
+      return {...gift, status: state.confirmedStatuses.get(item.id) ?? gift.status};
+    });
     render();
   }, error => {
     console.error(error);
@@ -274,10 +298,14 @@ elements.confirmUnreserve.addEventListener('click', event => {
   event.preventDefault();
   const gift = state.pendingUnreserve;
   elements.dialog.close();
-  const cardButton = elements.list.querySelector(`[data-id="${CSS.escape(gift.id)}"] .glass-button`);
-  changeStatus(gift, 'available', cardButton);
+  changeStatus(gift, 'available');
 });
 elements.dialog.addEventListener('click', event => {if (event.target === elements.dialog) elements.dialog.close();});
+window.addEventListener('beforeunload', event => {
+  if (!state.pendingStatusIds.size) return;
+  event.preventDefault();
+  event.returnValue = '';
+});
 
 if (!firebaseConfigured) {
   elements.loading.hidden = true;
