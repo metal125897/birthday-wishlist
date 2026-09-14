@@ -1,5 +1,5 @@
 import {onAuthStateChanged, signInWithEmailAndPassword, signOut} from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js';
-import {collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, writeBatch, serverTimestamp} from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js';
+import {collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, writeBatch, serverTimestamp, waitForPendingWrites} from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js';
 import {auth, db, firebaseConfigured} from './firebase-client.js';
 import {INITIAL_GIFTS} from './seed-data.js';
 
@@ -123,11 +123,11 @@ function showDeleteConfirmation(actions, gift) {
   const question = document.createElement('span');
   question.textContent = 'Точно удалить?';
   const confirm = document.createElement('button');
-  confirm.className = 'mini-button';
+  confirm.className = 'glass-button delete-confirm__button delete-confirm__button--danger';
   confirm.type = 'button';
   confirm.textContent = 'Удалить';
   const cancel = document.createElement('button');
-  cancel.className = 'mini-button';
+  cancel.className = 'glass-button glass-button--quiet delete-confirm__button';
   cancel.type = 'button';
   cancel.textContent = 'Отмена';
   const group = document.createElement('div');
@@ -137,13 +137,18 @@ function showDeleteConfirmation(actions, gift) {
   cancel.addEventListener('click', render);
   confirm.addEventListener('click', async () => {
     confirm.disabled = true;
+    confirm.textContent = 'Удаляем…';
+    cancel.disabled = true;
     try {
       await deleteDoc(doc(db, 'gifts', gift.id));
+      await waitForPendingWrites(db);
       if (elements.giftId.value === gift.id) resetForm();
       showNotice('Подарок удалён.');
     } catch (error) {
       console.error(error);
       confirm.disabled = false;
+      confirm.textContent = 'Удалить';
+      cancel.disabled = false;
       showNotice('Не удалось удалить подарок.', true);
     }
   });
@@ -188,7 +193,8 @@ async function seedInitialGifts() {
 
 function subscribeToGifts() {
   state.unsubscribe?.();
-  state.unsubscribe = onSnapshot(collection(db, 'gifts'), async snapshot => {
+  state.unsubscribe = onSnapshot(collection(db, 'gifts'), {includeMetadataChanges: true}, async snapshot => {
+    if (snapshot.metadata.hasPendingWrites) return;
     state.gifts = snapshot.docs.map(item => ({id: item.id, ...item.data()}));
     render();
     if (snapshot.empty) await seedInitialGifts();

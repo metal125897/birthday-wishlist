@@ -37,7 +37,8 @@ service cloud.firestore {
 
     match /gifts/{giftId} {
       allow read: if true;
-      allow create, delete: if isAdmin() && isValidGift(request.resource.data);
+      allow create: if isAdmin() && isValidGift(request.resource.data);
+      allow delete: if isAdmin();
       allow update: if (
           isAdmin()
           || request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])

@@ -64,6 +64,17 @@ if (!publicHtml.includes('Цены примерные. Стрелка у наз�
 if (!styles.includes('.gift-card.has-price .desire{grid-column:2;align-items:flex-end}')) {
   throw new Error('Мобильная цена и шкала желания должны оставаться в одной строке.');
 }
+if (!adminApp.includes('if (snapshot.metadata.hasPendingWrites) return;') || !adminApp.includes('await waitForPendingWrites(db)')) {
+  throw new Error('Админка должна ждать подтверждения Firestore перед завершением удаления.');
+}
+if (!styles.includes('.delete-confirm__button{min-width:100px;min-height:48px')) {
+  throw new Error('Кнопки подтверждения удаления должны иметь стандартную высоту.');
+}
+
+const firestoreRules = await readFile(resolve(root, 'firestore.rules'), 'utf8');
+if (!firestoreRules.includes('allow delete: if isAdmin();')) {
+  throw new Error('Удаление подарка должно проверять администратора без request.resource.data.');
+}
 
 JSON.parse(await readFile(resolve(root, 'firebase.json'), 'utf8'));
 JSON.parse(await readFile(resolve(root, 'package.json'), 'utf8'));
