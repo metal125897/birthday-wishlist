@@ -70,6 +70,16 @@ if (!adminApp.includes('if (snapshot.metadata.hasPendingWrites) return;') || !ad
 if (!styles.includes('.delete-confirm__button{min-width:100px;min-height:48px')) {
   throw new Error('Кнопки подтверждения удаления должны иметь стандартную высоту.');
 }
+if (!adminHtml.includes('id="export-csv"') || !adminApp.includes("['Название', 'Описание', 'Уровень желания', 'Цена']") || !adminApp.includes("type: 'text/csv;charset=utf-8'")) {
+  throw new Error('Админка должна экспортировать четыре запрошенных столбца в UTF-8 CSV.');
+}
+if (!publicHtml.includes('<details class="gift-guidance">') || !publicHtml.includes('Что лучше не дарить') || !publicHtml.includes('Natura Siberica')) {
+  throw new Error('Не найден статичный раскрываемый блок с нежелательными подарками.');
+}
+const workflow = await readFile(resolve(root, '.github/workflows/pages.yml'), 'utf8');
+if (!workflow.includes('run: npm run check') || workflow.indexOf('run: npm run check') > workflow.indexOf('actions/deploy-pages@')) {
+  throw new Error('CI-проверка должна выполняться до публикации GitHub Pages.');
+}
 
 const firestoreRules = await readFile(resolve(root, 'firestore.rules'), 'utf8');
 if (!firestoreRules.includes('allow delete: if isAdmin();')) {

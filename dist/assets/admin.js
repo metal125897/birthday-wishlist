@@ -14,7 +14,7 @@ const elements = {
   price: document.querySelector('#gift-price'), description: document.querySelector('#gift-description'),
   submit: document.querySelector('#submit-gift'), cancel: document.querySelector('#cancel-edit'),
   gifts: document.querySelector('#admin-gifts'), count: document.querySelector('#admin-count'),
-  notice: document.querySelector('#admin-notice')
+  notice: document.querySelector('#admin-notice'), exportCsv: document.querySelector('#export-csv')
 };
 
 const state = {gifts: [], unsubscribe: null, seeded: false};
@@ -157,6 +157,7 @@ function showDeleteConfirmation(actions, gift) {
 function render() {
   const gifts = [...state.gifts].sort((a, b) => (a.createdAt?.seconds ?? 0) - (b.createdAt?.seconds ?? 0));
   elements.count.textContent = String(gifts.length);
+  elements.exportCsv.disabled = gifts.length === 0;
   elements.gifts.replaceChildren(...gifts.map(adminGift));
   if (!gifts.length) {
     const empty = document.createElement('p');
@@ -164,6 +165,31 @@ function render() {
     empty.textContent = 'Список пока пуст.';
     elements.gifts.append(empty);
   }
+}
+
+function csvCell(value) {
+  if (value === null || value === undefined) return '""';
+  const text = String(value);
+  const safeText = typeof value === 'string' && /^[=+\-@]/.test(text) ? `'${text}` : text;
+  return `"${safeText.replaceAll('"', '""')}"`;
+}
+
+function exportGiftsToCsv() {
+  if (!state.gifts.length) return;
+  const gifts = [...state.gifts].sort((a, b) => (a.createdAt?.seconds ?? 0) - (b.createdAt?.seconds ?? 0));
+  const rows = [
+    ['Название', 'Описание', 'Уровень желания', 'Цена'],
+    ...gifts.map(gift => [gift.title, gift.description || '', gift.desireLevel, Number.isFinite(gift.price) ? gift.price : null])
+  ];
+  const csv = `\uFEFF${rows.map(row => row.map(csvCell).join(';')).join('\r\n')}`;
+  const url = URL.createObjectURL(new Blob([csv], {type: 'text/csv;charset=utf-8'}));
+  const link = document.createElement('a');
+  const date = new Intl.DateTimeFormat('sv-SE').format(new Date());
+  link.href = url;
+  link.download = `wishlist-gifts-${date}.csv`;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 0);
+  showNotice(`Список из ${gifts.length} подарков скачан.`);
 }
 
 async function seedInitialGifts() {
@@ -221,6 +247,7 @@ elements.loginForm.addEventListener('submit', async event => {
 });
 
 elements.logout.addEventListener('click', () => signOut(auth));
+elements.exportCsv.addEventListener('click', exportGiftsToCsv);
 elements.cancel.addEventListener('click', resetForm);
 elements.form.addEventListener('submit', async event => {
   event.preventDefault();
@@ -262,6 +289,7 @@ if (!firebaseConfigured) {
       state.unsubscribe?.();
       state.unsubscribe = null;
       state.gifts = [];
+      elements.exportCsv.disabled = true;
       state.seeded = false;
       elements.loginForm.reset();
       const submit = elements.loginForm.querySelector('button[type="submit"]');
