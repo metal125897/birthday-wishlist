@@ -2,6 +2,7 @@ import {onAuthStateChanged, signInWithEmailAndPassword, signOut} from 'https://w
 import {collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, writeBatch, serverTimestamp, waitForPendingWrites} from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js';
 import {auth, db, firebaseConfigured} from './firebase-client.js';
 import {INITIAL_GIFTS} from './seed-data.js';
+import {GIFT_CATEGORIES, normalizeGiftCategory} from './categories.js';
 
 const ADMIN_AUTH_EMAIL = 'admin@birthday-wishlist.local';
 
@@ -11,7 +12,8 @@ const elements = {
   loginError: document.querySelector('#login-error'), logout: document.querySelector('#logout-button'),
   form: document.querySelector('#gift-form'), formTitle: document.querySelector('#form-title'),
   giftId: document.querySelector('#gift-id'), title: document.querySelector('#gift-title'),
-  price: document.querySelector('#gift-price'), description: document.querySelector('#gift-description'),
+  price: document.querySelector('#gift-price'), category: document.querySelector('#gift-category'),
+  description: document.querySelector('#gift-description'),
   submit: document.querySelector('#submit-gift'), cancel: document.querySelector('#cancel-edit'),
   gifts: document.querySelector('#admin-gifts'), count: document.querySelector('#admin-count'),
   notice: document.querySelector('#admin-notice'), exportCsv: document.querySelector('#export-csv')
@@ -30,7 +32,8 @@ function normalizeForm() {
     title,
     description: elements.description.value.trim(),
     desireLevel: desireLevel(),
-    price: rawPrice === '' ? null : Number(rawPrice)
+    price: rawPrice === '' ? null : Number(rawPrice),
+    category: normalizeGiftCategory(elements.category.value)
   };
 }
 
@@ -39,6 +42,7 @@ function validateGift(gift) {
   if (gift.description.length > 4000) return 'Описание не должно быть длиннее 4000 символов.';
   if (!Number.isInteger(gift.desireLevel) || gift.desireLevel < 1 || gift.desireLevel > 5) return 'Выберите уровень желания от 1 до 5.';
   if (gift.price !== null && (!Number.isInteger(gift.price) || gift.price < 1 || gift.price > 99999999)) return 'Цена должна быть целым числом от 1 до 99 999 999.';
+  if (gift.category !== null && !GIFT_CATEGORIES.includes(gift.category)) return 'Выберите категорию из списка.';
   return '';
 }
 
@@ -63,6 +67,7 @@ function startEdit(gift) {
   elements.giftId.value = gift.id;
   elements.title.value = gift.title;
   elements.price.value = Number.isFinite(gift.price) ? gift.price : '';
+  elements.category.value = normalizeGiftCategory(gift.category) || '';
   elements.description.value = gift.description || '';
   document.querySelector(`input[name="desire"][value="${gift.desireLevel}"]`).checked = true;
   elements.formTitle.textContent = 'Редактирование подарка';
@@ -84,6 +89,13 @@ function metadata(gift) {
   status.className = `status-pill ${gift.status}`;
   status.textContent = gift.status === 'reserved' ? 'Забронировано' : 'Доступно для брони';
   wrapper.append(level, price, status);
+  const category = normalizeGiftCategory(gift.category);
+  if (category) {
+    const tag = document.createElement('span');
+    tag.className = 'category-tag';
+    tag.textContent = category;
+    wrapper.append(tag);
+  }
   if (gift.description?.trim()) {
     const description = document.createElement('span');
     description.textContent = 'с описанием';
@@ -203,6 +215,7 @@ async function seedInitialGifts() {
       description: gift.description,
       desireLevel: 1,
       price: null,
+      category: null,
       status: 'available',
       createdAt: new Date(baseTime + index * 1000)
     });

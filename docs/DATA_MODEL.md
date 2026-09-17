@@ -9,10 +9,13 @@
 | `description` | string | 0–4000 символов |
 | `desireLevel` | integer | От 1 до 5 |
 | `price` | integer или null | 1–99 999 999 ₽ или отсутствует |
+| `category` | string или null | Необязательное; одно из `Self Care & Cosmetics`, `Sport`, `Just Pleasure`, `Food`, `Needs` |
 | `status` | string | `available` или `reserved` |
 | `createdAt` | timestamp | Время создания для стабильной сортировки |
 
 Неизвестные поля запрещены правилами Firestore.
+
+Для обратной совместимости документ без поля `category` читается как подарок без категории. Новые и отредактированные документы сохраняют `category: null`, если в форме выбрано «Без категории». Список значений фиксирован в `dist/assets/categories.js`; отдельной сущности категории в Firestore нет.
 
 ## Стартовые данные
 
@@ -20,6 +23,7 @@
 
 - `desireLevel: 1`;
 - `price: null`;
+- `category: null`;
 - `status: "available"`;
 - последовательный `createdAt` для стабильного порядка.
 

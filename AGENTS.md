@@ -47,6 +47,7 @@
 - `dist/admin/index.html` — закрытая админ-панель.
 - `dist/assets/app.js` — публичная логика.
 - `dist/assets/admin.js` — авторизация, CRUD и первичное заполнение.
+- `dist/assets/categories.js` — единый фиксированный список категорий и нормализация значения.
 - `dist/assets/seed-data.js` — канонический стартовый список из 57 подарков.
 - `dist/assets/firebase-config.js` — публичная конфигурация Firebase; секреты сюда не добавлять.
 - `dist/assets/styles.css` — общая визуальная система.

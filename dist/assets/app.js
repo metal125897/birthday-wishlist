@@ -1,11 +1,16 @@
 import {collection, onSnapshot, updateDoc, doc, waitForPendingWrites} from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js';
 import {db, firebaseConfigured} from './firebase-client.js';
+import {normalizeGiftCategory} from './categories.js';
 
 const elements = {
   list: document.querySelector('#gift-list'), loading: document.querySelector('#loading'),
   empty: document.querySelector('#empty-state'), error: document.querySelector('#error-state'),
+  emptyCopy: document.querySelector('#empty-copy'),
   retry: document.querySelector('#retry-button'), counter: document.querySelector('#counter'),
-  sortControl: document.querySelector('.sort-control'), sortTrigger: document.querySelector('#sort-trigger'),
+  categoryControl: document.querySelector('#category-control'), categoryTrigger: document.querySelector('#category-trigger'),
+  categoryMenu: document.querySelector('#category-menu'), categoryValue: document.querySelector('#category-value'),
+  categoryOptions: [...document.querySelectorAll('[data-category]')],
+  sortControl: document.querySelector('#sort-control'), sortTrigger: document.querySelector('#sort-trigger'),
   sortMenu: document.querySelector('#sort-menu'), sortValue: document.querySelector('#sort-value'),
   sortOptions: [...document.querySelectorAll('[data-sort]')], notice: document.querySelector('#notice'),
   dialog: document.querySelector('#unreserve-dialog'), dialogCopy: document.querySelector('#dialog-copy'),
@@ -13,7 +18,7 @@ const elements = {
 };
 
 const state = {
-  gifts: [], filter: 'all', sort: 'desire-desc', expanded: new Set(), pendingUnreserve: null,
+  gifts: [], filter: 'all', category: 'all', sort: 'desire-desc', expanded: new Set(), pendingUnreserve: null,
   unsubscribe: null, pendingStatusIds: new Set(), confirmedStatuses: new Map()
 };
 
@@ -30,7 +35,11 @@ function createdMillis(gift) {
 }
 
 function sortedFilteredGifts() {
-  const filtered = state.gifts.filter(gift => state.filter === 'all' || gift.status === state.filter);
+  const filtered = state.gifts.filter(gift => {
+    const matchesStatus = state.filter === 'all' || gift.status === state.filter;
+    const matchesCategory = state.category === 'all' || normalizeGiftCategory(gift.category) === state.category;
+    return matchesStatus && matchesCategory;
+  });
   return filtered.sort((a, b) => {
     const byCreated = createdMillis(a) - createdMillis(b);
     if (state.sort === 'desire-desc') return b.desireLevel - a.desireLevel || byCreated;
@@ -44,11 +53,28 @@ function sortedFilteredGifts() {
   });
 }
 
-function desireScale(level) {
+function desireScale(level, category) {
   const wrapper = document.createElement('div');
   wrapper.className = 'desire';
   wrapper.setAttribute('aria-label', `Уровень желания: ${level} из 5`);
-  wrapper.innerHTML = `<span class="desire-label">Желание · ${level}/5</span><span class="desire-bars" aria-hidden="true">${Array.from({length: 5}, (_, i) => `<i class="${i < level ? 'on' : ''}"></i>`).join('')}</span>`;
+  const label = document.createElement('span');
+  label.className = 'desire-label';
+  const validCategory = normalizeGiftCategory(category);
+  if (validCategory) {
+    const tag = document.createElement('span');
+    tag.className = 'category-tag';
+    tag.textContent = validCategory;
+    label.append(tag);
+  }
+  const desireCopy = document.createElement('span');
+  desireCopy.className = 'desire-copy';
+  desireCopy.textContent = `Желание · ${level}/5`;
+  label.append(desireCopy);
+  const bars = document.createElement('span');
+  bars.className = 'desire-bars';
+  bars.setAttribute('aria-hidden', 'true');
+  bars.innerHTML = Array.from({length: 5}, (_, i) => `<i class="${i < level ? 'on' : ''}"></i>`).join('');
+  wrapper.append(label, bars);
   return wrapper;
 }
 
@@ -107,7 +133,7 @@ function giftCard(gift) {
 
   const side = document.createElement('div');
   side.className = 'gift-side';
-  side.append(desireScale(gift.desireLevel));
+  side.append(desireScale(gift.desireLevel, gift.category));
   const reserve = document.createElement('button');
   reserve.type = 'button';
   reserve.className = `glass-button${gift.status === 'reserved' ? ' glass-button--quiet' : ''}`;
@@ -163,6 +189,9 @@ function render() {
   elements.list.replaceChildren(...gifts.map(giftCard));
   elements.list.hidden = gifts.length === 0;
   elements.empty.hidden = gifts.length !== 0;
+  elements.emptyCopy.textContent = state.gifts.length
+    ? 'В этой категории ничего не нашлось по текущим фильтрам. Попробуйте изменить категорию или статус.'
+    : 'Список ещё наполняется. Загляните чуть позже.';
 }
 
 function showNotice(message, isError = false) {
@@ -237,62 +266,86 @@ document.querySelectorAll('[data-filter]').forEach(button => button.addEventList
   render();
 }));
 
-function closeSortMenu({restoreFocus = false} = {}) {
-  elements.sortMenu.hidden = true;
-  elements.sortControl.classList.remove('is-open');
-  elements.sortTrigger.setAttribute('aria-expanded', 'false');
-  if (restoreFocus) elements.sortTrigger.focus();
-}
-
-function openSortMenu(focusDirection = 0) {
-  elements.sortMenu.hidden = false;
-  elements.sortControl.classList.add('is-open');
-  elements.sortTrigger.setAttribute('aria-expanded', 'true');
-  if (focusDirection) {
-    const selectedIndex = Math.max(0, elements.sortOptions.findIndex(option => option.classList.contains('is-selected')));
-    const nextIndex = (selectedIndex + focusDirection + elements.sortOptions.length) % elements.sortOptions.length;
-    elements.sortOptions[nextIndex].focus();
+function setupListbox({control, trigger, menu, options, value, dataKey, onChange}) {
+  function close({restoreFocus = false} = {}) {
+    menu.hidden = true;
+    control.classList.remove('is-open');
+    trigger.setAttribute('aria-expanded', 'false');
+    if (restoreFocus) trigger.focus();
   }
-}
 
-function selectSort(option) {
-  state.sort = option.dataset.sort;
-  elements.sortValue.textContent = option.textContent;
-  elements.sortOptions.forEach(item => {
-    const selected = item === option;
-    item.classList.toggle('is-selected', selected);
-    item.setAttribute('aria-selected', String(selected));
+  function open(focusDirection = 0) {
+    menu.hidden = false;
+    control.classList.add('is-open');
+    trigger.setAttribute('aria-expanded', 'true');
+    if (focusDirection) {
+      const selectedIndex = Math.max(0, options.findIndex(option => option.classList.contains('is-selected')));
+      const nextIndex = (selectedIndex + focusDirection + options.length) % options.length;
+      options[nextIndex].focus();
+    }
+  }
+
+  function select(option) {
+    value.textContent = option.textContent;
+    options.forEach(item => {
+      const selected = item === option;
+      item.classList.toggle('is-selected', selected);
+      item.setAttribute('aria-selected', String(selected));
+    });
+    onChange(option.dataset[dataKey]);
+    close({restoreFocus: true});
+    render();
+  }
+
+  trigger.addEventListener('click', () => { if (menu.hidden) open(); else close(); });
+  trigger.addEventListener('keydown', event => {
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault();
+      if (menu.hidden) open(event.key === 'ArrowDown' ? 1 : -1);
+    }
   });
-  closeSortMenu({restoreFocus: true});
-  render();
+  options.forEach(option => option.addEventListener('click', () => select(option)));
+  menu.addEventListener('keydown', event => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      close({restoreFocus: true});
+      return;
+    }
+    if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
+    event.preventDefault();
+    const current = options.indexOf(document.activeElement);
+    let next = event.key === 'Home' ? 0 : event.key === 'End' ? options.length - 1 : current + (event.key === 'ArrowDown' ? 1 : -1);
+    next = (next + options.length) % options.length;
+    options[next].focus();
+  });
+  document.addEventListener('click', event => {
+    if (!control.contains(event.target) && !menu.hidden) close();
+  });
+  return {close};
 }
 
-elements.sortTrigger.addEventListener('click', () => {
-  if (elements.sortMenu.hidden) openSortMenu(); else closeSortMenu();
+const categoryListbox = setupListbox({
+  control: elements.categoryControl,
+  trigger: elements.categoryTrigger,
+  menu: elements.categoryMenu,
+  options: elements.categoryOptions,
+  value: elements.categoryValue,
+  dataKey: 'category',
+  onChange: category => { state.category = category; }
 });
-elements.sortTrigger.addEventListener('keydown', event => {
-  if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-    event.preventDefault();
-    if (elements.sortMenu.hidden) openSortMenu(event.key === 'ArrowDown' ? 1 : -1);
-  }
+
+const sortListbox = setupListbox({
+  control: elements.sortControl,
+  trigger: elements.sortTrigger,
+  menu: elements.sortMenu,
+  options: elements.sortOptions,
+  value: elements.sortValue,
+  dataKey: 'sort',
+  onChange: sort => { state.sort = sort; }
 });
-elements.sortOptions.forEach(option => option.addEventListener('click', () => selectSort(option)));
-elements.sortMenu.addEventListener('keydown', event => {
-  if (event.key === 'Escape') {
-    event.preventDefault();
-    closeSortMenu({restoreFocus: true});
-    return;
-  }
-  if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
-  event.preventDefault();
-  const current = elements.sortOptions.indexOf(document.activeElement);
-  let next = event.key === 'Home' ? 0 : event.key === 'End' ? elements.sortOptions.length - 1 : current + (event.key === 'ArrowDown' ? 1 : -1);
-  next = (next + elements.sortOptions.length) % elements.sortOptions.length;
-  elements.sortOptions[next].focus();
-});
-document.addEventListener('click', event => {
-  if (!elements.sortControl.contains(event.target) && !elements.sortMenu.hidden) closeSortMenu();
-});
+
+elements.categoryTrigger.addEventListener('click', () => sortListbox.close());
+elements.sortTrigger.addEventListener('click', () => categoryListbox.close());
 elements.retry.addEventListener('click', subscribe);
 elements.confirmUnreserve.addEventListener('click', event => {
   event.preventDefault();

@@ -12,7 +12,7 @@ service cloud.firestore {
           'title', 'description', 'desireLevel', 'price', 'status', 'createdAt'
         ])
         && data.keys().hasOnly([
-          'title', 'description', 'desireLevel', 'price', 'status', 'createdAt'
+          'title', 'description', 'desireLevel', 'price', 'category', 'status', 'createdAt'
         ]);
     }
 
@@ -30,6 +30,12 @@ service cloud.firestore {
           data.price is int
           && data.price >= 1
           && data.price <= 99999999
+        ))
+        && (!('category' in data) || data.category == null || (
+          data.category is string
+          && data.category in [
+            'Self Care & Cosmetics', 'Sport', 'Just Pleasure', 'Food', 'Needs'
+          ]
         ))
         && data.status in ['available', 'reserved']
         && data.createdAt is timestamp;

@@ -1,12 +1,13 @@
 import {readFile, access} from 'node:fs/promises';
 import {dirname, resolve} from 'node:path';
 import {INITIAL_GIFTS} from '../dist/assets/seed-data.js';
+import {GIFT_CATEGORIES} from '../dist/assets/categories.js';
 
 const root = resolve(import.meta.dirname, '..');
 const required = [
   'dist/index.html', 'dist/admin/index.html', 'dist/assets/styles.css',
   'dist/assets/app.js', 'dist/assets/admin.js', 'dist/assets/firebase-client.js',
-  'dist/assets/firebase-config.js', 'dist/assets/seed-data.js',
+  'dist/assets/firebase-config.js', 'dist/assets/seed-data.js', 'dist/assets/categories.js',
   'dist/assets/hero.jpg', 'firestore.rules', 'firebase.json', 'AGENTS.md'
 ];
 
@@ -19,6 +20,11 @@ for (const gift of INITIAL_GIFTS) {
   if (!gift.id || !gift.title?.trim()) throw new Error('У каждого подарка должны быть ID и название.');
   if (gift.title.length > 120) throw new Error(`Слишком длинное название: ${gift.title}`);
   if ((gift.description || '').length > 4000) throw new Error(`Слишком длинное описание: ${gift.title}`);
+}
+
+const expectedCategories = ['Self Care & Cosmetics', 'Sport', 'Just Pleasure', 'Food', 'Needs'];
+if (JSON.stringify(GIFT_CATEGORIES) !== JSON.stringify(expectedCategories)) {
+  throw new Error('Фиксированный список категорий изменён или нарушен его порядок.');
 }
 
 for (const htmlPath of ['dist/index.html', 'dist/admin/index.html']) {
@@ -76,6 +82,27 @@ if (!adminHtml.includes('id="export-csv"') || !adminApp.includes("['Назван
 if (!publicHtml.includes('<details class="gift-guidance">') || !publicHtml.includes('Что лучше не дарить') || !publicHtml.includes('Natura Siberica')) {
   throw new Error('Не найден статичный раскрываемый блок с нежелательными подарками.');
 }
+if (!publicHtml.includes('aria-label="Категория подарков"') || !publicHtml.includes('Все категории')) {
+  throw new Error('На публичной странице должен быть доступный фильтр категорий.');
+}
+if (!adminHtml.includes('<label>Категория') || !adminHtml.includes('<option value="">Без категории</option>')) {
+  throw new Error('В форме администратора должен быть необязательный выбор категории.');
+}
+for (const category of expectedCategories) {
+  const encodedCategory = category.replace('&', '&amp;');
+  if (!publicHtml.includes(`data-category="${encodedCategory}"`) || !adminHtml.includes(`value="${encodedCategory}"`)) {
+    throw new Error(`Категория ${category} отсутствует в одном из интерфейсов.`);
+  }
+}
+if (!publicApp.includes("state.category === 'all'") || !publicApp.includes('matchesStatus && matchesCategory')) {
+  throw new Error('Категория и статус должны применяться совместно к уже загруженному списку.');
+}
+if (!publicApp.includes('В этой категории ничего не нашлось по текущим фильтрам. Попробуйте изменить категорию или статус.')) {
+  throw new Error('Не найдена подсказка для пустого результата фильтрации.');
+}
+if (!adminApp.includes('category: normalizeGiftCategory(elements.category.value)') || !adminApp.includes("elements.category.value = normalizeGiftCategory(gift.category) || ''")) {
+  throw new Error('Админка должна сохранять, предвыбирать и очищать категорию.');
+}
 const workflow = await readFile(resolve(root, '.github/workflows/pages.yml'), 'utf8');
 if (!workflow.includes('run: npm run check') || workflow.indexOf('run: npm run check') > workflow.indexOf('actions/deploy-pages@')) {
   throw new Error('CI-проверка должна выполняться до публикации GitHub Pages.');
@@ -85,8 +112,11 @@ const firestoreRules = await readFile(resolve(root, 'firestore.rules'), 'utf8');
 if (!firestoreRules.includes('allow delete: if isAdmin();')) {
   throw new Error('Удаление подарка должно проверять администратора без request.resource.data.');
 }
+if (!firestoreRules.includes("'Self Care & Cosmetics', 'Sport', 'Just Pleasure', 'Food', 'Needs'") || !firestoreRules.includes("hasOnly(['status'])")) {
+  throw new Error('Firestore должен валидировать категории и запрещать гостю менять что-либо кроме статуса.');
+}
 
 JSON.parse(await readFile(resolve(root, 'firebase.json'), 'utf8'));
 JSON.parse(await readFile(resolve(root, 'package.json'), 'utf8'));
 
-console.log('Validation passed: 57 gifts, unique IDs, valid local assets and JSON.');
+console.log('Validation passed: 57 gifts, five fixed categories, valid local assets and JSON.');

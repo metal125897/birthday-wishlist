@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#06070a">
   <title>Админ-панель — Список желаний</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2306070a'/%3E%3Cpath d='M18 29h28v24H18z' fill='%23d9c08c'/%3E%3Cpath d='M23 29v-7a9 9 0 0 1 18 0v7' fill='none' stroke='%23fff' stroke-width='5'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="../assets/styles.css?v=20260914-export-preferences">
+  <link rel="stylesheet" href="../assets/styles.css?v=20260917-categories">
 </head>
 <body class="admin-body">
   <main class="admin-shell">
@@ -67,6 +67,16 @@
             <label>Примерная цена, ₽
               <input id="gift-price" type="number" min="1" max="99999999" inputmode="numeric" placeholder="Необязательно">
             </label>
+            <label>Категория
+              <select id="gift-category">
+                <option value="">Без категории</option>
+                <option value="Self Care &amp; Cosmetics">Self Care &amp; Cosmetics</option>
+                <option value="Sport">Sport</option>
+                <option value="Just Pleasure">Just Pleasure</option>
+                <option value="Food">Food</option>
+                <option value="Needs">Needs</option>
+              </select>
+            </label>
             <label>Описание
               <textarea id="gift-description" maxlength="4000" rows="7" placeholder="Необязательно"></textarea>
               <small>Ссылку можно вставить прямо в текст — в списке она станет кликабельной.</small>
@@ -90,6 +100,6 @@
       </div>
     </section>
   </main>
-  <script type="module" src="../assets/admin.js?v=20260914-export-preferences"></script>
+  <script type="module" src="../assets/admin.js?v=20260917-categories"></script>
 </body>
 </html>

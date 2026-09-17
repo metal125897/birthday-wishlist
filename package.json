@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "check": "node --check dist/assets/app.js && node --check dist/assets/admin.js && node --check dist/assets/firebase-client.js && node --check dist/assets/firebase-config.js && node --check dist/assets/seed-data.js && node --check scripts/validate.mjs && npm run validate",
+    "check": "node --check dist/assets/app.js && node --check dist/assets/admin.js && node --check dist/assets/categories.js && node --check dist/assets/firebase-client.js && node --check dist/assets/firebase-config.js && node --check dist/assets/seed-data.js && node --check scripts/validate.mjs && npm run validate",
     "validate": "node scripts/validate.mjs"
   }
 }
