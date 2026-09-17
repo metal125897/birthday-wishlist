@@ -4,12 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Личный список желаний ко дню рождения — выберите и забронируйте подарок, чтобы сюрпризы не повторялись.">
-  <meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
+  <meta name="robots" content="noindex, nofollow, noarchive, noimageindex, nosnippet, max-snippet:0, max-image-preview:none, max-video-preview:0">
+  <meta name="googlebot" content="noindex, nofollow, noarchive, noimageindex, nosnippet, max-snippet:0, max-image-preview:none, max-video-preview:0">
+  <meta name="bingbot" content="noindex, nofollow, noarchive, noimageindex, nosnippet">
   <meta name="referrer" content="no-referrer">
   <meta name="theme-color" content="#06070a">
   <title>Список желаний</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2306070a'/%3E%3Cpath d='M15 28h34v24H15z' fill='%23d9c08c'/%3E%3Cpath d='M32 22v30M13 22h38v10H13z' fill='none' stroke='%23fff' stroke-width='4'/%3E%3Cpath d='M32 22c-11 0-12-14-5-14 5 0 5 7 5 14Zm0 0c11 0 12-14 5-14-5 0-5 7-5 14Z' fill='none' stroke='%23d9c08c' stroke-width='4'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="./assets/styles.css?v=20260917-category-labels">
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://firestore.googleapis.com">
+  <link rel="stylesheet" href="./assets/styles.css?v=20260917-performance-cleanup">
 </head>
 <body>
   <a class="skip-link" href="#wishlist">К списку подарков</a>
@@ -23,14 +27,14 @@
     </div>
     <figure class="portrait" aria-label="Фото именинника">
       <div class="portrait__aura"></div>
-      <img src="./assets/hero.jpg" alt="Именинник среди переливающихся стеклянных форм" fetchpriority="high">
+      <img src="./assets/hero.jpg" alt="Именинник среди переливающихся стеклянных форм" fetchpriority="high" decoding="async">
       <div class="portrait__veil"></div>
     </figure>
   </header>
 
   <main class="shell main" id="wishlist">
-    <img class="ambient ambient--sphere" src="./assets/float_sphere.jpg" alt="" aria-hidden="true">
-    <img class="ambient ambient--torus" src="./assets/float_torus.jpg" alt="" aria-hidden="true">
+    <img class="ambient ambient--sphere" src="./assets/float_sphere.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
+    <img class="ambient ambient--torus" src="./assets/float_torus.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
 
     <section class="toolbar" aria-label="Управление списком">
       <div class="toolbar__meta">

@@ -1,4 +1,4 @@
-import {readFile, access} from 'node:fs/promises';
+import {readFile, access, readdir} from 'node:fs/promises';
 import {dirname, resolve} from 'node:path';
 import {INITIAL_GIFTS} from '../dist/assets/seed-data.js';
 import {GIFT_CATEGORIES, GIFT_CATEGORY_LABELS, giftCategoryLabel} from '../dist/assets/categories.js';
@@ -8,7 +8,8 @@ const required = [
   'dist/index.html', 'dist/admin/index.html', 'dist/assets/styles.css',
   'dist/assets/app.js', 'dist/assets/admin.js', 'dist/assets/firebase-client.js',
   'dist/assets/firebase-config.js', 'dist/assets/seed-data.js', 'dist/assets/categories.js',
-  'dist/assets/hero.jpg', 'firestore.rules', 'firebase.json', 'AGENTS.md'
+  'dist/assets/hero.jpg', 'dist/assets/fonts/inter-400-cyrillic.woff2',
+  'firestore.rules', 'firebase.json', 'AGENTS.md'
 ];
 
 for (const path of required) await access(resolve(root, path));
@@ -60,6 +61,29 @@ const publicApp = distSources[2];
 const adminApp = distSources[3];
 const styles = await readFile(resolve(root, 'dist/assets/styles.css'), 'utf8');
 
+const robotsDirective = 'noindex, nofollow, noarchive, noimageindex, nosnippet';
+for (const [name, html] of [['публичной страницы', publicHtml], ['админки', adminHtml]]) {
+  if (!html.includes(`<meta name="robots" content="${robotsDirective}`)
+    || !html.includes(`<meta name="googlebot" content="${robotsDirective}`)
+    || !html.includes(`<meta name="bingbot" content="${robotsDirective}`)) {
+    throw new Error(`На ${name} отсутствует усиленный запрет индексации.`);
+  }
+}
+if (/href="(?:\.\/)?admin\//.test(publicHtml)) {
+  throw new Error('Публичная страница не должна ссылаться на скрытую админку.');
+}
+const robotsText = await readFile(resolve(root, 'dist/robots.txt'), 'utf8');
+if (!/User-agent:\s*\*\s+Disallow:\s*\//i.test(robotsText)) {
+  throw new Error('robots.txt должен запрещать обход опубликованной папки.');
+}
+const fontFiles = (await readdir(resolve(root, 'dist/assets/fonts'))).filter(file => file.endsWith('.woff2'));
+if (fontFiles.length !== 1 || fontFiles[0] !== 'inter-400-cyrillic.woff2') {
+  throw new Error('В production должен оставаться один общий WOFF2 без дублирующих копий.');
+}
+if ((styles.match(/inter-400-cyrillic\.woff2/g) || []).length !== 4) {
+  throw new Error('Все веса Inter должны переиспользовать один кэшируемый WOFF2-файл.');
+}
+
 const writeIndex = publicApp.indexOf("await updateDoc(doc(db, 'gifts', gift.id), {status})");
 const acknowledgementIndex = publicApp.indexOf('await waitForPendingWrites(db)', writeIndex);
 const successIndex = publicApp.indexOf("showNotice(status === 'reserved'", acknowledgementIndex);
@@ -76,6 +100,12 @@ if (!resetFormSource.includes('elements.submit.disabled = false')) {
 if (adminHtml.includes('aria-hidden="true">*</span>')) throw new Error('Лишняя звёздочка у названия подарка не должна возвращаться.');
 if (!publicHtml.includes('Цены примерные. Стрелка у названия раскрывает комментарии')) {
   throw new Error('Не найден актуальный текст подсказки в hero-зоне.');
+}
+if (!styles.includes('right:calc(-1 * max(32px,(100vw - 1180px)/2))') || !styles.includes('left:54%')) {
+  throw new Error('Правая маска hero должна плавно доходить до края viewport.');
+}
+if (!publicHtml.includes('loading="lazy" decoding="async"')) {
+  throw new Error('Декоративные изображения ниже первого экрана должны загружаться лениво.');
 }
 if (!styles.includes('.gift-card.has-price .desire{grid-column:2;align-items:flex-end}')) {
   throw new Error('Мобильная цена и шкала желания должны оставаться в одной строке.');
