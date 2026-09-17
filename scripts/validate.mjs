@@ -1,7 +1,7 @@
 import {readFile, access} from 'node:fs/promises';
 import {dirname, resolve} from 'node:path';
 import {INITIAL_GIFTS} from '../dist/assets/seed-data.js';
-import {GIFT_CATEGORIES} from '../dist/assets/categories.js';
+import {GIFT_CATEGORIES, GIFT_CATEGORY_LABELS, giftCategoryLabel} from '../dist/assets/categories.js';
 
 const root = resolve(import.meta.dirname, '..');
 const required = [
@@ -23,8 +23,18 @@ for (const gift of INITIAL_GIFTS) {
 }
 
 const expectedCategories = ['Self Care & Cosmetics', 'Sport', 'Just Pleasure', 'Food', 'Needs'];
+const expectedCategoryLabels = {
+  'Self Care & Cosmetics': 'Забота о себе',
+  Sport: 'Жопу качат',
+  'Just Pleasure': 'Дофаминовый всплеск',
+  Food: 'Еда',
+  Needs: 'Практичное'
+};
 if (JSON.stringify(GIFT_CATEGORIES) !== JSON.stringify(expectedCategories)) {
   throw new Error('Фиксированный список категорий изменён или нарушен его порядок.');
+}
+if (JSON.stringify(GIFT_CATEGORY_LABELS) !== JSON.stringify(expectedCategoryLabels) || expectedCategories.some(category => giftCategoryLabel(category) !== expectedCategoryLabels[category])) {
+  throw new Error('Русские подписи категорий отсутствуют или не соответствуют стабильным кодам.');
 }
 
 for (const htmlPath of ['dist/index.html', 'dist/admin/index.html']) {
@@ -76,8 +86,8 @@ if (!adminApp.includes('if (snapshot.metadata.hasPendingWrites) return;') || !ad
 if (!styles.includes('.delete-confirm__button{min-width:100px;min-height:48px')) {
   throw new Error('Кнопки подтверждения удаления должны иметь стандартную высоту.');
 }
-if (!adminHtml.includes('id="export-csv"') || !adminApp.includes("['Название', 'Описание', 'Уровень желания', 'Цена']") || !adminApp.includes("type: 'text/csv;charset=utf-8'")) {
-  throw new Error('Админка должна экспортировать четыре запрошенных столбца в UTF-8 CSV.');
+if (!adminHtml.includes('id="export-csv"') || !adminApp.includes("['Название', 'Описание', 'Уровень желания', 'Цена', 'Категория']") || !adminApp.includes('giftCategoryLabel(gift.category)') || !adminApp.includes("type: 'text/csv;charset=utf-8'")) {
+  throw new Error('Админка должна экспортировать пять запрошенных столбцов в UTF-8 CSV, включая категорию.');
 }
 if (!publicHtml.includes('<details class="gift-guidance">') || !publicHtml.includes('Что лучше не дарить') || !publicHtml.includes('Natura Siberica')) {
   throw new Error('Не найден статичный раскрываемый блок с нежелательными подарками.');
@@ -85,12 +95,16 @@ if (!publicHtml.includes('<details class="gift-guidance">') || !publicHtml.inclu
 if (!publicHtml.includes('aria-label="Категория подарков"') || !publicHtml.includes('Все категории')) {
   throw new Error('На публичной странице должен быть доступный фильтр категорий.');
 }
-if (!adminHtml.includes('<label>Категория') || !adminHtml.includes('<option value="">Без категории</option>')) {
+if (!adminHtml.includes('id="gift-category-label">Категория</span>') || !adminHtml.includes('<option value="">Без категории</option>')) {
   throw new Error('В форме администратора должен быть необязательный выбор категории.');
+}
+if (!adminHtml.includes('id="gift-category-trigger"') || !adminHtml.includes('id="gift-category-menu" role="listbox"') || !adminHtml.includes('data-admin-category=""')) {
+  throw new Error('Категория в админке должна использовать собственное доступное меню сайта.');
 }
 for (const category of expectedCategories) {
   const encodedCategory = category.replace('&', '&amp;');
-  if (!publicHtml.includes(`data-category="${encodedCategory}"`) || !adminHtml.includes(`value="${encodedCategory}"`)) {
+  const label = expectedCategoryLabels[category];
+  if (!publicHtml.includes(`data-category="${encodedCategory}">${label}</button>`) || !adminHtml.includes(`value="${encodedCategory}">${label}</option>`)) {
     throw new Error(`Категория ${category} отсутствует в одном из интерфейсов.`);
   }
 }
@@ -100,8 +114,11 @@ if (!publicApp.includes("state.category === 'all'") || !publicApp.includes('matc
 if (!publicApp.includes('В этой категории ничего не нашлось по текущим фильтрам. Попробуйте изменить категорию или статус.')) {
   throw new Error('Не найдена подсказка для пустого результата фильтрации.');
 }
-if (!adminApp.includes('category: normalizeGiftCategory(elements.category.value)') || !adminApp.includes("elements.category.value = normalizeGiftCategory(gift.category) || ''")) {
+if (!adminApp.includes('category: normalizeGiftCategory(elements.category.value)') || !adminApp.includes('setCategoryValue(gift.category)') || !adminApp.includes("setCategoryValue('')")) {
   throw new Error('Админка должна сохранять, предвыбирать и очищать категорию.');
+}
+if (!styles.includes('.gift-card:not(.is-open){height:224px}') || !styles.includes('.desire{grid-row:2;grid-column:1/-1;align-items:flex-end') || !styles.includes('.admin-gift__desire-prefix{display:none}')) {
+  throw new Error('Мобильные карточки должны сохранять одинаковую высоту и компактные двухстрочные метаданные.');
 }
 const workflow = await readFile(resolve(root, '.github/workflows/pages.yml'), 'utf8');
 if (!workflow.includes('run: npm run check') || workflow.indexOf('run: npm run check') > workflow.indexOf('actions/deploy-pages@')) {

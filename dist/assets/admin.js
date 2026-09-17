@@ -2,7 +2,7 @@ import {onAuthStateChanged, signInWithEmailAndPassword, signOut} from 'https://w
 import {collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, writeBatch, serverTimestamp, waitForPendingWrites} from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js';
 import {auth, db, firebaseConfigured} from './firebase-client.js';
 import {INITIAL_GIFTS} from './seed-data.js';
-import {GIFT_CATEGORIES, normalizeGiftCategory} from './categories.js';
+import {GIFT_CATEGORIES, giftCategoryLabel, normalizeGiftCategory} from './categories.js?v=20260917-category-labels';
 
 const ADMIN_AUTH_EMAIL = 'admin@birthday-wishlist.local';
 
@@ -13,6 +13,9 @@ const elements = {
   form: document.querySelector('#gift-form'), formTitle: document.querySelector('#form-title'),
   giftId: document.querySelector('#gift-id'), title: document.querySelector('#gift-title'),
   price: document.querySelector('#gift-price'), category: document.querySelector('#gift-category'),
+  categoryControl: document.querySelector('#gift-category-control'), categoryTrigger: document.querySelector('#gift-category-trigger'),
+  categoryMenu: document.querySelector('#gift-category-menu'), categoryValue: document.querySelector('#gift-category-value'),
+  categoryOptions: [...document.querySelectorAll('[data-admin-category]')],
   description: document.querySelector('#gift-description'),
   submit: document.querySelector('#submit-gift'), cancel: document.querySelector('#cancel-edit'),
   gifts: document.querySelector('#admin-gifts'), count: document.querySelector('#admin-count'),
@@ -20,6 +23,37 @@ const elements = {
 };
 
 const state = {gifts: [], unsubscribe: null, seeded: false};
+
+function closeCategoryMenu({restoreFocus = false} = {}) {
+  elements.categoryMenu.hidden = true;
+  elements.categoryControl.classList.remove('is-open');
+  elements.categoryTrigger.setAttribute('aria-expanded', 'false');
+  if (restoreFocus) elements.categoryTrigger.focus();
+}
+
+function openCategoryMenu(focusDirection = 0) {
+  elements.categoryMenu.hidden = false;
+  elements.categoryControl.classList.add('is-open');
+  elements.categoryTrigger.setAttribute('aria-expanded', 'true');
+  if (focusDirection) {
+    const selectedIndex = Math.max(0, elements.categoryOptions.findIndex(option => option.classList.contains('is-selected')));
+    const nextIndex = (selectedIndex + focusDirection + elements.categoryOptions.length) % elements.categoryOptions.length;
+    elements.categoryOptions[nextIndex].focus();
+  }
+}
+
+function setCategoryValue(value, {restoreFocus = false} = {}) {
+  const normalized = normalizeGiftCategory(value) || '';
+  const selectedOption = elements.categoryOptions.find(option => option.dataset.adminCategory === normalized) || elements.categoryOptions[0];
+  elements.category.value = normalized;
+  elements.categoryValue.textContent = selectedOption.textContent;
+  elements.categoryOptions.forEach(option => {
+    const selected = option === selectedOption;
+    option.classList.toggle('is-selected', selected);
+    option.setAttribute('aria-selected', String(selected));
+  });
+  closeCategoryMenu({restoreFocus});
+}
 
 function desireLevel() {
   return Number(document.querySelector('input[name="desire"]:checked').value);
@@ -56,6 +90,7 @@ function showNotice(message, error = false) {
 
 function resetForm() {
   elements.form.reset();
+  setCategoryValue('');
   elements.giftId.value = '';
   elements.formTitle.textContent = 'Новый подарок';
   elements.submit.disabled = false;
@@ -67,7 +102,7 @@ function startEdit(gift) {
   elements.giftId.value = gift.id;
   elements.title.value = gift.title;
   elements.price.value = Number.isFinite(gift.price) ? gift.price : '';
-  elements.category.value = normalizeGiftCategory(gift.category) || '';
+  setCategoryValue(gift.category);
   elements.description.value = gift.description || '';
   document.querySelector(`input[name="desire"][value="${gift.desireLevel}"]`).checked = true;
   elements.formTitle.textContent = 'Редактирование подарка';
@@ -81,26 +116,38 @@ function startEdit(gift) {
 function metadata(gift) {
   const wrapper = document.createElement('div');
   wrapper.className = 'admin-gift__meta';
+  const facts = document.createElement('div');
+  facts.className = 'admin-gift__facts';
   const level = document.createElement('span');
-  level.textContent = `Желание ${gift.desireLevel}/5`;
+  level.className = 'admin-gift__desire';
+  const levelPrefix = document.createElement('span');
+  levelPrefix.className = 'admin-gift__desire-prefix';
+  levelPrefix.textContent = 'Желание ';
+  level.append(levelPrefix, document.createTextNode(`${gift.desireLevel}/5`));
   const price = document.createElement('span');
   price.textContent = Number.isFinite(gift.price) ? `≈ ${new Intl.NumberFormat('ru-RU').format(gift.price)} ₽` : 'без цены';
-  const status = document.createElement('span');
-  status.className = `status-pill ${gift.status}`;
-  status.textContent = gift.status === 'reserved' ? 'Забронировано' : 'Доступно для брони';
-  wrapper.append(level, price, status);
+  facts.append(level, price);
   const category = normalizeGiftCategory(gift.category);
   if (category) {
     const tag = document.createElement('span');
     tag.className = 'category-tag';
-    tag.textContent = category;
-    wrapper.append(tag);
+    tag.textContent = giftCategoryLabel(category);
+    facts.append(tag);
   }
+
+  const stateRow = document.createElement('div');
+  stateRow.className = 'admin-gift__state';
+  const status = document.createElement('span');
+  status.className = `status-pill ${gift.status}`;
+  status.textContent = gift.status === 'reserved' ? 'Забронировано' : 'Доступно для брони';
+  stateRow.append(status);
   if (gift.description?.trim()) {
     const description = document.createElement('span');
+    description.className = 'admin-gift__description-tag';
     description.textContent = 'с описанием';
-    wrapper.append(description);
+    stateRow.append(description);
   }
+  wrapper.append(facts, stateRow);
   return wrapper;
 }
 
@@ -190,8 +237,8 @@ function exportGiftsToCsv() {
   if (!state.gifts.length) return;
   const gifts = [...state.gifts].sort((a, b) => (a.createdAt?.seconds ?? 0) - (b.createdAt?.seconds ?? 0));
   const rows = [
-    ['Название', 'Описание', 'Уровень желания', 'Цена'],
-    ...gifts.map(gift => [gift.title, gift.description || '', gift.desireLevel, Number.isFinite(gift.price) ? gift.price : null])
+    ['Название', 'Описание', 'Уровень желания', 'Цена', 'Категория'],
+    ...gifts.map(gift => [gift.title, gift.description || '', gift.desireLevel, Number.isFinite(gift.price) ? gift.price : null, giftCategoryLabel(gift.category) || ''])
   ];
   const csv = `\uFEFF${rows.map(row => row.map(csvCell).join(';')).join('\r\n')}`;
   const url = URL.createObjectURL(new Blob([csv], {type: 'text/csv;charset=utf-8'}));
@@ -262,6 +309,35 @@ elements.loginForm.addEventListener('submit', async event => {
 elements.logout.addEventListener('click', () => signOut(auth));
 elements.exportCsv.addEventListener('click', exportGiftsToCsv);
 elements.cancel.addEventListener('click', resetForm);
+elements.categoryTrigger.addEventListener('click', () => {
+  if (elements.categoryMenu.hidden) openCategoryMenu();
+  else closeCategoryMenu();
+});
+elements.categoryTrigger.addEventListener('keydown', event => {
+  if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+    event.preventDefault();
+    if (elements.categoryMenu.hidden) openCategoryMenu(event.key === 'ArrowDown' ? 1 : -1);
+  }
+});
+elements.categoryOptions.forEach(option => option.addEventListener('click', () => {
+  setCategoryValue(option.dataset.adminCategory, {restoreFocus: true});
+}));
+elements.categoryMenu.addEventListener('keydown', event => {
+  if (event.key === 'Escape') {
+    event.preventDefault();
+    closeCategoryMenu({restoreFocus: true});
+    return;
+  }
+  if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
+  event.preventDefault();
+  const current = elements.categoryOptions.indexOf(document.activeElement);
+  let next = event.key === 'Home' ? 0 : event.key === 'End' ? elements.categoryOptions.length - 1 : current + (event.key === 'ArrowDown' ? 1 : -1);
+  next = (next + elements.categoryOptions.length) % elements.categoryOptions.length;
+  elements.categoryOptions[next].focus();
+});
+document.addEventListener('click', event => {
+  if (!elements.categoryControl.contains(event.target) && !elements.categoryMenu.hidden) closeCategoryMenu();
+});
 elements.form.addEventListener('submit', async event => {
   event.preventDefault();
   const gift = normalizeForm();

@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#06070a">
   <title>Админ-панель — Список желаний</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2306070a'/%3E%3Cpath d='M18 29h28v24H18z' fill='%23d9c08c'/%3E%3Cpath d='M23 29v-7a9 9 0 0 1 18 0v7' fill='none' stroke='%23fff' stroke-width='5'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="../assets/styles.css?v=20260917-categories">
+  <link rel="stylesheet" href="../assets/styles.css?v=20260917-category-labels">
 </head>
 <body class="admin-body">
   <main class="admin-shell">
@@ -67,16 +67,31 @@
             <label>Примерная цена, ₽
               <input id="gift-price" type="number" min="1" max="99999999" inputmode="numeric" placeholder="Необязательно">
             </label>
-            <label>Категория
-              <select id="gift-category">
+            <div class="admin-category-field">
+              <span id="gift-category-label">Категория</span>
+              <select id="gift-category" class="visually-hidden-field" tabindex="-1" aria-hidden="true">
                 <option value="">Без категории</option>
-                <option value="Self Care &amp; Cosmetics">Self Care &amp; Cosmetics</option>
-                <option value="Sport">Sport</option>
-                <option value="Just Pleasure">Just Pleasure</option>
-                <option value="Food">Food</option>
-                <option value="Needs">Needs</option>
+                <option value="Self Care &amp; Cosmetics">Забота о себе</option>
+                <option value="Sport">Жопу качат</option>
+                <option value="Just Pleasure">Дофаминовый всплеск</option>
+                <option value="Food">Еда</option>
+                <option value="Needs">Практичное</option>
               </select>
-            </label>
+              <div class="select-control admin-category-control" id="gift-category-control">
+                <button class="sort-trigger" id="gift-category-trigger" type="button" aria-labelledby="gift-category-label gift-category-value" aria-haspopup="listbox" aria-expanded="false" aria-controls="gift-category-menu">
+                  <span id="gift-category-value">Без категории</span>
+                  <span class="sort-chevron" aria-hidden="true"></span>
+                </button>
+                <div class="sort-menu" id="gift-category-menu" role="listbox" aria-labelledby="gift-category-label" hidden>
+                  <button class="sort-option is-selected" type="button" role="option" aria-selected="true" data-admin-category="">Без категории</button>
+                  <button class="sort-option" type="button" role="option" aria-selected="false" data-admin-category="Self Care &amp; Cosmetics">Забота о себе</button>
+                  <button class="sort-option" type="button" role="option" aria-selected="false" data-admin-category="Sport">Жопу качат</button>
+                  <button class="sort-option" type="button" role="option" aria-selected="false" data-admin-category="Just Pleasure">Дофаминовый всплеск</button>
+                  <button class="sort-option" type="button" role="option" aria-selected="false" data-admin-category="Food">Еда</button>
+                  <button class="sort-option" type="button" role="option" aria-selected="false" data-admin-category="Needs">Практичное</button>
+                </div>
+              </div>
+            </div>
             <label>Описание
               <textarea id="gift-description" maxlength="4000" rows="7" placeholder="Необязательно"></textarea>
               <small>Ссылку можно вставить прямо в текст — в списке она станет кликабельной.</small>
@@ -100,6 +115,6 @@
       </div>
     </section>
   </main>
-  <script type="module" src="../assets/admin.js?v=20260917-categories"></script>
+  <script type="module" src="../assets/admin.js?v=20260917-category-labels"></script>
 </body>
 </html>

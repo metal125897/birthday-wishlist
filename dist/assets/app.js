@@ -1,6 +1,6 @@
 import {collection, onSnapshot, updateDoc, doc, waitForPendingWrites} from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js';
 import {db, firebaseConfigured} from './firebase-client.js';
-import {normalizeGiftCategory} from './categories.js';
+import {giftCategoryLabel, normalizeGiftCategory} from './categories.js?v=20260917-category-labels';
 
 const elements = {
   list: document.querySelector('#gift-list'), loading: document.querySelector('#loading'),
@@ -63,7 +63,7 @@ function desireScale(level, category) {
   if (validCategory) {
     const tag = document.createElement('span');
     tag.className = 'category-tag';
-    tag.textContent = validCategory;
+    tag.textContent = giftCategoryLabel(validCategory);
     label.append(tag);
   }
   const desireCopy = document.createElement('span');

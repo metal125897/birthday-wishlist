@@ -9,11 +9,13 @@
 | `description` | string | 0–4000 символов |
 | `desireLevel` | integer | От 1 до 5 |
 | `price` | integer или null | 1–99 999 999 ₽ или отсутствует |
-| `category` | string или null | Необязательное; одно из `Self Care & Cosmetics`, `Sport`, `Just Pleasure`, `Food`, `Needs` |
+| `category` | string или null | Необязательный стабильный код: `Self Care & Cosmetics`, `Sport`, `Just Pleasure`, `Food`, `Needs`; в интерфейсе отображается русской подписью |
 | `status` | string | `available` или `reserved` |
 | `createdAt` | timestamp | Время создания для стабильной сортировки |
 
 Неизвестные поля запрещены правилами Firestore.
+
+Коды категорий намеренно не переименовываются в существующих документах: `Self Care & Cosmetics` отображается как «Забота о себе», `Sport` — «Жопу качат», `Just Pleasure` — «Дофаминовый всплеск», `Food` — «Еда», `Needs` — «Практичное». Это сохраняет все ранее назначенные значения без миграции Firestore.
 
 Для обратной совместимости документ без поля `category` читается как подарок без категории. Новые и отредактированные документы сохраняют `category: null`, если в форме выбрано «Без категории». Список значений фиксирован в `dist/assets/categories.js`; отдельной сущности категории в Firestore нет.
 
