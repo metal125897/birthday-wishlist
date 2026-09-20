@@ -1,5 +1,5 @@
 import {onAuthStateChanged, signInWithEmailAndPassword, signOut} from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js';
-import {collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, writeBatch, serverTimestamp, waitForPendingWrites} from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js';
+import {collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, runTransaction, serverTimestamp, waitForPendingWrites} from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js';
 import {auth, db, firebaseConfigured} from './firebase-client.js';
 import {INITIAL_GIFTS} from './seed-data.js';
 import {GIFT_CATEGORIES, giftCategoryLabel, normalizeGiftCategory} from './categories.js?v=20260917-category-labels';
@@ -254,21 +254,26 @@ function exportGiftsToCsv() {
 async function seedInitialGifts() {
   if (state.seeded || state.gifts.length) return;
   state.seeded = true;
-  const batch = writeBatch(db);
   const baseTime = Date.UTC(2026, 8, 13, 0, 0, 0);
-  INITIAL_GIFTS.forEach((gift, index) => {
-    batch.set(doc(db, 'gifts', gift.id), {
-      title: gift.title,
-      description: gift.description,
-      desireLevel: 1,
-      price: null,
-      category: null,
-      status: 'available',
-      createdAt: new Date(baseTime + index * 1000)
-    });
-  });
+  const giftRefs = INITIAL_GIFTS.map(gift => doc(db, 'gifts', gift.id));
   try {
-    await batch.commit();
+    await runTransaction(db, async transaction => {
+      const existing = await Promise.all(giftRefs.map(giftRef => transaction.get(giftRef)));
+      if (existing.some(snapshot => snapshot.exists())) {
+        throw new Error('Стартовое заполнение отменено: в базе уже есть исходные документы.');
+      }
+      INITIAL_GIFTS.forEach((gift, index) => {
+        transaction.set(giftRefs[index], {
+          title: gift.title,
+          description: gift.description,
+          desireLevel: 1,
+          price: null,
+          category: null,
+          status: 'available',
+          createdAt: new Date(baseTime + index * 1000)
+        });
+      });
+    });
     showNotice(`Стартовый список из ${INITIAL_GIFTS.length} подарков добавлен.`);
   } catch (error) {
     state.seeded = false;
@@ -283,7 +288,7 @@ function subscribeToGifts() {
     if (snapshot.metadata.hasPendingWrites) return;
     state.gifts = snapshot.docs.map(item => ({id: item.id, ...item.data()}));
     render();
-    if (snapshot.empty) await seedInitialGifts();
+    if (snapshot.empty && !snapshot.metadata.fromCache) await seedInitialGifts();
   }, error => {
     console.error(error);
     showNotice('Не удалось загрузить список. Проверьте Firestore и правила доступа.', true);

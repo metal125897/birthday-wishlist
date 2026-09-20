@@ -113,6 +113,9 @@ if (!styles.includes('.gift-card.has-price .desire{grid-column:2;align-items:fle
 if (!adminApp.includes('if (snapshot.metadata.hasPendingWrites) return;') || !adminApp.includes('await waitForPendingWrites(db)')) {
   throw new Error('Админка должна ждать подтверждения Firestore перед завершением удаления.');
 }
+if (!adminApp.includes('snapshot.empty && !snapshot.metadata.fromCache') || !adminApp.includes('await runTransaction(db') || !adminApp.includes('transaction.get(giftRef)')) {
+  throw new Error('Стартовое заполнение должно ждать серверный снимок и не перезаписывать существующие документы.');
+}
 if (!styles.includes('.delete-confirm__button{min-width:100px;min-height:48px')) {
   throw new Error('Кнопки подтверждения удаления должны иметь стандартную высоту.');
 }
