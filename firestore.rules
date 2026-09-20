@@ -52,6 +52,24 @@ service cloud.firestore {
         && isValidGift(request.resource.data);
     }
 
+    function isValidGiftGuidance(data) {
+      return data.keys().hasAll(['things', 'brands', 'updatedAt'])
+        && data.keys().hasOnly(['things', 'brands', 'updatedAt'])
+        && data.things is string
+        && data.things.size() > 0
+        && data.things.size() <= 4000
+        && data.brands is string
+        && data.brands.size() > 0
+        && data.brands.size() <= 4000
+        && data.updatedAt is timestamp;
+    }
+
+    match /siteContent/giftGuidance {
+      allow read: if true;
+      allow create, update: if isAdmin() && isValidGiftGuidance(request.resource.data);
+      allow delete: if false;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

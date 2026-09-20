@@ -41,6 +41,7 @@
           <h1>Админ-панель</h1>
         </div>
         <div class="admin-header__actions">
+          <button class="glass-button glass-button--quiet" id="edit-guidance" type="button" disabled>Что не дарить</button>
           <button class="glass-button glass-button--quiet" id="export-csv" type="button" disabled>Скачать CSV</button>
           <a class="glass-button glass-button--quiet" href="../" target="_blank" rel="noopener">Открыть сайт</a>
           <button class="glass-button glass-button--quiet" id="logout-button" type="button">Выйти</button>
@@ -119,6 +120,24 @@
       </div>
     </section>
   </main>
-  <script type="module" src="../assets/admin.js?v=20260918-seed-guard"></script>
+  <dialog class="reserve-dialog guidance-dialog" id="guidance-dialog" aria-labelledby="guidance-dialog-title">
+    <form class="dialog-card form-stack" id="guidance-form">
+      <button class="dialog-close" id="guidance-close" type="button" aria-label="Закрыть">×</button>
+      <p class="eyebrow">Текст на главной</p>
+      <h2 id="guidance-dialog-title">Что лучше не дарить</h2>
+      <label>Вещи
+        <textarea id="guidance-things-input" maxlength="4000" rows="6"></textarea>
+      </label>
+      <label>Бренды
+        <textarea id="guidance-brands-input" maxlength="4000" rows="4"></textarea>
+      </label>
+      <div class="dialog-actions">
+        <button class="glass-button glass-button--quiet" id="guidance-cancel" type="button">Отменить</button>
+        <button class="glass-button" id="guidance-save" type="submit">Сохранить</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script type="module" src="../assets/admin.js?v=20260920-editable-guidance"></script>
 </body>
 </html>

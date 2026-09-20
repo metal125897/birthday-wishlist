@@ -3,7 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "check": "node --check dist/assets/app.js && node --check dist/assets/admin.js && node --check dist/assets/categories.js && node --check dist/assets/firebase-client.js && node --check dist/assets/firebase-config.js && node --check dist/assets/seed-data.js && node --check scripts/validate.mjs && npm run validate",
-    "validate": "node scripts/validate.mjs"
+    "check": "node --check dist/assets/app.js && node --check dist/assets/admin.js && node --check dist/assets/categories.js && node --check dist/assets/firebase-client.js && node --check dist/assets/firebase-config.js && node --check dist/assets/seed-data.js && node --check dist/assets/site-content.js && node --check scripts/snapshot-firestore.mjs && node --check scripts/validate-data-snapshot.mjs && node --check scripts/validate.mjs && npm run validate && npm run snapshot:validate",
+    "validate": "node scripts/validate.mjs",
+    "snapshot:data": "node scripts/snapshot-firestore.mjs",
+    "snapshot:validate": "node scripts/validate-data-snapshot.mjs"
   }
 }

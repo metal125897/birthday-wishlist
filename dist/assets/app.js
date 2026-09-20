@@ -1,6 +1,7 @@
 import {collection, onSnapshot, updateDoc, doc, waitForPendingWrites} from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js';
 import {db, firebaseConfigured} from './firebase-client.js';
 import {giftCategoryLabel, normalizeGiftCategory} from './categories.js?v=20260917-category-labels';
+import {normalizeGiftGuidance} from './site-content.js?v=20260920-editable-guidance';
 
 const elements = {
   list: document.querySelector('#gift-list'), loading: document.querySelector('#loading'),
@@ -14,13 +15,24 @@ const elements = {
   sortMenu: document.querySelector('#sort-menu'), sortValue: document.querySelector('#sort-value'),
   sortOptions: [...document.querySelectorAll('[data-sort]')], notice: document.querySelector('#notice'),
   dialog: document.querySelector('#unreserve-dialog'), dialogCopy: document.querySelector('#dialog-copy'),
-  confirmUnreserve: document.querySelector('#confirm-unreserve')
+  confirmUnreserve: document.querySelector('#confirm-unreserve'),
+  guidanceThings: document.querySelector('#guidance-things'), guidanceBrands: document.querySelector('#guidance-brands')
 };
 
 const state = {
   gifts: [], filter: 'all', category: 'all', sort: 'desire-desc', expanded: new Set(), pendingUnreserve: null,
-  unsubscribe: null, pendingStatusIds: new Set(), confirmedStatuses: new Map()
+  unsubscribe: null, unsubscribeGuidance: null, pendingStatusIds: new Set(), confirmedStatuses: new Map()
 };
+
+function subscribeToGuidance() {
+  state.unsubscribeGuidance?.();
+  state.unsubscribeGuidance = onSnapshot(doc(db, 'siteContent', 'giftGuidance'), snapshot => {
+    if (!snapshot.exists()) return;
+    const guidance = normalizeGiftGuidance(snapshot.data());
+    elements.guidanceThings.textContent = guidance.things;
+    elements.guidanceBrands.textContent = guidance.brands;
+  }, error => console.error('Не удалось загрузить подсказки о подарках.', error));
+}
 
 function plural(number, forms) {
   const n10 = number % 10;
@@ -369,4 +381,5 @@ if (!firebaseConfigured) {
   elements.counter.textContent = 'Ожидается подключение базы данных';
 } else {
   subscribe();
+  subscribeToGuidance();
 }

@@ -1,8 +1,9 @@
 import {onAuthStateChanged, signInWithEmailAndPassword, signOut} from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js';
-import {collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, runTransaction, serverTimestamp, waitForPendingWrites} from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js';
+import {collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, runTransaction, setDoc, serverTimestamp, waitForPendingWrites} from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js';
 import {auth, db, firebaseConfigured} from './firebase-client.js';
 import {INITIAL_GIFTS} from './seed-data.js';
 import {GIFT_CATEGORIES, giftCategoryLabel, normalizeGiftCategory} from './categories.js?v=20260917-category-labels';
+import {DEFAULT_GIFT_GUIDANCE, normalizeGiftGuidance} from './site-content.js?v=20260920-editable-guidance';
 
 const ADMIN_AUTH_EMAIL = 'admin@birthday-wishlist.local';
 
@@ -19,10 +20,40 @@ const elements = {
   description: document.querySelector('#gift-description'),
   submit: document.querySelector('#submit-gift'), cancel: document.querySelector('#cancel-edit'),
   gifts: document.querySelector('#admin-gifts'), count: document.querySelector('#admin-count'),
-  notice: document.querySelector('#admin-notice'), exportCsv: document.querySelector('#export-csv')
+  notice: document.querySelector('#admin-notice'), exportCsv: document.querySelector('#export-csv'),
+  editGuidance: document.querySelector('#edit-guidance'), guidanceDialog: document.querySelector('#guidance-dialog'),
+  guidanceForm: document.querySelector('#guidance-form'), guidanceThings: document.querySelector('#guidance-things-input'),
+  guidanceBrands: document.querySelector('#guidance-brands-input'), guidanceClose: document.querySelector('#guidance-close'),
+  guidanceCancel: document.querySelector('#guidance-cancel'), guidanceSave: document.querySelector('#guidance-save')
 };
 
-const state = {gifts: [], unsubscribe: null, seeded: false};
+const state = {
+  gifts: [], unsubscribe: null, unsubscribeGuidance: null, seeded: false,
+  guidance: {...DEFAULT_GIFT_GUIDANCE}
+};
+
+function closeGuidanceDialog() {
+  elements.guidanceDialog.close();
+}
+
+function openGuidanceDialog() {
+  elements.guidanceThings.value = state.guidance.things;
+  elements.guidanceBrands.value = state.guidance.brands;
+  elements.guidanceDialog.showModal();
+  elements.guidanceThings.focus();
+}
+
+function subscribeToGuidance() {
+  state.unsubscribeGuidance?.();
+  state.unsubscribeGuidance = onSnapshot(doc(db, 'siteContent', 'giftGuidance'), snapshot => {
+    if (!snapshot.metadata.fromCache) elements.editGuidance.disabled = false;
+    state.guidance = snapshot.exists() ? normalizeGiftGuidance(snapshot.data()) : {...DEFAULT_GIFT_GUIDANCE};
+  }, error => {
+    console.error(error);
+    elements.editGuidance.disabled = true;
+    showNotice('Не удалось загрузить блок «Что лучше не дарить».', true);
+  });
+}
 
 function closeCategoryMenu({restoreFocus = false} = {}) {
   elements.categoryMenu.hidden = true;
@@ -313,6 +344,35 @@ elements.loginForm.addEventListener('submit', async event => {
 
 elements.logout.addEventListener('click', () => signOut(auth));
 elements.exportCsv.addEventListener('click', exportGiftsToCsv);
+elements.editGuidance.addEventListener('click', openGuidanceDialog);
+elements.guidanceClose.addEventListener('click', closeGuidanceDialog);
+elements.guidanceCancel.addEventListener('click', closeGuidanceDialog);
+elements.guidanceDialog.addEventListener('click', event => {
+  if (event.target === elements.guidanceDialog) closeGuidanceDialog();
+});
+elements.guidanceForm.addEventListener('submit', async event => {
+  event.preventDefault();
+  const guidance = normalizeGiftGuidance({
+    things: elements.guidanceThings.value,
+    brands: elements.guidanceBrands.value
+  });
+  if (!guidance.things || !guidance.brands) return showNotice('Заполните оба поля.', true);
+  elements.guidanceSave.disabled = true;
+  elements.guidanceSave.textContent = 'Сохраняем…';
+  try {
+    await setDoc(doc(db, 'siteContent', 'giftGuidance'), {...guidance, updatedAt: serverTimestamp()});
+    await waitForPendingWrites(db);
+    state.guidance = guidance;
+    closeGuidanceDialog();
+    showNotice('Блок «Что лучше не дарить» обновлён.');
+  } catch (error) {
+    console.error(error);
+    showNotice('Не удалось сохранить текст.', true);
+  } finally {
+    elements.guidanceSave.disabled = false;
+    elements.guidanceSave.textContent = 'Сохранить';
+  }
+});
 elements.cancel.addEventListener('click', resetForm);
 elements.categoryTrigger.addEventListener('click', () => {
   if (elements.categoryMenu.hidden) openCategoryMenu();
@@ -378,12 +438,19 @@ if (!firebaseConfigured) {
     elements.loading.hidden = true;
     elements.loginView.hidden = Boolean(user);
     elements.adminView.hidden = !user;
-    if (user) subscribeToGifts();
+    if (user) {
+      subscribeToGifts();
+      subscribeToGuidance();
+    }
     else {
       state.unsubscribe?.();
+      state.unsubscribeGuidance?.();
       state.unsubscribe = null;
+      state.unsubscribeGuidance = null;
       state.gifts = [];
       elements.exportCsv.disabled = true;
+      elements.editGuidance.disabled = true;
+      state.guidance = {...DEFAULT_GIFT_GUIDANCE};
       state.seeded = false;
       elements.loginForm.reset();
       const submit = elements.loginForm.querySelector('button[type="submit"]');

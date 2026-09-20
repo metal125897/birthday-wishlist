@@ -8,6 +8,7 @@ const required = [
   'dist/index.html', 'dist/admin/index.html', 'dist/assets/styles.css',
   'dist/assets/app.js', 'dist/assets/admin.js', 'dist/assets/firebase-client.js',
   'dist/assets/firebase-config.js', 'dist/assets/seed-data.js', 'dist/assets/categories.js',
+  'dist/assets/site-content.js', 'data/firestore-snapshot.json',
   'dist/assets/hero.jpg', 'dist/assets/fonts/inter-400-cyrillic.woff2',
   'firestore.rules', 'firebase.json', 'AGENTS.md'
 ];
@@ -122,8 +123,11 @@ if (!styles.includes('.delete-confirm__button{min-width:100px;min-height:48px'))
 if (!adminHtml.includes('id="export-csv"') || !adminApp.includes("['Название', 'Описание', 'Уровень желания', 'Цена', 'Категория']") || !adminApp.includes('giftCategoryLabel(gift.category)') || !adminApp.includes("type: 'text/csv;charset=utf-8'")) {
   throw new Error('Админка должна экспортировать пять запрошенных столбцов в UTF-8 CSV, включая категорию.');
 }
-if (!publicHtml.includes('<details class="gift-guidance">') || !publicHtml.includes('Что лучше не дарить') || !publicHtml.includes('Natura Siberica')) {
-  throw new Error('Не найден статичный раскрываемый блок с нежелательными подарками.');
+if (!publicHtml.includes('<details class="gift-guidance">') || !publicHtml.includes('id="guidance-things"') || !publicHtml.includes('id="guidance-brands"') || !publicApp.includes("doc(db, 'siteContent', 'giftGuidance')")) {
+  throw new Error('Не найден редактируемый раскрываемый блок с нежелательными подарками.');
+}
+if (!adminHtml.includes('id="edit-guidance"') || !adminHtml.includes('id="guidance-things-input"') || !adminHtml.includes('id="guidance-brands-input"') || !adminApp.includes("setDoc(doc(db, 'siteContent', 'giftGuidance')")) {
+  throw new Error('Админка должна редактировать оба поля блока «Что лучше не дарить».');
 }
 if (!publicHtml.includes('aria-label="Категория подарков"') || !publicHtml.includes('Все категории')) {
   throw new Error('На публичной странице должен быть доступный фильтр категорий.');
@@ -165,8 +169,15 @@ if (!firestoreRules.includes('allow delete: if isAdmin();')) {
 if (!firestoreRules.includes("'Self Care & Cosmetics', 'Sport', 'Just Pleasure', 'Food', 'Needs'") || !firestoreRules.includes("hasOnly(['status'])")) {
   throw new Error('Firestore должен валидировать категории и запрещать гостю менять что-либо кроме статуса.');
 }
+if (!firestoreRules.includes('match /siteContent/giftGuidance') || !firestoreRules.includes('allow create, update: if isAdmin() && isValidGiftGuidance')) {
+  throw new Error('Firestore должен разрешать редактирование блока только администратору.');
+}
+
+const packageJson = JSON.parse(await readFile(resolve(root, 'package.json'), 'utf8'));
+if (!packageJson.scripts?.['snapshot:data'] || !packageJson.scripts?.['snapshot:validate'] || !packageJson.scripts.check.includes('snapshot:validate')) {
+  throw new Error('Снимок Firestore должен создаваться отдельной командой и проверяться CI.');
+}
 
 JSON.parse(await readFile(resolve(root, 'firebase.json'), 'utf8'));
-JSON.parse(await readFile(resolve(root, 'package.json'), 'utf8'));
 
 console.log('Validation passed: 57 gifts, five fixed categories, valid local assets and JSON.');
