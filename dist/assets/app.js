@@ -168,7 +168,12 @@ function giftCard(gift) {
     appendLinkedText(inner, gift.description);
     description.append(inner);
     card.append(description);
-    if (state.expanded.has(gift.id)) requestAnimationFrame(() => description.style.height = `${inner.scrollHeight}px`);
+    if (state.expanded.has(gift.id)) description.style.height = 'auto';
+    description.addEventListener('transitionend', event => {
+      if (event.propertyName !== 'height') return;
+      if (card.classList.contains('is-open')) description.style.height = 'auto';
+      else card.classList.remove('is-collapsing');
+    });
   }
 
   card.addEventListener('click', event => {
@@ -187,10 +192,18 @@ function toggleCard(card, id) {
   const description = card.querySelector('.gift-description');
   if (!description) return;
   const open = !state.expanded.has(id);
+  const currentHeight = description.getBoundingClientRect().height;
+  description.style.height = `${currentHeight}px`;
+  void description.offsetHeight;
   if (open) state.expanded.add(id); else state.expanded.delete(id);
+  card.classList.toggle('is-collapsing', !open);
   card.classList.toggle('is-open', open);
   card.setAttribute('aria-expanded', String(open));
   description.style.height = open ? `${description.scrollHeight}px` : '0px';
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    if (open) description.style.height = 'auto';
+    else card.classList.remove('is-collapsing');
+  }
 }
 
 function render() {
@@ -241,6 +254,21 @@ function openUnreserveDialog(gift) {
   state.pendingUnreserve = gift;
   elements.dialogCopy.textContent = `Подарок «${gift.title}» уже забронирован. Если бронь оформили не вы, нажмите «Отмена».`;
   elements.dialog.showModal();
+}
+
+function closeUnreserveDialog(onClosed) {
+  if (!elements.dialog.open || elements.dialog.classList.contains('is-closing')) return;
+  const finish = () => {
+    elements.dialog.close();
+    elements.dialog.classList.remove('is-closing');
+    state.pendingUnreserve = null;
+    onClosed?.();
+  };
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) finish();
+  else {
+    elements.dialog.classList.add('is-closing');
+    window.setTimeout(finish, 180);
+  }
 }
 
 function subscribe() {
@@ -339,7 +367,9 @@ function setupListbox({control, trigger, menu, options, value, dataKey, onChange
 }
 
 elements.list.addEventListener('pointermove', event => {
-  if (event.pointerType === 'mouse') elements.list.classList.remove('suppress-hover');
+  if (event.pointerType === 'mouse' && elements.categoryMenu.hidden && elements.sortMenu.hidden) {
+    elements.list.classList.remove('suppress-hover');
+  }
 });
 
 const categoryListbox = setupListbox({
@@ -365,13 +395,20 @@ const sortListbox = setupListbox({
 elements.categoryTrigger.addEventListener('click', () => sortListbox.close());
 elements.sortTrigger.addEventListener('click', () => categoryListbox.close());
 elements.retry.addEventListener('click', subscribe);
-elements.confirmUnreserve.addEventListener('click', event => {
+elements.dialog.querySelector('form').addEventListener('submit', event => {
   event.preventDefault();
-  const gift = state.pendingUnreserve;
-  elements.dialog.close();
-  changeStatus(gift, 'available');
+  if (event.submitter === elements.confirmUnreserve) {
+    const gift = state.pendingUnreserve;
+    closeUnreserveDialog(() => changeStatus(gift, 'available'));
+  } else closeUnreserveDialog();
 });
-elements.dialog.addEventListener('click', event => {if (event.target === elements.dialog) elements.dialog.close();});
+elements.dialog.addEventListener('cancel', event => {
+  event.preventDefault();
+  closeUnreserveDialog();
+});
+elements.dialog.addEventListener('click', event => {
+  if (event.target === elements.dialog) closeUnreserveDialog();
+});
 window.addEventListener('beforeunload', event => {
   if (!state.pendingStatusIds.size) return;
   event.preventDefault();
