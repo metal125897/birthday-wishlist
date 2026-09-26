@@ -157,6 +157,9 @@ if (!adminApp.includes('category: normalizeGiftCategory(elements.category.value)
 if (!styles.includes('.gift-card:not(.is-open):not(.is-collapsing){height:224px}') || !styles.includes('.gift-card.is-open,.gift-card.is-collapsing{height:auto;min-height:224px}') || !styles.includes('.gift-title{display:-webkit-box;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:3;font-size:1.125rem;line-height:1.34}') || !styles.includes('.desire{grid-row:2;grid-column:1/-1;align-items:flex-end') || !styles.includes('.admin-gift__desire-prefix{display:none}')) {
   throw new Error('Мобильные карточки должны сохранять одинаковую высоту и компактные двухстрочные метаданные.');
 }
+if (styles.includes('.gift-card::before{') || !styles.includes('background:rgba(255,255,255,.027);box-shadow:0 24px 72px') || !styles.includes('.gift-card.has-description:not(.is-reserved):hover::after')) {
+  throw new Error('У карточек не должно быть постоянного верхнего блика; hover-блик остаётся только при наведении на раскрываемую карточку.');
+}
 const workflow = await readFile(resolve(root, '.github/workflows/pages.yml'), 'utf8');
 if (!workflow.includes('run: npm run check') || workflow.indexOf('run: npm run check') > workflow.indexOf('actions/deploy-pages@')) {
   throw new Error('CI-проверка должна выполняться до публикации GitHub Pages.');

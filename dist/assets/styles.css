@@ -74,13 +74,11 @@ a{color:var(--gold)}
 .notice{margin:0 0 18px;padding:13px 16px;border:1px solid rgba(88,167,140,.35);border-radius:14px;background:rgba(41,111,88,.13);color:#bde2d5}
 .notice.is-error{border-color:rgba(229,156,156,.35);background:rgba(130,54,54,.14);color:#f0c0c0}
 .gift-list{display:flex;flex-direction:column;gap:16px}
-.gift-card{position:relative;isolation:isolate;display:grid;grid-template-columns:minmax(0,1fr) 280px;column-gap:24px;row-gap:0;min-height:136px;padding:25px 28px;border:1px solid rgba(255,255,255,.12);border-radius:var(--radius);background:linear-gradient(145deg,rgba(255,255,255,.052),rgba(255,255,255,.017) 58%,rgba(255,255,255,.03));box-shadow:0 24px 72px rgba(0,0,0,.34);-webkit-backdrop-filter:blur(24px) saturate(1.14);backdrop-filter:blur(24px) saturate(1.14);overflow:hidden;content-visibility:auto;contain-intrinsic-size:auto 151px;-webkit-tap-highlight-color:transparent;transition:transform .25s,border-color .25s,box-shadow .25s,background .25s,opacity .25s,filter .25s}
-.gift-card::before{content:"";position:absolute;z-index:0;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(ellipse 75% 85% at 4% 0%,rgba(255,255,255,.05),transparent 68%);opacity:.65;transition:opacity .25s}
+.gift-card{position:relative;isolation:isolate;display:grid;grid-template-columns:minmax(0,1fr) 280px;column-gap:24px;row-gap:0;min-height:136px;padding:25px 28px;border:1px solid rgba(255,255,255,.12);border-radius:var(--radius);background:rgba(255,255,255,.027);box-shadow:0 24px 72px rgba(0,0,0,.34);-webkit-backdrop-filter:blur(24px) saturate(1.14);backdrop-filter:blur(24px) saturate(1.14);overflow:hidden;content-visibility:auto;contain-intrinsic-size:auto 151px;-webkit-tap-highlight-color:transparent;transition:transform .25s,border-color .25s,box-shadow .25s,background .25s,opacity .25s,filter .25s}
 .gift-card::after{content:"";position:absolute;z-index:0;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(118deg,rgba(255,255,255,.065),transparent 25%,transparent 76%,rgba(255,255,255,.018));opacity:0;transition:opacity .25s}
 .gift-card.has-description{cursor:pointer}
 @media(hover:hover) and (pointer:fine){
   .gift-list:not(.suppress-hover) .gift-card.has-description:not(.is-reserved):hover{transform:translateY(-2px);border-color:rgba(255,255,255,.19);background:linear-gradient(145deg,rgba(255,255,255,.066),rgba(255,255,255,.021) 58%,rgba(255,255,255,.034));box-shadow:0 28px 82px rgba(0,0,0,.4)}
-  .gift-list:not(.suppress-hover) .gift-card.has-description:not(.is-reserved):hover::before{opacity:.92}
   .gift-list:not(.suppress-hover) .gift-card.has-description:not(.is-reserved):hover::after{opacity:1}
 }
 .gift-card.is-open{border-color:rgba(255,255,255,.18);box-shadow:0 30px 86px rgba(0,0,0,.42)}
