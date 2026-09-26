@@ -290,6 +290,7 @@ function setupListbox({control, trigger, menu, options, value, dataKey, onChange
     menu.hidden = false;
     control.classList.add('is-open');
     trigger.setAttribute('aria-expanded', 'true');
+    elements.list.classList.add('suppress-hover');
     if (focusDirection) {
       const selectedIndex = Math.max(0, options.findIndex(option => option.classList.contains('is-selected')));
       const nextIndex = (selectedIndex + focusDirection + options.length) % options.length;
@@ -306,6 +307,7 @@ function setupListbox({control, trigger, menu, options, value, dataKey, onChange
     });
     onChange(option.dataset[dataKey]);
     close({restoreFocus: true});
+    elements.list.classList.add('suppress-hover');
     render();
   }
 
@@ -335,6 +337,10 @@ function setupListbox({control, trigger, menu, options, value, dataKey, onChange
   });
   return {close};
 }
+
+elements.list.addEventListener('pointermove', event => {
+  if (event.pointerType === 'mouse') elements.list.classList.remove('suppress-hover');
+});
 
 const categoryListbox = setupListbox({
   control: elements.categoryControl,
