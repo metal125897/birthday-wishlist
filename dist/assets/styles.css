@@ -127,6 +127,7 @@ a{color:var(--gold)}
   .toolbar{position:relative;top:auto;display:flex;align-items:stretch;flex-direction:column;gap:14px}.toolbar__meta{align-self:flex-start}.status-filter{width:max-content}.select-control{width:100%;max-width:none;min-width:0}.sort-menu{left:0;right:auto;width:100%;min-width:0}
 }
 @media(max-width:900px){
+  .portrait__veil,.portrait::after{-webkit-mask-image:linear-gradient(to bottom,transparent,#000 20%);mask-image:linear-gradient(to bottom,transparent,#000 20%)}
   .shell,.admin-shell{width:min(100% - 36px,720px)}.hero{min-height:auto;padding-top:64px;grid-template-columns:1fr}.hero__copy{padding-bottom:0}.hero h1{font-size:clamp(4rem,14vw,6rem)}.portrait{height:min(600px,105vw);margin-top:-60px}.portrait img{width:120%;left:-10%}.gift-card{grid-template-columns:1fr 230px}.admin-grid{grid-template-columns:1fr}.form-panel{position:relative;top:auto}
 }
 @media(max-width:700px){
