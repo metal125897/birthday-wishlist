@@ -334,13 +334,31 @@ function subscribe() {
   });
 }
 
-document.querySelectorAll('[data-filter]').forEach(button => button.addEventListener('click', () => {
+const statusFilter = document.querySelector('.status-filter');
+const statusButtons = [...statusFilter.querySelectorAll('[data-filter]')];
+
+function updateStatusSlider() {
+  const active = statusFilter.querySelector('.is-active');
+  const bounds = active.getBoundingClientRect();
+  const left = bounds.left - statusFilter.getBoundingClientRect().left - statusFilter.clientLeft;
+  statusFilter.style.setProperty('--status-x', `${left}px`);
+  statusFilter.style.setProperty('--status-width', `${bounds.width}px`);
+  statusFilter.classList.add('has-slider');
+}
+
+updateStatusSlider();
+// Button widths also change when the local font loads or the viewport changes.
+const statusSliderObserver = new ResizeObserver(updateStatusSlider);
+statusButtons.forEach(button => statusSliderObserver.observe(button));
+
+statusButtons.forEach(button => button.addEventListener('click', () => {
   state.filter = button.dataset.filter;
-  document.querySelectorAll('[data-filter]').forEach(item => {
+  statusButtons.forEach(item => {
     const active = item === button;
     item.classList.toggle('is-active', active);
     item.setAttribute('aria-pressed', String(active));
   });
+  updateStatusSlider();
   render();
 }));
 
