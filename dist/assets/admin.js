@@ -4,6 +4,7 @@ import {auth, db, firebaseConfigured} from './firebase-client.js';
 import {INITIAL_GIFTS} from './seed-data.js';
 import {GIFT_CATEGORIES, giftCategoryLabel, normalizeGiftCategory} from './categories.js?v=20260917-category-labels';
 import {DEFAULT_GIFT_GUIDANCE, normalizeGiftGuidance} from './site-content.js?v=20260920-editable-guidance';
+import {isGiftPrice, parseGiftPrice} from './gift-price.js';
 
 const ADMIN_AUTH_EMAIL = 'admin@birthday-wishlist.local';
 
@@ -48,6 +49,44 @@ window.addEventListener('resize', () => {
   if (elements.description.clientWidth !== descriptionWidth) resizeDescription();
 });
 document.fonts.ready.then(resizeDescription);
+
+const validPriceText = text => /^[0-9]{0,7}$/.test(text);
+let lastPriceValue = '';
+let lastPriceCaret = 0;
+function rememberPriceInput() {
+  if (!validPriceText(elements.price.value)) return;
+  lastPriceValue = elements.price.value;
+  lastPriceCaret = elements.price.selectionStart ?? lastPriceValue.length;
+}
+elements.price.addEventListener('focus', rememberPriceInput);
+elements.price.addEventListener('beforeinput', event => {
+  rememberPriceInput();
+  if (!event.inputType.startsWith('insert') || event.data === null) return;
+  const field = elements.price;
+  const next = field.value.slice(0, field.selectionStart) + event.data + field.value.slice(field.selectionEnd);
+  if (!validPriceText(next)) event.preventDefault();
+});
+elements.price.addEventListener('paste', event => {
+  event.preventDefault();
+  const field = elements.price;
+  const text = event.clipboardData.getData('text').trim();
+  const next = field.value.slice(0, field.selectionStart) + text + field.value.slice(field.selectionEnd);
+  if (!validPriceText(text) || !validPriceText(next)) return;
+  field.setRangeText(text, field.selectionStart, field.selectionEnd, 'end');
+  rememberPriceInput();
+});
+elements.price.addEventListener('input', () => {
+  const field = elements.price;
+  const text = field.value.trim();
+  if (validPriceText(text)) {
+    if (field.value !== text) field.value = text;
+  }
+  else {
+    field.value = lastPriceValue;
+    field.setSelectionRange(lastPriceCaret, lastPriceCaret);
+  }
+  rememberPriceInput();
+});
 
 function closeGuidanceDialog() {
   elements.guidanceDialog.close();
@@ -109,12 +148,11 @@ function desireLevel() {
 
 function normalizeForm() {
   const title = elements.title.value.trim();
-  const rawPrice = elements.price.value.trim();
   return {
     title,
     description: elements.description.value.trim(),
     desireLevel: desireLevel(),
-    price: rawPrice === '' ? null : Number(rawPrice),
+    price: parseGiftPrice(elements.price.value),
     category: normalizeGiftCategory(elements.category.value)
   };
 }
@@ -123,7 +161,7 @@ function validateGift(gift) {
   if (!gift.title || gift.title.length > 120) return 'Введите название длиной до 120 символов.';
   if (gift.description.length > 4000) return 'Описание не должно быть длиннее 4000 символов.';
   if (!Number.isInteger(gift.desireLevel) || gift.desireLevel < 1 || gift.desireLevel > 5) return 'Выберите уровень желания от 1 до 5.';
-  if (gift.price !== null && (!Number.isInteger(gift.price) || gift.price < 1 || gift.price > 99999999)) return 'Цена должна быть целым числом от 1 до 99 999 999.';
+  if (gift.price !== null && !isGiftPrice(gift.price)) return 'Цена должна содержать только цифры: от 0 до 9 999 999.';
   if (gift.category !== null && !GIFT_CATEGORIES.includes(gift.category)) return 'Выберите категорию из списка.';
   return '';
 }
@@ -138,6 +176,7 @@ function showNotice(message, error = false) {
 
 function resetForm() {
   elements.form.reset();
+  rememberPriceInput();
   resizeDescription();
   setCategoryValue('');
   elements.giftId.value = '';
@@ -151,6 +190,7 @@ function startEdit(gift) {
   elements.giftId.value = gift.id;
   elements.title.value = gift.title;
   elements.price.value = Number.isFinite(gift.price) ? gift.price : '';
+  rememberPriceInput();
   setCategoryValue(gift.category);
   elements.description.value = gift.description || '';
   resizeDescription();

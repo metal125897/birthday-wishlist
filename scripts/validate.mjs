@@ -8,7 +8,7 @@ const required = [
   'dist/index.html', 'dist/admin/index.html', 'dist/assets/styles.css',
   'dist/assets/app.js', 'dist/assets/admin.js', 'dist/assets/firebase-client.js',
   'dist/assets/firebase-config.js', 'dist/assets/seed-data.js', 'dist/assets/categories.js',
-  'dist/assets/site-content.js', 'data/firestore-snapshot.json',
+  'dist/assets/site-content.js', 'dist/assets/gift-price.js', 'data/firestore-snapshot.json',
   'dist/assets/hero.jpg', 'dist/assets/fonts/inter-400-cyrillic.woff2',
   'firestore.rules', 'firebase.json', 'AGENTS.md'
 ];

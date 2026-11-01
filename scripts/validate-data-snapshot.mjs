@@ -1,6 +1,7 @@
 import {readFile} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {GIFT_CATEGORIES} from '../dist/assets/categories.js';
+import {isGiftPrice} from '../dist/assets/gift-price.js';
 
 const root = resolve(import.meta.dirname, '..');
 const snapshot = JSON.parse(await readFile(resolve(root, 'data/firestore-snapshot.json'), 'utf8'));
@@ -11,6 +12,7 @@ for (const gift of snapshot.gifts) {
   if (!gift.id || !gift.title?.trim()) throw new Error('В снимке найден подарок без ID или названия.');
   if (!Number.isInteger(gift.desireLevel) || gift.desireLevel < 1 || gift.desireLevel > 5) throw new Error(`Некорректное желание у ${gift.title}.`);
   if (!['available', 'reserved'].includes(gift.status)) throw new Error(`Некорректный статус у ${gift.title}.`);
+  if (gift.price != null && !isGiftPrice(gift.price)) throw new Error(`Некорректная цена у ${gift.title}.`);
   if (gift.category != null && !GIFT_CATEGORIES.includes(gift.category)) throw new Error(`Некорректная категория у ${gift.title}.`);
 }
 if (!snapshot.giftGuidance?.things?.trim() || !snapshot.giftGuidance?.brands?.trim()) throw new Error('Снимок не содержит оба текста блока «Что лучше не дарить».');

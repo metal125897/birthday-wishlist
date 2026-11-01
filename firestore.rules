@@ -28,8 +28,8 @@ service cloud.firestore {
         && data.desireLevel <= 5
         && (data.price == null || (
           data.price is int
-          && data.price >= 1
-          && data.price <= 99999999
+          && data.price >= 0
+          && data.price <= 9999999
         ))
         && (!('category' in data) || data.category == null || (
           data.category is string

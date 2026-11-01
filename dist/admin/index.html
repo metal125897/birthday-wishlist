@@ -12,7 +12,7 @@
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2306070a'/%3E%3Cpath d='M18 29h28v24H18z' fill='%23d9c08c'/%3E%3Cpath d='M23 29v-7a9 9 0 0 1 18 0v7' fill='none' stroke='%23fff' stroke-width='5'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://firestore.googleapis.com">
-  <link rel="stylesheet" href="../assets/styles.css?v=20261101-hero-snow">
+  <link rel="stylesheet" href="../assets/styles.css?v=20261101-price-and-form">
 </head>
 <body class="admin-body">
   <main class="admin-shell">
@@ -70,7 +70,7 @@
               </div>
             </fieldset>
             <label>Примерная цена, ₽
-              <input id="gift-price" type="number" min="1" max="99999999" inputmode="numeric" placeholder="Необязательно">
+              <input id="gift-price" type="text" inputmode="numeric" maxlength="7" pattern="\s*[0-9]{1,7}\s*" autocomplete="off" spellcheck="false" placeholder="Необязательно">
             </label>
             <div class="admin-category-field">
               <span id="gift-category-label">Категория</span>
@@ -138,6 +138,6 @@
     </form>
   </dialog>
 
-  <script type="module" src="../assets/admin.js?v=20261101-admin-fields"></script>
+  <script type="module" src="../assets/admin.js?v=20261101-price-and-form"></script>
 </body>
 </html>

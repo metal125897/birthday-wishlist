@@ -2,6 +2,7 @@ import {collection, onSnapshot, updateDoc, doc, waitForPendingWrites} from 'http
 import {db, firebaseConfigured} from './firebase-client.js';
 import {giftCategoryLabel, normalizeGiftCategory} from './categories.js?v=20260917-category-labels';
 import {normalizeGiftGuidance} from './site-content.js?v=20260920-editable-guidance';
+import {isGiftPrice} from './gift-price.js';
 
 const elements = {
   list: document.querySelector('#gift-list'), loading: document.querySelector('#loading'),
@@ -93,8 +94,8 @@ function sortedFilteredGifts() {
     const byCreated = createdMillis(a) - createdMillis(b);
     if (state.sort === 'desire-desc') return b.desireLevel - a.desireLevel || byCreated;
     if (state.sort === 'desire-asc') return a.desireLevel - b.desireLevel || byCreated;
-    const aHasPrice = Number.isFinite(a.price);
-    const bHasPrice = Number.isFinite(b.price);
+    const aHasPrice = isGiftPrice(a.price);
+    const bHasPrice = isGiftPrice(b.price);
     if (aHasPrice !== bHasPrice) return aHasPrice ? -1 : 1;
     if (!aHasPrice) return b.desireLevel - a.desireLevel || byCreated;
     const priceResult = state.sort === 'price-asc' ? a.price - b.price : b.price - a.price;
@@ -146,7 +147,7 @@ function appendLinkedText(container, text) {
 
 function giftCard(gift) {
   const hasDescription = Boolean(gift.description?.trim());
-  const hasPrice = Number.isFinite(gift.price);
+  const hasPrice = isGiftPrice(gift.price);
   const statusPending = state.pendingStatusIds.has(gift.id);
   const card = document.createElement('article');
   card.className = `gift-card${hasDescription ? ' has-description' : ''}${hasPrice ? ' has-price' : ''}${gift.status === 'reserved' ? ' is-reserved' : ''}${gift.desireLevel === 5 ? ' is-desire-5' : ''}${state.expanded.has(gift.id) ? ' is-open' : ''}${statusPending ? ' is-saving' : ''}`;
