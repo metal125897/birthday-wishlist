@@ -24,6 +24,43 @@ const state = {
   unsubscribe: null, unsubscribeGuidance: null, pendingStatusIds: new Set(), confirmedStatuses: new Map()
 };
 
+function setupGuidanceAnimation() {
+  const details = document.querySelector('.gift-guidance');
+  const summary = details.querySelector('summary');
+  const content = details.querySelector('.gift-guidance__content');
+  let expanded = details.open;
+  let heightAnimation;
+  let fadeAnimation;
+  summary.addEventListener('click', event => {
+    event.preventDefault();
+    const startHeight = details.getBoundingClientRect().height;
+    const startOpacity = details.open ? getComputedStyle(content).opacity : '0';
+    expanded = !expanded;
+    heightAnimation?.cancel();
+    fadeAnimation?.cancel();
+    details.classList.toggle('is-closing', !expanded);
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches || !details.animate) {
+      details.open = expanded;
+      details.classList.remove('is-closing');
+      return;
+    }
+    details.open = true;
+    const style = getComputedStyle(details);
+    const borderHeight = parseFloat(style.borderTopWidth) + parseFloat(style.borderBottomWidth);
+    const endHeight = expanded ? details.getBoundingClientRect().height : summary.getBoundingClientRect().height + borderHeight;
+    heightAnimation = details.animate([{height: `${startHeight}px`}, {height: `${endHeight}px`}], {duration: 280, easing: 'ease'});
+    fadeAnimation = content.animate([{opacity: startOpacity}, {opacity: expanded ? 1 : 0}], {duration: 220, easing: 'ease', fill: 'both'});
+    heightAnimation.onfinish = () => {
+      details.open = expanded;
+      details.classList.remove('is-closing');
+      fadeAnimation.cancel();
+      heightAnimation = fadeAnimation = null;
+    };
+  });
+}
+
+setupGuidanceAnimation();
+
 function subscribeToGuidance() {
   state.unsubscribeGuidance?.();
   state.unsubscribeGuidance = onSnapshot(doc(db, 'siteContent', 'giftGuidance'), snapshot => {
