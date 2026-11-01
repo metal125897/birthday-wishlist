@@ -32,6 +32,23 @@ const state = {
   guidance: {...DEFAULT_GIFT_GUIDANCE}
 };
 
+let descriptionWidth = 0;
+function resizeDescription() {
+  const field = elements.description;
+  if (!field.clientWidth) return;
+  descriptionWidth = field.clientWidth;
+  field.style.height = 'auto';
+  const style = getComputedStyle(field);
+  const borderHeight = parseFloat(style.borderTopWidth) + parseFloat(style.borderBottomWidth);
+  field.style.height = `${Math.ceil(field.scrollHeight + borderHeight)}px`;
+}
+
+elements.description.addEventListener('input', resizeDescription);
+window.addEventListener('resize', () => {
+  if (elements.description.clientWidth !== descriptionWidth) resizeDescription();
+});
+document.fonts.ready.then(resizeDescription);
+
 function closeGuidanceDialog() {
   elements.guidanceDialog.close();
 }
@@ -121,6 +138,7 @@ function showNotice(message, error = false) {
 
 function resetForm() {
   elements.form.reset();
+  resizeDescription();
   setCategoryValue('');
   elements.giftId.value = '';
   elements.formTitle.textContent = 'Новый подарок';
@@ -135,6 +153,7 @@ function startEdit(gift) {
   elements.price.value = Number.isFinite(gift.price) ? gift.price : '';
   setCategoryValue(gift.category);
   elements.description.value = gift.description || '';
+  resizeDescription();
   document.querySelector(`input[name="desire"][value="${gift.desireLevel}"]`).checked = true;
   elements.formTitle.textContent = 'Редактирование подарка';
   elements.submit.disabled = false;
@@ -439,6 +458,7 @@ if (!firebaseConfigured) {
     elements.loginView.hidden = Boolean(user);
     elements.adminView.hidden = !user;
     if (user) {
+      resizeDescription();
       subscribeToGifts();
       subscribeToGuidance();
     }
