@@ -20,7 +20,8 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;bac
   linear-gradient(rgba(255,255,255,.012) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.009) 1px,transparent 1px);
   background-size:64px 64px;mask-image:linear-gradient(to bottom,rgba(0,0,0,.3),transparent 70%)}
 button,input,textarea,select{font:inherit}
-button,a{touch-action:manipulation}
+button,a,summary{touch-action:manipulation}
+button,a,summary,[role="button"]{-webkit-tap-highlight-color:transparent}
 a{color:var(--gold)}
 [hidden]{display:none!important}
 .shell{width:min(1180px,calc(100% - 64px));margin-inline:auto}
@@ -138,4 +139,11 @@ a{color:var(--gold)}
 }
 @media(max-width:700px){.gift-guidance__content{grid-template-columns:1fr;gap:14px}}
 @media(hover:none),(pointer:coarse){.gift-card::after{display:none}}
+/* Touch hardware keeps this path even when the browser requests the desktop site. */
+@media(max-width:620px),(any-pointer:coarse){
+  .gift-card{content-visibility:visible;contain-intrinsic-size:none;-webkit-backdrop-filter:none;backdrop-filter:none}
+  .gift-card.is-reserved{filter:none}
+  .toolbar,.sort-menu,.gift-guidance{-webkit-backdrop-filter:none;backdrop-filter:none}
+  .toolbar{background:rgba(10,11,15,.96)}
+}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.ambient{transform:none!important}}
