@@ -39,6 +39,23 @@ const state = {
   guidance: {...DEFAULT_GIFT_GUIDANCE}
 };
 
+function giftDraft() {
+  return JSON.stringify([elements.giftId.value, elements.title.value, elements.price.value,
+    elements.category.value, elements.description.value, desireLevel()]);
+}
+function guidanceDraft() {
+  return JSON.stringify([elements.guidanceThings.value, elements.guidanceBrands.value]);
+}
+let giftBaseline = giftDraft();
+let guidanceBaseline = guidanceDraft();
+function hasUnsavedDraft() {
+  return giftDraft() !== giftBaseline
+    || (elements.guidanceDialog.open && guidanceDraft() !== guidanceBaseline);
+}
+function allowDiscard() {
+  return !hasUnsavedDraft() || window.confirm('Есть несохранённые изменения. Отбросить их?');
+}
+
 let descriptionWidth = 0;
 function resizeDescription() {
   const field = elements.description;
@@ -95,6 +112,8 @@ elements.price.addEventListener('input', () => {
 });
 
 function closeGuidanceDialog() {
+  if (elements.guidanceSave.disabled) return;
+  if (guidanceDraft() !== guidanceBaseline && !window.confirm('Отбросить изменения блока «Что лучше не дарить»?')) return;
   elements.guidanceDialog.close();
 }
 
@@ -102,6 +121,7 @@ function openGuidanceDialog() {
   document.querySelector("#guidance-notice").hidden = true;
   elements.guidanceThings.value = state.guidance.things;
   elements.guidanceBrands.value = state.guidance.brands;
+  guidanceBaseline = guidanceDraft();
   elements.guidanceDialog.showModal();
   elements.guidanceThings.focus();
 }
@@ -193,10 +213,12 @@ function resetForm() {
   elements.submit.disabled = false;
   elements.submit.textContent = 'Добавить подарок';
   elements.cancel.hidden = true;
+  giftBaseline = giftDraft();
 }
 
 function startEdit(gift) {
   if (saving) return;
+  if (!allowDiscard()) return;
   elements.giftId.value = gift.id;
   elements.title.value = gift.title;
   elements.price.value = Number.isFinite(gift.price) ? gift.price : '';
@@ -209,6 +231,7 @@ function startEdit(gift) {
   elements.submit.disabled = false;
   elements.submit.textContent = 'Сохранить изменения';
   elements.cancel.hidden = false;
+  giftBaseline = giftDraft();
   elements.title.focus();
   window.scrollTo({top: 0, behavior: 'smooth'});
 }
@@ -385,11 +408,15 @@ elements.loginForm.addEventListener('submit', async event => {
   }
 });
 
-elements.logout.addEventListener('click', () => signOut(auth));
+elements.logout.addEventListener('click', () => { if (!saving && allowDiscard()) signOut(auth); });
 elements.exportCsv.addEventListener('click', exportGiftsToCsv);
 elements.editGuidance.addEventListener('click', openGuidanceDialog);
 elements.guidanceClose.addEventListener('click', closeGuidanceDialog);
 elements.guidanceCancel.addEventListener('click', closeGuidanceDialog);
+elements.guidanceDialog.addEventListener('cancel', event => {
+  event.preventDefault();
+  closeGuidanceDialog();
+});
 elements.guidanceDialog.addEventListener('click', event => {
   if (event.target === elements.guidanceDialog) closeGuidanceDialog();
 });
@@ -406,7 +433,8 @@ elements.guidanceForm.addEventListener('submit', async event => {
     await setDoc(doc(db, 'siteContent', 'giftGuidance'), {...guidance, updatedAt: serverTimestamp()});
     await waitForPendingWrites(db);
     state.guidance = guidance;
-    closeGuidanceDialog();
+    guidanceBaseline = guidanceDraft();
+    elements.guidanceDialog.close();
     showNotice('Блок «Что лучше не дарить» обновлён.');
   } catch (error) {
     console.error(error);
@@ -416,7 +444,7 @@ elements.guidanceForm.addEventListener('submit', async event => {
     elements.guidanceSave.textContent = 'Сохранить';
   }
 });
-elements.cancel.addEventListener('click', resetForm);
+elements.cancel.addEventListener('click', () => { if (!saving && allowDiscard()) resetForm(); });
 elements.categoryTrigger.addEventListener('click', () => {
   if (elements.categoryMenu.hidden) openCategoryMenu();
   else closeCategoryMenu();
@@ -483,7 +511,7 @@ elements.form.addEventListener('submit', async event => {
 });
 
 window.addEventListener('beforeunload', event => {
-  if (!saving) return;
+  if (!saving && !hasUnsavedDraft() && !elements.guidanceSave.disabled) return;
   event.preventDefault();
   event.returnValue = '';
 });

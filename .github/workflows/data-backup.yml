@@ -1,0 +1,43 @@
+name: Back up wishlist data
+
+on:
+  schedule:
+    # 1st and 15th, 04:00 UTC / 09:00 Yekaterinburg. No more than twice monthly.
+    - cron: '0 4 1,15 * *'
+  # Manual runs validate a fresh snapshot without committing an extra backup.
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: wishlist-data-backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Read current Firestore data
+        run: npm run snapshot:data
+      - name: Validate snapshot
+        run: npm run snapshot:validate
+      - name: Commit scheduled backup
+        if: github.event_name == 'schedule'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/firestore-snapshot.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Back up current wishlist data"
+            git push origin HEAD:main
+          fi
+      - name: Run summary
+        run: echo 'Snapshot read and validation passed. Only scheduled runs commit backups.' >> "$GITHUB_STEP_SUMMARY"

@@ -20,7 +20,7 @@ function decodeValue(value = {}) {
 }
 
 function decodeFields(fields = {}) {
-  return Object.fromEntries(Object.entries(fields).map(([key, value]) => [key, decodeValue(value)]));
+  return Object.fromEntries(Object.entries(fields).sort(([a], [b]) => a.localeCompare(b)).map(([key, value]) => [key, decodeValue(value)]));
 }
 
 async function fetchJson(url, {allowMissing = false} = {}) {
