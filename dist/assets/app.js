@@ -1,4 +1,4 @@
-import {collection, onSnapshot, updateDoc, doc, waitForPendingWrites} from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js';
+import {collection, onSnapshot, runTransaction, doc, waitForPendingWrites} from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js';
 import {db, firebaseConfigured} from './firebase-client.js';
 import {giftCategoryLabel, normalizeGiftCategory} from './categories.js?v=20260917-category-labels';
 import {normalizeGiftGuidance} from './site-content.js?v=20260920-editable-guidance';
@@ -154,8 +154,6 @@ function giftCard(gift) {
   card.dataset.id = gift.id;
   if (statusPending) card.setAttribute('aria-busy', 'true');
   if (hasDescription) {
-    card.tabIndex = 0;
-    card.setAttribute('role', 'button');
     card.setAttribute('aria-expanded', String(state.expanded.has(gift.id)));
   }
 
@@ -166,6 +164,16 @@ function giftCard(gift) {
   const title = document.createElement('h2');
   title.className = 'gift-title';
   title.textContent = gift.title;
+  if (hasDescription) {
+    const toggle = document.createElement('button');
+    toggle.className = 'gift-title-toggle';
+    toggle.type = 'button';
+    toggle.textContent = gift.title;
+    toggle.setAttribute('aria-expanded', String(state.expanded.has(gift.id)));
+    toggle.setAttribute('aria-controls', 'description-' + gift.id);
+    toggle.addEventListener('click', event => { event.stopPropagation(); toggleCard(card, gift.id); });
+    title.replaceChildren(toggle);
+  }
   titleRow.append(title);
   if (hasDescription) {
     const chevron = document.createElement('span');
@@ -201,6 +209,9 @@ function giftCard(gift) {
   if (hasDescription) {
     const description = document.createElement('div');
     description.className = 'gift-description';
+    description.id = 'description-' + gift.id;
+    description.inert = !state.expanded.has(gift.id);
+    description.setAttribute('aria-hidden', String(!state.expanded.has(gift.id)));
     const inner = document.createElement('div');
     inner.className = 'gift-description__inner';
     appendLinkedText(inner, gift.description);
@@ -237,6 +248,9 @@ function toggleCard(card, id) {
   card.classList.toggle('is-collapsing', !open);
   card.classList.toggle('is-open', open);
   card.setAttribute('aria-expanded', String(open));
+  card.querySelector('.gift-title-toggle').setAttribute('aria-expanded', String(open));
+  description.inert = !open;
+  description.setAttribute('aria-hidden', String(!open));
   description.style.height = open ? `${description.scrollHeight}px` : '0px';
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     if (open) description.style.height = 'auto';
@@ -249,7 +263,12 @@ function render() {
   elements.loading.hidden = true;
   elements.error.hidden = true;
   elements.counter.innerHTML = `В списке <b>${gifts.length} ${plural(gifts.length, ['подарок', 'подарка', 'подарков'])}</b>`;
+  const focusedCard = document.activeElement?.closest('.gift-card');
+  const focusedId = focusedCard?.dataset.id;
+  const wasReserve = document.activeElement?.classList.contains('glass-button');
   elements.list.replaceChildren(...gifts.map(giftCard));
+  if (focusedId) [...elements.list.children].find(card => card.dataset.id === focusedId)
+    ?.querySelector(wasReserve ? '.glass-button' : '.gift-title-toggle')?.focus({preventScroll: true});
   elements.list.hidden = gifts.length === 0;
   elements.empty.hidden = gifts.length !== 0;
   elements.emptyCopy.textContent = state.gifts.length
@@ -271,7 +290,13 @@ async function changeStatus(gift, status) {
   state.pendingStatusIds.add(gift.id);
   render();
   try {
-    await updateDoc(doc(db, 'gifts', gift.id), {status});
+    await runTransaction(db, async transaction => {
+      const ref = doc(db, 'gifts', gift.id);
+      const current = await transaction.get(ref);
+      if (!current.exists()) throw new Error('gift-missing');
+      if (current.data().status !== previousStatus) throw new Error('status-conflict');
+      transaction.update(ref, {status});
+    });
     await waitForPendingWrites(db);
     state.confirmedStatuses.set(gift.id, status);
     state.gifts = state.gifts.map(item => item.id === gift.id ? {...item, status} : item);
@@ -280,11 +305,11 @@ async function changeStatus(gift, status) {
     showNotice(status === 'reserved' ? 'Подарок забронирован.' : 'Бронь снята.');
   } catch (error) {
     console.error(error);
-    state.confirmedStatuses.set(gift.id, previousStatus);
-    state.gifts = state.gifts.map(item => item.id === gift.id ? {...item, status: previousStatus} : item);
     state.pendingStatusIds.delete(gift.id);
     render();
-    showNotice('Не удалось сохранить бронь. Попробуйте ещё раз.', true);
+    showNotice(error.message === 'status-conflict'
+      ? 'Статус уже изменился другим гостем. Проверьте список.'
+      : 'Не удалось сохранить бронь. Попробуйте ещё раз.', true);
   }
 }
 
@@ -323,6 +348,7 @@ function subscribe() {
       if (!item.metadata.hasPendingWrites) state.confirmedStatuses.set(item.id, gift.status);
       return {...gift, status: state.confirmedStatuses.get(item.id) ?? gift.status};
     });
+    if (snapshot.metadata.fromCache && snapshot.empty) return;
     render();
   }, error => {
     console.error(error);
@@ -395,6 +421,12 @@ function setupListbox({control, trigger, menu, options, value, dataKey, onChange
     render();
   }
 
+  control.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && !menu.hidden) { event.preventDefault(); close({restoreFocus: true}); }
+  });
+  control.addEventListener('focusout', () => queueMicrotask(() => {
+    if (!control.contains(document.activeElement)) close();
+  }));
   trigger.addEventListener('click', () => { if (menu.hidden) open(); else close(); });
   trigger.addEventListener('keydown', event => {
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {

@@ -59,7 +59,7 @@ a{color:var(--gold)}
 .ambient{position:absolute;z-index:-1;pointer-events:none;mix-blend-mode:screen;border-radius:50%;opacity:.26;filter:blur(.5px);mask-image:radial-gradient(circle,#000 25%,transparent 72%)}
 .ambient--sphere{width:260px;left:-205px;top:240px}
 .ambient--torus{width:340px;right:-280px;top:58%}
-.toolbar{position:sticky;z-index:10;top:14px;display:grid;grid-template-columns:minmax(300px,1fr) minmax(210px,260px) minmax(300px,1fr);align-items:end;gap:clamp(14px,2vw,28px);margin:10px 0 24px;padding:18px 20px;border:1px solid var(--border);border-radius:20px;background:rgba(10,11,15,.72);box-shadow:0 18px 60px rgba(0,0,0,.28);backdrop-filter:blur(24px) saturate(1.25)}
+.toolbar{position:relative;z-index:10;top:auto;display:grid;grid-template-columns:minmax(300px,1fr) minmax(210px,260px) minmax(300px,1fr);align-items:end;gap:clamp(14px,2vw,28px);margin:10px 0 24px;padding:18px 20px;border:1px solid var(--border);border-radius:20px;background:rgba(10,11,15,.72);box-shadow:0 18px 60px rgba(0,0,0,.28);backdrop-filter:blur(24px) saturate(1.25)}
 .toolbar__meta{display:flex;flex-direction:column;gap:14px;justify-self:start}
 .counter{margin:0;color:var(--muted);font-size:.92rem}.counter b{color:var(--text);font-weight:600}
 .status-filter,.desire-picker{gap:6px;padding:5px;border:1px solid var(--border);border-radius:14px;background:rgba(255,255,255,.025)}
@@ -170,3 +170,8 @@ a{color:var(--gold)}
   .toolbar{background:rgba(10,11,15,.96)}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.ambient{transform:none!important}}
+
+.gift-title-toggle{display:block;width:100%;padding:0;border:0;background:none;color:inherit;font:inherit;line-height:inherit;text-align:inherit;cursor:pointer}
+.notice{position:fixed;z-index:30;bottom:18px;left:50%;transform:translateX(-50%);width:max-content;max-width:calc(100% - 28px);margin:0;background:#14251f;box-shadow:var(--shadow)}
+.notice.is-error{background:#321c20}
+#guidance-notice{position:static;transform:none;width:auto;max-width:none;margin:0}

@@ -1,12 +1,18 @@
 import {onAuthStateChanged, signInWithEmailAndPassword, signOut} from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js';
-import {collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, runTransaction, setDoc, serverTimestamp, waitForPendingWrites} from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js';
+import {collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc, serverTimestamp, waitForPendingWrites} from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js';
 import {auth, db, firebaseConfigured} from './firebase-client.js';
-import {INITIAL_GIFTS} from './seed-data.js';
 import {GIFT_CATEGORIES, giftCategoryLabel, normalizeGiftCategory} from './categories.js?v=20260917-category-labels';
 import {DEFAULT_GIFT_GUIDANCE, normalizeGiftGuidance} from './site-content.js?v=20260920-editable-guidance';
 import {isGiftPrice, parseGiftPrice} from './gift-price.js';
 
 const ADMIN_AUTH_EMAIL = 'admin@birthday-wishlist.local';
+let saving = false;
+function lockForm(locked) {
+  saving = locked;
+  elements.form.inert = locked;
+  elements.gifts.inert = locked;
+  elements.logout.disabled = locked;
+}
 
 const elements = {
   loading: document.querySelector('#admin-loading'), loginView: document.querySelector('#login-view'),
@@ -29,7 +35,7 @@ const elements = {
 };
 
 const state = {
-  gifts: [], unsubscribe: null, unsubscribeGuidance: null, seeded: false,
+  gifts: [], unsubscribe: null, unsubscribeGuidance: null,
   guidance: {...DEFAULT_GIFT_GUIDANCE}
 };
 
@@ -93,6 +99,7 @@ function closeGuidanceDialog() {
 }
 
 function openGuidanceDialog() {
+  document.querySelector("#guidance-notice").hidden = true;
   elements.guidanceThings.value = state.guidance.things;
   elements.guidanceBrands.value = state.guidance.brands;
   elements.guidanceDialog.showModal();
@@ -167,14 +174,16 @@ function validateGift(gift) {
 }
 
 function showNotice(message, error = false) {
-  elements.notice.textContent = message;
-  elements.notice.classList.toggle('is-error', error);
-  elements.notice.hidden = false;
+  const target = elements.guidanceDialog.open ? document.querySelector("#guidance-notice") : elements.notice;
+  target.textContent = message;
+  target.classList.toggle('is-error', error);
+  target.hidden = false;
   clearTimeout(showNotice.timer);
-  showNotice.timer = setTimeout(() => elements.notice.hidden = true, 5000);
+  showNotice.timer = setTimeout(() => target.hidden = true, 5000);
 }
 
 function resetForm() {
+  if (saving) return;
   elements.form.reset();
   rememberPriceInput();
   resizeDescription();
@@ -187,6 +196,7 @@ function resetForm() {
 }
 
 function startEdit(gift) {
+  if (saving) return;
   elements.giftId.value = gift.id;
   elements.title.value = gift.title;
   elements.price.value = Number.isFinite(gift.price) ? gift.price : '';
@@ -285,12 +295,15 @@ function showDeleteConfirmation(actions, gift) {
   actions.append(group);
   cancel.addEventListener('click', render);
   confirm.addEventListener('click', async () => {
+    if (saving) return;
+    lockForm(true);
     confirm.disabled = true;
     confirm.textContent = 'Удаляем…';
     cancel.disabled = true;
     try {
       await deleteDoc(doc(db, 'gifts', gift.id));
       await waitForPendingWrites(db);
+      lockForm(false);
       if (elements.giftId.value === gift.id) resetForm();
       showNotice('Подарок удалён.');
     } catch (error) {
@@ -299,6 +312,8 @@ function showDeleteConfirmation(actions, gift) {
       confirm.textContent = 'Удалить';
       cancel.disabled = false;
       showNotice('Не удалось удалить подарок.', true);
+    } finally {
+      lockForm(false);
     }
   });
 }
@@ -341,44 +356,13 @@ function exportGiftsToCsv() {
   showNotice(`Список из ${gifts.length} подарков скачан.`);
 }
 
-async function seedInitialGifts() {
-  if (state.seeded || state.gifts.length) return;
-  state.seeded = true;
-  const baseTime = Date.UTC(2026, 8, 13, 0, 0, 0);
-  const giftRefs = INITIAL_GIFTS.map(gift => doc(db, 'gifts', gift.id));
-  try {
-    await runTransaction(db, async transaction => {
-      const existing = await Promise.all(giftRefs.map(giftRef => transaction.get(giftRef)));
-      if (existing.some(snapshot => snapshot.exists())) {
-        throw new Error('Стартовое заполнение отменено: в базе уже есть исходные документы.');
-      }
-      INITIAL_GIFTS.forEach((gift, index) => {
-        transaction.set(giftRefs[index], {
-          title: gift.title,
-          description: gift.description,
-          desireLevel: 1,
-          price: null,
-          category: null,
-          status: 'available',
-          createdAt: new Date(baseTime + index * 1000)
-        });
-      });
-    });
-    showNotice(`Стартовый список из ${INITIAL_GIFTS.length} подарков добавлен.`);
-  } catch (error) {
-    state.seeded = false;
-    console.error(error);
-    showNotice('Не удалось добавить стартовый список. Проверьте правила Firestore.', true);
-  }
-}
-
 function subscribeToGifts() {
   state.unsubscribe?.();
   state.unsubscribe = onSnapshot(collection(db, 'gifts'), {includeMetadataChanges: true}, async snapshot => {
     if (snapshot.metadata.hasPendingWrites) return;
     state.gifts = snapshot.docs.map(item => ({id: item.id, ...item.data()}));
     render();
-    if (snapshot.empty && !snapshot.metadata.fromCache) await seedInitialGifts();
+
   }, error => {
     console.error(error);
     showNotice('Не удалось загрузить список. Проверьте Firestore и правила доступа.', true);
@@ -459,14 +443,23 @@ elements.categoryMenu.addEventListener('keydown', event => {
   next = (next + elements.categoryOptions.length) % elements.categoryOptions.length;
   elements.categoryOptions[next].focus();
 });
+elements.categoryControl.addEventListener('keydown', event => {
+  if (event.key === 'Escape') closeCategoryMenu({restoreFocus: true});
+});
+elements.categoryControl.addEventListener('focusout', () => queueMicrotask(() => {
+  if (!elements.categoryControl.contains(document.activeElement)) closeCategoryMenu();
+}));
+
 document.addEventListener('click', event => {
   if (!elements.categoryControl.contains(event.target) && !elements.categoryMenu.hidden) closeCategoryMenu();
 });
 elements.form.addEventListener('submit', async event => {
   event.preventDefault();
+  if (saving) return;
   const gift = normalizeForm();
   const errorMessage = validateGift(gift);
   if (errorMessage) return showNotice(errorMessage, true);
+  lockForm(true);
   elements.submit.disabled = true;
   elements.submit.textContent = 'Сохраняем…';
   try {
@@ -477,13 +470,22 @@ elements.form.addEventListener('submit', async event => {
       await addDoc(collection(db, 'gifts'), {...gift, status: 'available', createdAt: serverTimestamp()});
       showNotice('Подарок добавлен в список.');
     }
+    lockForm(false);
     resetForm();
   } catch (error) {
     console.error(error);
     elements.submit.disabled = false;
     elements.submit.textContent = elements.giftId.value ? 'Сохранить изменения' : 'Добавить подарок';
     showNotice('Не удалось сохранить подарок.', true);
+  } finally {
+    lockForm(false);
   }
+});
+
+window.addEventListener('beforeunload', event => {
+  if (!saving) return;
+  event.preventDefault();
+  event.returnValue = '';
 });
 
 if (!firebaseConfigured) {
@@ -511,7 +513,6 @@ if (!firebaseConfigured) {
       elements.exportCsv.disabled = true;
       elements.editGuidance.disabled = true;
       state.guidance = {...DEFAULT_GIFT_GUIDANCE};
-      state.seeded = false;
       elements.loginForm.reset();
       const submit = elements.loginForm.querySelector('button[type="submit"]');
       submit.disabled = false;

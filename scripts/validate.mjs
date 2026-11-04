@@ -85,7 +85,7 @@ if ((styles.match(/inter-400-cyrillic\.woff2/g) || []).length !== 4) {
   throw new Error('Все веса Inter должны переиспользовать один кэшируемый WOFF2-файл.');
 }
 
-const writeIndex = publicApp.indexOf("await updateDoc(doc(db, 'gifts', gift.id), {status})");
+const writeIndex = publicApp.indexOf('await runTransaction(db');
 const acknowledgementIndex = publicApp.indexOf('await waitForPendingWrites(db)', writeIndex);
 const successIndex = publicApp.indexOf("showNotice(status === 'reserved'", acknowledgementIndex);
 if (writeIndex < 0 || acknowledgementIndex < writeIndex || successIndex < acknowledgementIndex) {
@@ -114,8 +114,8 @@ if (!styles.includes('.gift-card.has-price .desire{grid-column:2;align-items:fle
 if (!adminApp.includes('if (snapshot.metadata.hasPendingWrites) return;') || !adminApp.includes('await waitForPendingWrites(db)')) {
   throw new Error('Админка должна ждать подтверждения Firestore перед завершением удаления.');
 }
-if (!adminApp.includes('snapshot.empty && !snapshot.metadata.fromCache') || !adminApp.includes('await runTransaction(db') || !adminApp.includes('transaction.get(giftRef)')) {
-  throw new Error('Стартовое заполнение должно ждать серверный снимок и не перезаписывать существующие документы.');
+if (adminApp.includes('seedInitialGifts') || adminApp.includes('INITIAL_GIFTS')) {
+  throw new Error('Рабочая админка не должна автоматически возвращать стартовые подарки.');
 }
 if (!styles.includes('.delete-confirm__button{min-width:100px;min-height:48px')) {
   throw new Error('Кнопки подтверждения удаления должны иметь стандартную высоту.');
