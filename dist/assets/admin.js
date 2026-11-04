@@ -123,8 +123,21 @@ function openGuidanceDialog() {
   elements.guidanceBrands.value = state.guidance.brands;
   guidanceBaseline = guidanceDraft();
   elements.guidanceDialog.showModal();
+  resizeGuidance();
   elements.guidanceThings.focus();
 }
+
+function resizeGuidance() {
+  for (const field of [elements.guidanceThings, elements.guidanceBrands]) {
+    if (!field.clientWidth) continue;
+    field.style.height = 'auto';
+    const style = getComputedStyle(field);
+    field.style.height = `${Math.ceil(field.scrollHeight + parseFloat(style.borderTopWidth) + parseFloat(style.borderBottomWidth))}px`;
+  }
+}
+elements.guidanceThings.addEventListener('input', resizeGuidance);
+elements.guidanceBrands.addEventListener('input', resizeGuidance);
+window.addEventListener('resize', resizeGuidance);
 
 function subscribeToGuidance() {
   state.unsubscribeGuidance?.();
