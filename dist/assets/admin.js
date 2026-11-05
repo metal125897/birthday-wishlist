@@ -507,7 +507,7 @@ elements.categoryTrigger.addEventListener('click', () => {
 elements.categoryTrigger.addEventListener('keydown', event => {
   if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
     event.preventDefault();
-    if (elements.categoryMenu.hidden) openCategoryMenu(event.key === 'ArrowDown' ? 1 : -1);
+    openCategoryMenu(event.key === 'ArrowDown' ? 1 : -1);
   }
 });
 elements.categoryOptions.forEach(option => option.addEventListener('click', () => {
@@ -529,9 +529,10 @@ elements.categoryMenu.addEventListener('keydown', event => {
 elements.categoryControl.addEventListener('keydown', event => {
   if (event.key === 'Escape') closeCategoryMenu({restoreFocus: true});
 });
-elements.categoryControl.addEventListener('focusout', () => queueMicrotask(() => {
-  if (!elements.categoryControl.contains(document.activeElement)) closeCategoryMenu();
-}));
+elements.categoryControl.addEventListener('focusout', event => {
+  if (elements.categoryControl.contains(event.relatedTarget)) return;
+  setTimeout(() => { if (!elements.categoryControl.contains(document.activeElement)) closeCategoryMenu(); }, 0);
+});
 
 document.addEventListener('click', event => {
   if (!elements.categoryControl.contains(event.target) && !elements.categoryMenu.hidden) closeCategoryMenu();

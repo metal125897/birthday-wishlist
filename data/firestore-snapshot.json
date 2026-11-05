@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "projectId": "wishlist-b3953",
-  "capturedAt": "2026-11-05T11:16:38.271Z",
+  "capturedAt": "2026-11-05T11:30:00.425Z",
   "giftGuidance": {
     "things": "Шампунь, гель для душа, бомбочки, пена и соль для ванны, свечи, диффузоры, посуда и приборы, цветы, полотенца, маски на основе глины и тканевые маски.",
     "brands": "Mixit, Aravia, Vois, Natura Siberica, Planeta Organica, Likato, Semily, kottur, HELDI.\nSokolov, SUNLIGHT, Kari",
@@ -596,7 +596,7 @@
       "reservedBy": null,
       "status": "available",
       "title": "Деньги (вне очередей и броней)",
-      "firestoreUpdateTime": "2026-11-05T06:55:37.078214Z"
+      "firestoreUpdateTime": "2026-11-05T11:23:28.723801Z"
     },
     {
       "id": "JoKIGNqtlMgwRfpgQlKh",

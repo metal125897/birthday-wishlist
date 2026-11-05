@@ -569,14 +569,16 @@ function setupListbox({control, trigger, menu, options, value, dataKey, onChange
   control.addEventListener('keydown', event => {
     if (event.key === 'Escape' && !menu.hidden) { event.preventDefault(); close({restoreFocus: true}); }
   });
-  control.addEventListener('focusout', () => queueMicrotask(() => {
-    if (!control.contains(document.activeElement)) close();
-  }));
+  control.addEventListener('focusout', event => {
+    if (control.contains(event.relatedTarget)) return;
+    // Focus can briefly be on body between focusout and focusin.
+    setTimeout(() => { if (!control.contains(document.activeElement)) close(); }, 0);
+  });
   trigger.addEventListener('click', () => { if (menu.hidden) open(); else close(); });
   trigger.addEventListener('keydown', event => {
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
       event.preventDefault();
-      if (menu.hidden) open(event.key === 'ArrowDown' ? 1 : -1);
+      open(event.key === 'ArrowDown' ? 1 : -1);
     }
   });
   options.forEach(option => option.addEventListener('click', () => select(option)));
