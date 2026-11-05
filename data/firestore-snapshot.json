@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "projectId": "wishlist-b3953",
-  "capturedAt": "2026-11-05T07:24:45.569Z",
+  "capturedAt": "2026-11-05T11:05:28.045Z",
   "giftGuidance": {
     "things": "Шампунь, гель для душа, бомбочки, пена и соль для ванны, свечи, диффузоры, посуда и приборы, цветы, полотенца, маски на основе глины и тканевые маски.",
     "brands": "Mixit, Aravia, Vois, Natura Siberica, Planeta Organica, Likato, Semily, kottur, HELDI.\nSokolov, SUNLIGHT, Kari",
@@ -174,9 +174,10 @@
       "description": "Бренды: Bombbar, Первый Русский Протеин, GeneticLab или BigWhey\nЛучше больше порций, вкус не так важен\nЛучше один из:\nhttps://ozon.ru/t/MnWzTMy\nhttps://ozon.ru/t/yeEUHt7\nhttps://www.wildberries.ru/catalog/1109787629/detail.aspx",
       "desireLevel": 5,
       "price": 1600,
+      "reservedBy": null,
       "status": "available",
       "title": "Протеин",
-      "firestoreUpdateTime": "2026-11-04T14:17:03.821762Z"
+      "firestoreUpdateTime": "2026-11-05T07:30:11.304320Z"
     },
     {
       "id": "randewoo-perfume",

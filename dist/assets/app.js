@@ -175,7 +175,7 @@ function giftCard(gift) {
   titleRow.className = 'gift-title-row';
   const bookmark = document.createElement('button');
   bookmark.type = 'button';
-  bookmark.className = 'bookmark-button';
+  bookmark.className = `bookmark-button${gift.status === 'reserved' ? ' glass-button--quiet' : ''}`;
   const bookmarked = state.bookmarks.has(gift.id);
   bookmark.setAttribute('aria-pressed', String(bookmarked));
   bookmark.setAttribute('aria-label', bookmarked ? 'Убрать из отложенных' : 'Отложить подарок');
