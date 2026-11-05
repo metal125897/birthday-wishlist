@@ -1,0 +1,14 @@
+import {readFile} from 'node:fs/promises';
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+const source=await readFile(new URL('../dist/assets/guest-client.js',import.meta.url),'utf8');
+const functions=source.slice(source.indexOf('async function persistentSession()'),source.indexOf('\nfunction watchGuest'));
+let blocked=true,created=0;
+const guestAuth={currentUser:null};
+const context=vm.createContext({guestAuth,guestReady:Promise.resolve(),signingIn:undefined,browserLocalPersistence:'local',indexedDBLocalPersistence:'idb',navigator:{locks:{request:(name,callback)=>Promise.resolve().then(callback)}},setPersistence:async()=>{if(blocked)throw Error('storage blocked');},signInAnonymously:async()=>{created++;guestAuth.currentUser={uid:'guest-only'};}});
+vm.runInContext(functions,context);
+await assert.rejects(context.ensureGuest(),{message:'persistent-storage-unavailable'});assert.equal(created,0);
+blocked=false;const [a,b]=await Promise.all([context.ensureGuest(),context.ensureGuest()]);assert.equal(a.uid,b.uid);assert.equal(created,1);
+assert.equal((await context.ensureGuest()).uid,a.uid);assert.equal(created,1);
+assert.ok(source.includes("'wishlist-guests-v1'"));
+console.log('Guest session: persistent storage required, concurrent sign-in serialized, restored identity reused.');

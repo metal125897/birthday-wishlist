@@ -12,7 +12,7 @@
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2306070a'/%3E%3Cpath d='M18 29h28v24H18z' fill='%23d9c08c'/%3E%3Cpath d='M23 29v-7a9 9 0 0 1 18 0v7' fill='none' stroke='%23fff' stroke-width='5'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://firestore.googleapis.com">
-  <link rel="stylesheet" href="../assets/styles.css?v=20261104-guidance-fields">
+  <link rel="stylesheet" href="../assets/styles.css?v=20261105-owners">
 </head>
 <body class="admin-body">
   <main class="admin-shell">
@@ -120,6 +120,16 @@
       </div>
     </section>
   </main>
+  <dialog class="reserve-dialog" id="admin-release-dialog" aria-labelledby="admin-release-title">
+    <form method="dialog" class="dialog-card">
+      <h2 id="admin-release-title">Снять бронь?</h2>
+      <p id="admin-release-copy"></p>
+      <div class="dialog-actions">
+        <button class="glass-button glass-button--quiet" value="cancel">Отмена</button>
+        <button class="glass-button" value="confirm">Снять бронь</button>
+      </div>
+    </form>
+  </dialog>
   <dialog class="reserve-dialog guidance-dialog" id="guidance-dialog" aria-labelledby="guidance-dialog-title">
     <form class="dialog-card form-stack" id="guidance-form">
       <button class="dialog-close" id="guidance-close" type="button" aria-label="Закрыть">×</button>
@@ -139,6 +149,6 @@
     </form>
   </dialog>
 
-  <script type="module" src="../assets/bootstrap.js?v=20261104-guidance-fields" data-entry="../assets/admin.js?v=20261104-guidance-fields"></script>
+  <script type="module" src="../assets/bootstrap.js?v=20261105-owners" data-entry="../assets/admin.js?v=20261105-owners"></script>
 </body>
 </html>

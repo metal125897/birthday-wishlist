@@ -1,5 +1,6 @@
 import {collection, onSnapshot, runTransaction, doc, waitForPendingWrites} from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js';
-import {db, firebaseConfigured} from './firebase-client.js';
+import {db, firebaseConfigured, ensureGuest, watchGuest} from './guest-client.js?v=20261104-owners';
+import {reservationUpdate, ownsReservation} from './reservation-policy.js?v=20261104-owners';
 import {giftCategoryLabel, normalizeGiftCategory} from './categories.js?v=20260917-category-labels';
 import {normalizeGiftGuidance} from './site-content.js?v=20260920-editable-guidance';
 import {isGiftPrice} from './gift-price.js';
@@ -21,6 +22,7 @@ const elements = {
 };
 
 const state = {
+  guestUid: null,
   gifts: [], filter: 'all', category: 'all', sort: 'desire-desc', expanded: new Set(), pendingUnreserve: null,
   unsubscribe: null, unsubscribeGuidance: null, pendingStatusIds: new Set(), confirmedStatuses: new Map()
 };
@@ -195,8 +197,10 @@ function giftCard(gift) {
   const reserve = document.createElement('button');
   reserve.type = 'button';
   reserve.className = `glass-button${gift.status === 'reserved' ? ' glass-button--quiet' : ''}`;
-  reserve.textContent = statusPending ? 'Сохраняем…' : gift.status === 'reserved' ? 'Снять бронь' : 'Забронировать';
-  reserve.disabled = statusPending;
+  const owned = ownsReservation(gift, state.guestUid);
+  reserve.textContent = statusPending ? 'Сохраняем…' : gift.status === 'reserved' ? (owned ? 'Ваша бронь · снять' : 'Забронировано') : 'Забронировать';
+  reserve.disabled = statusPending || (gift.status === 'reserved' && !owned);
+  if (owned) reserve.title = 'Ваша бронь. Доступ к ней сохранён в этом браузере. После очистки данных сайта обратитесь к владельцу списка.';
   reserve.setAttribute('aria-label', `${reserve.textContent}: ${gift.title}`);
   reserve.addEventListener('click', event => {
     event.stopPropagation();
@@ -290,32 +294,39 @@ async function changeStatus(gift, status) {
   state.pendingStatusIds.add(gift.id);
   render();
   try {
+    const user = await ensureGuest();
+    state.guestUid = user.uid;
+    let saved;
     await runTransaction(db, async transaction => {
       const ref = doc(db, 'gifts', gift.id);
       const current = await transaction.get(ref);
       if (!current.exists()) throw new Error('gift-missing');
       if (current.data().status !== previousStatus) throw new Error('status-conflict');
-      transaction.update(ref, {status});
+      saved = reservationUpdate(current.data(), status, user.uid);
+      transaction.update(ref, saved);
     });
     await waitForPendingWrites(db);
     state.confirmedStatuses.set(gift.id, status);
-    state.gifts = state.gifts.map(item => item.id === gift.id ? {...item, status} : item);
+    state.gifts = state.gifts.map(item => item.id === gift.id ? {...item, ...saved} : item);
     state.pendingStatusIds.delete(gift.id);
     render();
-    showNotice(status === 'reserved' ? 'Подарок забронирован.' : 'Бронь снята.');
+    showNotice(status === 'reserved' ? 'Ваша бронь сохранена. Снять её можно в этом браузере. После очистки данных сайта поможет владелец списка.' : 'Бронь снята.');
   } catch (error) {
     console.error(error);
     state.pendingStatusIds.delete(gift.id);
     render();
     showNotice(error.message === 'status-conflict'
       ? 'Статус уже изменился другим гостем. Проверьте список.'
-      : 'Не удалось сохранить бронь. Попробуйте ещё раз.', true);
+      : error.message === 'persistent-storage-unavailable'
+        ? 'Браузер не разрешает сохранить сессию. Разрешите хранение данных сайта и повторите.'
+        : 'Не удалось сохранить бронь. Проверьте соединение или обновите страницу и повторите.', true);
   }
 }
 
 function openUnreserveDialog(gift) {
+  if (!ownsReservation(gift, state.guestUid)) return;
   state.pendingUnreserve = gift;
-  elements.dialogCopy.textContent = `Подарок «${gift.title}» уже забронирован. Если бронь оформили не вы, нажмите «Отмена».`;
+  elements.dialogCopy.textContent = `Снять вашу бронь подарка «${gift.title}»? После подтверждения он снова станет доступен другим гостям.`;
   elements.dialog.showModal();
 }
 
@@ -511,6 +522,10 @@ if (!firebaseConfigured) {
   elements.retry.hidden = true;
   elements.counter.textContent = 'Ожидается подключение базы данных';
 } else {
+  watchGuest(user => {
+    state.guestUid = user?.uid ?? null;
+    if (state.gifts.length) render();
+  });
   subscribe();
   subscribeToGuidance();
 }

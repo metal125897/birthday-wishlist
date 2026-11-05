@@ -169,8 +169,8 @@ const firestoreRules = await readFile(resolve(root, 'firestore.rules'), 'utf8');
 if (!firestoreRules.includes('allow delete: if isAdmin();')) {
   throw new Error('Удаление подарка должно проверять администратора без request.resource.data.');
 }
-if (!firestoreRules.includes("'Self Care & Cosmetics', 'Sport', 'Just Pleasure', 'Food', 'Needs'") || !firestoreRules.includes("hasOnly(['status'])")) {
-  throw new Error('Firestore должен валидировать категории и запрещать гостю менять что-либо кроме статуса.');
+if (!firestoreRules.includes("'Self Care & Cosmetics', 'Sport', 'Just Pleasure', 'Food', 'Needs'") || !firestoreRules.includes("hasOnly(['status', 'reservedBy'])") || !firestoreRules.includes('request.auth.uid')) {
+  throw new Error('Firestore должен проверять владельца и ограничивать гостевые изменения статусом и reservedBy.');
 }
 if (!firestoreRules.includes('match /siteContent/giftGuidance') || !firestoreRules.includes('allow create, update: if isAdmin() && isValidGiftGuidance')) {
   throw new Error('Firestore должен разрешать редактирование блока только администратору.');

@@ -1,11 +1,15 @@
 import {onAuthStateChanged, signInWithEmailAndPassword, signOut} from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js';
-import {collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc, serverTimestamp, waitForPendingWrites} from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js';
+import {collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc, runTransaction, serverTimestamp, waitForPendingWrites} from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js';
 import {auth, db, firebaseConfigured} from './firebase-client.js';
 import {GIFT_CATEGORIES, giftCategoryLabel, normalizeGiftCategory} from './categories.js?v=20260917-category-labels';
 import {DEFAULT_GIFT_GUIDANCE, normalizeGiftGuidance} from './site-content.js?v=20260920-editable-guidance';
 import {isGiftPrice, parseGiftPrice} from './gift-price.js';
 
 const ADMIN_AUTH_EMAIL = 'admin@birthday-wishlist.local';
+const isAdminUser = user => Boolean(user && user.email === ADMIN_AUTH_EMAIL);
+const releaseDialog = document.querySelector('#admin-release-dialog');
+let pendingRelease = null;
+let releasingId = null;
 let saving = false;
 function lockForm(locked) {
   saving = locked;
@@ -309,6 +313,20 @@ function adminGift(gift) {
   remove.textContent = 'Удалить';
   remove.addEventListener('click', () => showDeleteConfirmation(actions, gift));
   actions.append(edit, remove);
+  if (gift.status === 'reserved') {
+    const release = document.createElement('button');
+    release.type = 'button';
+    release.className = 'mini-button';
+    release.textContent = releasingId === gift.id ? 'Снимаем…' : 'Снять бронь';
+    release.disabled = releasingId === gift.id;
+    release.addEventListener('click', () => {
+      if (saving || !isAdminUser(auth.currentUser)) return;
+      pendingRelease = gift;
+      document.querySelector('#admin-release-copy').textContent = `Снять бронь подарка «${gift.title}»? Он станет доступен всем гостям.`;
+      releaseDialog.showModal();
+    });
+    actions.append(release);
+  }
   row.append(content, actions);
   return row;
 }
@@ -508,7 +526,7 @@ elements.form.addEventListener('submit', async event => {
       await updateDoc(doc(db, 'gifts', elements.giftId.value), gift);
       showNotice('Изменения сохранены.');
     } else {
-      await addDoc(collection(db, 'gifts'), {...gift, status: 'available', createdAt: serverTimestamp()});
+      await addDoc(collection(db, 'gifts'), {...gift, status: 'available', reservedBy: null, createdAt: serverTimestamp()});
       showNotice('Подарок добавлен в список.');
     }
     lockForm(false);
@@ -529,6 +547,36 @@ window.addEventListener('beforeunload', event => {
   event.returnValue = '';
 });
 
+releaseDialog.querySelector('form').addEventListener('submit', async event => {
+  event.preventDefault();
+  const gift = pendingRelease;
+  const confirmed = event.submitter?.value === 'confirm';
+  releaseDialog.close();
+  pendingRelease = null;
+  if (!confirmed || !gift || saving || !isAdminUser(auth.currentUser)) return;
+  releasingId = gift.id;
+  lockForm(true);
+  render();
+  try {
+    await runTransaction(db, async transaction => {
+      const ref = doc(db, 'gifts', gift.id);
+      const current = await transaction.get(ref);
+      if (!current.exists() || current.data().status !== 'reserved') throw new Error('status-conflict');
+      transaction.update(ref, {status: 'available', reservedBy: null});
+    });
+    await waitForPendingWrites(db);
+    showNotice('Бронь снята.');
+  } catch (error) {
+    console.error(error);
+    showNotice('Не удалось снять бронь. Проверьте актуальный статус и повторите.', true);
+  } finally {
+    releasingId = null;
+    lockForm(false);
+    render();
+  }
+});
+releaseDialog.addEventListener('close', () => { pendingRelease = null; });
+
 if (!firebaseConfigured) {
   elements.loading.hidden = true;
   elements.loginView.hidden = false;
@@ -538,9 +586,10 @@ if (!firebaseConfigured) {
 } else {
   onAuthStateChanged(auth, user => {
     elements.loading.hidden = true;
-    elements.loginView.hidden = Boolean(user);
-    elements.adminView.hidden = !user;
-    if (user) {
+    const admin = isAdminUser(user);
+    elements.loginView.hidden = admin;
+    elements.adminView.hidden = !admin;
+    if (admin) {
       resizeDescription();
       subscribeToGifts();
       subscribeToGuidance();

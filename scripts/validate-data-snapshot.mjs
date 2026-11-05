@@ -12,6 +12,8 @@ for (const gift of snapshot.gifts) {
   if (!gift.id || !gift.title?.trim()) throw new Error('В снимке найден подарок без ID или названия.');
   if (!Number.isInteger(gift.desireLevel) || gift.desireLevel < 1 || gift.desireLevel > 5) throw new Error(`Некорректное желание у ${gift.title}.`);
   if (!['available', 'reserved'].includes(gift.status)) throw new Error(`Некорректный статус у ${gift.title}.`);
+  if (gift.reservedBy != null && (typeof gift.reservedBy !== 'string' || !gift.reservedBy.length || gift.reservedBy.length > 128)) throw new Error('Некорректный владелец брони.');
+  if (gift.status === 'available' && gift.reservedBy != null) throw new Error('У свободного подарка не может быть владельца брони.');
   if (gift.price != null && !isGiftPrice(gift.price)) throw new Error(`Некорректная цена у ${gift.title}.`);
   if (gift.category != null && !GIFT_CATEGORIES.includes(gift.category)) throw new Error(`Некорректная категория у ${gift.title}.`);
 }

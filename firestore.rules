@@ -4,7 +4,7 @@ service cloud.firestore {
   match /databases/{database}/documents {
     function isAdmin() {
       return request.auth != null
-        && request.auth.token.email == 'admin@birthday-wishlist.local';
+        && request.auth.token.get('email', '') == 'admin@birthday-wishlist.local';
     }
 
     function hasGiftShape(data) {
@@ -12,7 +12,7 @@ service cloud.firestore {
           'title', 'description', 'desireLevel', 'price', 'status', 'createdAt'
         ])
         && data.keys().hasOnly([
-          'title', 'description', 'desireLevel', 'price', 'category', 'status', 'createdAt'
+          'title', 'description', 'desireLevel', 'price', 'category', 'status', 'createdAt', 'reservedBy'
         ]);
     }
 
@@ -38,16 +38,26 @@ service cloud.firestore {
           ]
         ))
         && data.status in ['available', 'reserved']
+        && (data.get('reservedBy', null) == null || (
+          data.reservedBy is string && data.reservedBy.size() > 0 && data.reservedBy.size() <= 128
+        ))
+        && (data.status != 'available' || data.get('reservedBy', null) == null)
         && data.createdAt is timestamp;
     }
 
     match /gifts/{giftId} {
       allow read: if true;
-      allow create: if isAdmin() && isValidGift(request.resource.data);
+      allow create: if isAdmin() && isValidGift(request.resource.data)
+        && request.resource.data.status == 'available' && request.resource.data.get('reservedBy', null) == null;
       allow delete: if isAdmin();
       allow update: if (
           isAdmin()
-          || request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])
+          || (request.auth != null
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'reservedBy'])
+            && ((resource.data.status == 'available' && resource.data.get('reservedBy', null) == null
+              && request.resource.data.status == 'reserved' && request.resource.data.reservedBy == request.auth.uid)
+              || (resource.data.status == 'reserved' && resource.data.get('reservedBy', null) == request.auth.uid
+                && request.resource.data.status == 'available' && request.resource.data.reservedBy == null)))
         )
         && isValidGift(request.resource.data);
     }
