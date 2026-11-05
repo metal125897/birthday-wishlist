@@ -193,17 +193,31 @@ a{color:var(--gold)}
 .catalog-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 16px}
 .catalog-modes{display:inline-flex;padding:5px;border:1px solid var(--border);border-radius:16px;background:rgba(255,255,255,.025)}
 .catalog-modes .chip{min-height:44px}
-.featured-gifts{display:flex;flex-direction:column;gap:16px;padding:22px 14px 14px;border:1px solid rgba(223,199,143,.32);border-radius:28px;background:linear-gradient(180deg,rgba(223,199,143,.075),rgba(223,199,143,.018) 180px)}
+.featured-gifts{display:flex;flex-direction:column;gap:16px;padding:28px 14px 22px;margin-bottom:10px;border:1px solid rgba(223,199,143,.52);border-radius:28px;background:linear-gradient(180deg,rgba(48,43,31,.88),rgba(28,26,20,.88) 190px,rgba(24,23,18,.94));box-shadow:inset 0 1px 0 rgba(255,235,187,.08),0 16px 44px rgba(0,0,0,.25)}
 .featured-heading{text-align:center;padding:4px 12px 12px}
-.featured-heading h2{margin:0 0 6px;color:var(--gold);font-size:1.15rem;font-weight:600}
+.featured-heading h2{display:flex;align-items:center;justify-content:center;gap:16px;margin:0 0 8px;color:var(--gold);font-size:1.15rem;font-weight:600}
+.featured-heading h2::before,.featured-heading h2::after{content:"";height:1px;flex:1;max-width:140px;background:linear-gradient(90deg,transparent,rgba(223,199,143,.7))}
+.featured-heading h2::after{transform:rotate(180deg)}
+.featured-ending{display:flex;align-items:center;justify-content:center;gap:16px;width:min(420px,76%);margin:14px auto 0;color:var(--gold)}
+.featured-ending::before,.featured-ending::after{content:"";height:1px;flex:1;background:linear-gradient(90deg,transparent,rgba(223,199,143,.65))}
+.featured-ending::after{transform:rotate(180deg)}
+.featured-ending svg{flex:none;width:20px;height:20px;fill:currentColor}
 .featured-heading p{margin:0;color:var(--muted);font-size:.85rem}
+.featured-gifts .gift-card{background:rgba(7,8,10,.7)}
 .featured-gifts .gift-card.is-desire-5{border-color:rgba(255,255,255,.12);box-shadow:0 24px 72px rgba(0,0,0,.34)}
-.bookmark-button{display:grid;place-items:center;flex:none;width:44px;height:44px;padding:10px;border:0;border-radius:12px;background:transparent;color:#8e939e;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.bookmark-button svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linejoin:round}
-.bookmark-button[aria-pressed=true]{color:var(--gold)}
-.bookmark-button[aria-pressed=true] svg{fill:rgba(223,199,143,.16)}
+.gift-actions{display:grid;grid-template-columns:minmax(0,1fr) 48px;gap:10px;align-items:center}
+.gift-actions .glass-button{width:100%;min-width:0;height:48px;min-height:48px;padding:0 10px;line-height:1.25}
+.bookmark-button{display:grid;place-items:center;width:48px;height:48px;padding:11px;border:1px solid rgba(255,255,255,.19);border-radius:14px;background:rgba(255,255,255,.045);color:#b9bdc5;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-position .35s,border-color .2s,color .2s,transform .2s}
+.bookmark-button svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linejoin:round}
+.bookmark-button[aria-pressed=true]{color:#32291b;border-color:rgba(241,215,156,.8);background:linear-gradient(120deg,#b99a5a,#f0dba4 45%,#c9ac6b 72%,#9a7c43);background-size:180% 100%;box-shadow:inset 0 1px 0 rgba(255,246,220,.55)}
+.bookmark-button[aria-pressed=true] svg{fill:currentColor}
+@media(hover:hover) and (pointer:fine){.bookmark-button:hover{border-color:var(--gold)}.bookmark-button[aria-pressed=true]:hover{background-position:100% 0}}
+.bookmark-button:active{transform:scale(.96)}
 .gift-title-row{gap:10px}.gift-title{min-width:0;overflow-wrap:anywhere}
-.gift-reason{margin:12px 0 0;color:#cdbb96;font-size:.88rem;line-height:1.5;font-style:italic;overflow-wrap:anywhere}
+.gift-reason{margin:12px 0 0;color:#cdbb96;font-size:.88rem;line-height:1.5;overflow-wrap:anywhere}
+#surprise-toggle{gap:8px}
+#surprise-toggle svg{flex:none;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+#surprise-toggle[aria-pressed=false] .surprise-eye-slash{display:none}
 .gift-card .glass-button:active{transform:scale(.985)}
 .gift-card.is-saving .glass-button{position:relative;gap:8px}
 .gift-card.is-saving .glass-button::before{content:'';width:13px;height:13px;border:1.5px solid currentColor;border-right-color:transparent;border-radius:50%;animation:booking-wait .8s linear infinite}
@@ -211,19 +225,20 @@ a{color:var(--gold)}
 @media(min-width:621px){.desire-label{width:100%;flex-direction:row;align-items:center;justify-content:space-between;gap:8px;min-height:20px}.desire-copy{margin-left:auto}.admin-header{flex-wrap:wrap}.admin-header__actions{flex-wrap:wrap}}
 @media(max-width:620px){
  .catalog-heading{align-items:flex-start;flex-direction:column;gap:10px}.catalog-modes .chip{font-size:.85rem}
- .featured-gifts{padding:18px 7px 7px;gap:12px;border-radius:24px}.featured-heading{padding:0 7px 8px}.featured-heading p{font-size:.8rem}
+ .featured-gifts{padding:22px 7px 20px;gap:12px;border-radius:24px}.featured-heading{padding:0 7px 8px}.featured-heading p{font-size:.8rem}
+ .featured-heading h2{gap:9px;font-size:1.05rem}.featured-ending{margin-top:10px;gap:12px}
  .featured-gifts .gift-card{padding-inline:11px}
- .gift-title-row{grid-template-columns:minmax(0,1fr) 34px 44px;gap:6px}
- .bookmark-button{grid-column:3;grid-row:1;width:44px;height:44px;padding:10px;margin-top:-5px}
- .gift-card:not(.has-description) .gift-title{grid-column:1/3}
+ .gift-title-row{grid-template-columns:minmax(0,1fr) 34px;gap:14px}
+ .gift-card:not(.has-description) .gift-title{grid-column:1/-1}
+ .gift-actions{grid-row:3;grid-column:1/-1;margin-top:11px}
+ .gift-actions .glass-button{grid-row:auto;grid-column:auto;margin:0;height:48px;min-height:48px;padding-block:0}
  .gift-chevron{grid-row:1}
  .gift-card.has-reason:not(.is-open):not(.is-collapsing){height:auto;min-height:224px}
  .gift-card.has-reason{grid-template-rows:minmax(66px,1fr) auto auto auto}
  .gift-reason{grid-column:1/-1;grid-row:2;margin:10px 0 8px;font-size:.85rem}
  .gift-card.has-reason .price,.gift-card.has-reason .desire{grid-row:3}
- .gift-card.has-reason .gift-side .glass-button{grid-row:4}
+ .gift-card.has-reason .gift-actions{grid-row:4}
  .gift-card.has-reason .gift-description{grid-row:5}
- .admin-header__actions #surprise-toggle{flex-basis:100%}
  .admin-grid{grid-template-columns:minmax(0,1fr)}
  .admin-panel,.admin-gift>div{min-width:0}
  .admin-gift__facts .category-tag{min-width:0;display:block;overflow:hidden;text-overflow:ellipsis}

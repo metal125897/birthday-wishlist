@@ -12,7 +12,7 @@
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2306070a'/%3E%3Cpath d='M18 29h28v24H18z' fill='%23d9c08c'/%3E%3Cpath d='M23 29v-7a9 9 0 0 1 18 0v7' fill='none' stroke='%23fff' stroke-width='5'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://firestore.googleapis.com">
-  <link rel="stylesheet" href="../assets/styles.css?v=20261105-wishes">
+  <link rel="stylesheet" href="../assets/styles.css?v=20261105-wishes-polish">
 </head>
 <body class="admin-body">
   <main class="admin-shell">
@@ -41,10 +41,12 @@
           <h1>Админ-панель</h1>
         </div>
         <div class="admin-header__actions">
-          <button class="glass-button glass-button--quiet" id="surprise-toggle" type="button" aria-pressed="true">Сюрприз: включён · показать брони</button>
           <button class="glass-button glass-button--quiet" id="edit-guidance" type="button" disabled>Что не дарить</button>
           <button class="glass-button glass-button--quiet" id="export-csv" type="button" disabled>Скачать CSV</button>
-          <a class="glass-button glass-button--quiet" href="../" target="_blank" rel="noopener">Открыть сайт</a>
+          <button class="glass-button glass-button--quiet" id="surprise-toggle" type="button" aria-pressed="true" aria-label="Показать брони. Режим сюрприза включён" title="Показать брони. Режим сюрприза включён">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/><path class="surprise-eye-slash" d="m3 3 18 18"/></svg>
+            <span>Сюрприз</span>
+          </button>
           <button class="glass-button glass-button--quiet" id="logout-button" type="button">Выйти</button>
         </div>
       </header>
@@ -98,7 +100,7 @@
                 </div>
               </div>
             </div>
-            <label>Почему хочется
+            <label>Цитата
               <input id="gift-reason" maxlength="100" placeholder="Необязательно" aria-describedby="reason-counter">
               <small id="reason-counter">0 / 100</small>
             </label>
@@ -154,6 +156,6 @@
     </form>
   </dialog>
 
-  <script type="module" src="../assets/bootstrap.js?v=20261105-wishes" data-entry="../assets/admin.js?v=20261105-wishes"></script>
+  <script type="module" src="../assets/bootstrap.js?v=20261105-wishes-polish" data-entry="../assets/admin.js?v=20261105-wishes-polish"></script>
 </body>
 </html>

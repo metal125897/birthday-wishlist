@@ -229,8 +229,10 @@ function giftCard(gift) {
     if (gift.status === 'reserved') openUnreserveDialog(gift);
     else changeStatus(gift, 'reserved');
   });
-  side.append(reserve);
-  titleRow.append(bookmark);
+  const actions = document.createElement('div');
+  actions.className = 'gift-actions';
+  actions.append(reserve, bookmark);
+  side.append(actions);
   card.append(main, side);
   if (reasonText) {
     const reason = document.createElement('p');
@@ -310,7 +312,11 @@ function render() {
     const heading = document.createElement('header');
     heading.className = 'featured-heading';
     heading.innerHTML = '<h2 id="featured-title">Особенно хочется</h2><p>То, чему я буду особенно рад</p>';
-    group.append(heading, ...featured.map(giftCard));
+    const ending = document.createElement('div');
+    ending.className = 'featured-ending';
+    ending.setAttribute('aria-hidden', 'true');
+    ending.innerHTML = '<svg viewBox="0 0 24 24"><path d="m12 1 3 8 8 3-8 3-3 8-3-8-8-3 8-3z"/></svg>';
+    group.append(heading, ...featured.map(giftCard), ending);
     nodes.push(group);
   }
   nodes.push(...gifts.filter(gift => !featured.length || gift.desireLevel !== 5).map(giftCard));

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "projectId": "wishlist-b3953",
-  "capturedAt": "2026-11-05T06:40:22.312Z",
+  "capturedAt": "2026-11-05T07:02:54.050Z",
   "giftGuidance": {
     "things": "Шампунь, гель для душа, бомбочки, пена и соль для ванны, свечи, диффузоры, посуда и приборы, цветы, полотенца, маски на основе глины и тканевые маски.",
     "brands": "Mixit, Aravia, Vois, Natura Siberica, Planeta Organica, Likato, Semily, kottur, HELDI.\nSokolov, SUNLIGHT, Kari",
@@ -16,9 +16,10 @@
       "description": "https://ozon.ru/t/D4oTsJt\nhttps://www.wildberries.ru/catalog/329620584/detail.aspx",
       "desireLevel": 2,
       "price": 300,
+      "reason": "Чтобы было...",
       "status": "available",
       "title": "Гель Tiswell NANO «Пломба»",
-      "firestoreUpdateTime": "2026-09-18T13:57:29.158957Z"
+      "firestoreUpdateTime": "2026-11-05T06:50:42.910342Z"
     },
     {
       "id": "globalwhite-spray",
@@ -27,9 +28,11 @@
       "description": "Мятный вкус. 3 или 5 штук\nhttps://ozon.ru/t/dwZeRuW\nhttps://www.wildberries.ru/catalog/194564381/detail.aspx\nhttps://market.yandex.ru/cc/B79NGj",
       "desireLevel": 4,
       "price": 650,
+      "reason": "Люблю мяту",
+      "reservedBy": null,
       "status": "available",
       "title": "Мятный спрей для рта GlobalWhite",
-      "firestoreUpdateTime": "2026-10-31T10:50:54.995198Z"
+      "firestoreUpdateTime": "2026-11-05T06:56:45.611999Z"
     },
     {
       "id": "whitening-strips",
@@ -148,9 +151,10 @@
       "description": "Вкус всё равно, какой дешевле выбирайте\nhttps://ozon.ru/t/D4ozTS2\nhttps://www.wildberries.ru/catalog/279293283/detail.aspx\nhttps://market.yandex.ru/cc/B4fNQ4",
       "desireLevel": 4,
       "price": 950,
+      "reservedBy": null,
       "status": "available",
       "title": "EAA Bombbar",
-      "firestoreUpdateTime": "2026-11-01T15:18:25.900937Z"
+      "firestoreUpdateTime": "2026-11-05T06:56:19.159024Z"
     },
     {
       "id": "creatine",
@@ -588,9 +592,10 @@
       "description": "",
       "desireLevel": 5,
       "price": null,
+      "reservedBy": null,
       "status": "available",
       "title": "Деньги (вне очередей и броней)",
-      "firestoreUpdateTime": "2026-09-26T12:23:21.619513Z"
+      "firestoreUpdateTime": "2026-11-05T06:55:37.078214Z"
     },
     {
       "id": "JoKIGNqtlMgwRfpgQlKh",
