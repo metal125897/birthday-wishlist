@@ -31,6 +31,7 @@ const state = {
   gifts: [], filter: 'all', category: 'all', sort: 'desire-desc', expanded: new Set(), pendingUnreserve: null,
   unsubscribe: null, unsubscribeGuidance: null, pendingStatusIds: new Set(), confirmedStatuses: new Map()
 };
+let bookmarkGradientSequence = 0;
 
 function setupGuidanceAnimation() {
   const details = document.querySelector('.gift-guidance');
@@ -178,7 +179,9 @@ function giftCard(gift) {
   const bookmarked = state.bookmarks.has(gift.id);
   bookmark.setAttribute('aria-pressed', String(bookmarked));
   bookmark.setAttribute('aria-label', bookmarked ? 'Убрать из отложенных' : 'Отложить подарок');
-  bookmark.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4z"/></svg>';
+  const gradientId = `bookmark-gold-${++bookmarkGradientSequence}`;
+  bookmark.style.setProperty('--bookmark-fill', `url(#${gradientId})`);
+  bookmark.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="${gradientId}" x1="0%" y1="0%" x2="100%" y2="100%"><stop stop-color="#b99a5a"/><stop offset=".45" stop-color="#f0dba4"/><stop offset=".75" stop-color="#c9ac6b"/><stop offset="1" stop-color="#9a7c43"/></linearGradient></defs><path class="bookmark-mark" d="M6 4h12v17l-6-4-6 4z"/></svg>`;
   bookmark.addEventListener('click', event => {
     event.stopPropagation();
     if (state.bookmarks.has(gift.id)) state.bookmarks.delete(gift.id); else state.bookmarks.add(gift.id);
@@ -462,20 +465,27 @@ function subscribe() {
 
 const statusFilter = document.querySelector('.status-filter');
 const statusButtons = [...statusFilter.querySelectorAll('[data-filter]')];
+const modeFilter = document.querySelector('.catalog-modes');
+const modeButtons = [...modeFilter.querySelectorAll('[data-mode]')];
 
-function updateStatusSlider() {
-  const active = statusFilter.querySelector('.is-active');
+function updateSegmentSlider(container) {
+  const active = container.querySelector('.is-active');
   const bounds = active.getBoundingClientRect();
-  const left = bounds.left - statusFilter.getBoundingClientRect().left - statusFilter.clientLeft;
-  statusFilter.style.setProperty('--status-x', `${left}px`);
-  statusFilter.style.setProperty('--status-width', `${bounds.width}px`);
-  statusFilter.classList.add('has-slider');
+  const left = bounds.left - container.getBoundingClientRect().left - container.clientLeft;
+  container.style.setProperty('--status-x', `${left}px`);
+  container.style.setProperty('--status-width', `${bounds.width}px`);
+  container.classList.add('has-slider');
 }
+function updateStatusSlider() { updateSegmentSlider(statusFilter); }
+function updateModeSlider() { updateSegmentSlider(modeFilter); }
 
 updateStatusSlider();
+updateModeSlider();
 // Button widths also change when the local font loads or the viewport changes.
 const statusSliderObserver = new ResizeObserver(updateStatusSlider);
 statusButtons.forEach(button => statusSliderObserver.observe(button));
+const modeSliderObserver = new ResizeObserver(updateModeSlider);
+modeButtons.forEach(button => modeSliderObserver.observe(button));
 
 statusButtons.forEach(button => button.addEventListener('click', () => {
   state.filter = button.dataset.filter;
@@ -587,6 +597,7 @@ document.querySelectorAll('[data-mode]').forEach(button => button.addEventListen
     item.classList.toggle('is-active', item === button);
     item.setAttribute('aria-pressed', String(item === button));
   });
+  updateModeSlider();
   document.querySelector('#catalog-filters').hidden = state.mode === 'saved';
   document.querySelector('#saved-counter').hidden = state.mode !== 'saved';
   if (state.mode === 'catalog') updateStatusSlider();
