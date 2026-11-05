@@ -155,6 +155,39 @@ function appendLinkedText(container, text) {
   container.append(document.createTextNode(text.slice(cursor)));
 }
 
+function updateBookmarkButton(button, id) {
+  const selected = state.bookmarks.has(id);
+  button.classList.toggle('glass-button--quiet', selected);
+  button.setAttribute('aria-pressed', String(selected));
+  button.setAttribute('aria-label', selected ? 'Убрать из отложенных' : 'Отложить подарок');
+}
+
+function refreshBookmarks() {
+  if (!elements.loading.hidden || !elements.error.hidden) return;
+  const gifts = sortedFilteredGifts();
+  const cards = [...elements.list.querySelectorAll('.gift-card')];
+  const focused = document.activeElement?.closest('.gift-card');
+  const focusedIndex = cards.indexOf(focused);
+  cards.forEach(card => updateBookmarkButton(card.querySelector('.bookmark-button'), card.dataset.id));
+  if (state.mode === 'saved') {
+    const byId = new Map(cards.map(card => [card.dataset.id, card]));
+    const wanted = new Set(gifts.map(gift => gift.id));
+    cards.filter(card => !wanted.has(card.dataset.id)).forEach(card => card.remove());
+    // Reuse existing nodes so hover, focus and description animations stay intact.
+    gifts.forEach((gift, index) => {
+      const card = byId.get(gift.id) || giftCard(gift);
+      const current = elements.list.children[index];
+      if (card !== current) elements.list.insertBefore(card, current || null);
+    });
+  }
+  updateListSummary(gifts);
+  if (focused && !focused.isConnected) {
+    const remaining = [...elements.list.querySelectorAll('.gift-card')];
+    const next = remaining[Math.min(focusedIndex, remaining.length - 1)]?.querySelector('.bookmark-button');
+    (next || document.querySelector('[data-mode="saved"]')).focus({preventScroll: true});
+  }
+}
+
 function giftCard(gift) {
   const hasDescription = Boolean(gift.description?.trim());
   const hasPrice = isGiftPrice(gift.price);
@@ -175,10 +208,8 @@ function giftCard(gift) {
   titleRow.className = 'gift-title-row';
   const bookmark = document.createElement('button');
   bookmark.type = 'button';
-  bookmark.className = `bookmark-button${gift.status === 'reserved' ? ' glass-button--quiet' : ''}`;
-  const bookmarked = state.bookmarks.has(gift.id);
-  bookmark.setAttribute('aria-pressed', String(bookmarked));
-  bookmark.setAttribute('aria-label', bookmarked ? 'Убрать из отложенных' : 'Отложить подарок');
+  bookmark.className = 'bookmark-button';
+  updateBookmarkButton(bookmark, gift.id);
   const gradientId = `bookmark-gold-${++bookmarkGradientSequence}`;
   bookmark.style.setProperty('--bookmark-fill', `url(#${gradientId})`);
   bookmark.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="${gradientId}" x1="0%" y1="0%" x2="100%" y2="100%"><stop stop-color="#b99a5a"/><stop offset=".45" stop-color="#f0dba4"/><stop offset=".75" stop-color="#c9ac6b"/><stop offset="1" stop-color="#9a7c43"/></linearGradient></defs><path class="bookmark-mark" d="M6 4h12v17l-6-4-6 4z"/></svg>`;
@@ -186,7 +217,7 @@ function giftCard(gift) {
     event.stopPropagation();
     if (state.bookmarks.has(gift.id)) state.bookmarks.delete(gift.id); else state.bookmarks.add(gift.id);
     if (!writeBookmarks(bookmarkStorage, state.bookmarks)) showNotice('Изменение действует до закрытия страницы. Браузер не разрешает сохранить закладки.', true);
-    render();
+    refreshBookmarks();
   });
   const title = document.createElement('h2');
   title.className = 'gift-title';
@@ -300,8 +331,6 @@ function render() {
   const gifts = sortedFilteredGifts();
   elements.loading.hidden = true;
   elements.error.hidden = true;
-  elements.counter.innerHTML = `В списке <b>${gifts.length} ${plural(gifts.length, ['подарок', 'подарка', 'подарков'])}</b>`;
-  document.querySelector('#saved-counter').textContent = `Отложено: ${gifts.length} ${plural(gifts.length, ['подарок', 'подарка', 'подарков'])}`;
   const focusedCard = document.activeElement?.closest('.gift-card');
   const focusedId = focusedCard?.dataset.id;
   const wasReserve = document.activeElement?.classList.contains('glass-button');
@@ -329,6 +358,12 @@ function render() {
     const target = card?.querySelector(wasBookmark ? '.bookmark-button' : wasReserve ? '.glass-button' : '.gift-title-toggle');
     (target || document.querySelector(`[data-mode="${state.mode}"]`)).focus({preventScroll: true});
   }
+  updateListSummary(gifts);
+}
+
+function updateListSummary(gifts) {
+  elements.counter.innerHTML = `В списке <b>${gifts.length} ${plural(gifts.length, ['подарок', 'подарка', 'подарков'])}</b>`;
+  document.querySelector('#saved-counter').textContent = `Отложено: ${gifts.length} ${plural(gifts.length, ['подарок', 'подарка', 'подарков'])}`;
   elements.list.hidden = gifts.length === 0;
   elements.empty.hidden = gifts.length !== 0;
   elements.empty.querySelector('h2').textContent = state.mode === 'saved' ? 'Пока нет отложенных подарков' : 'Пока нет подарков';
@@ -606,7 +641,7 @@ document.querySelectorAll('[data-mode]').forEach(button => button.addEventListen
 window.addEventListener('storage', event => {
   if (event.key !== bookmarkStorageKey && event.key !== null) return;
   state.bookmarks = readBookmarks(bookmarkStorage);
-  render();
+  refreshBookmarks();
 });
 
 elements.categoryTrigger.addEventListener('click', () => sortListbox.close());
