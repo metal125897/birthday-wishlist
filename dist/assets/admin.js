@@ -29,6 +29,8 @@ const elements = {
   categoryMenu: document.querySelector('#gift-category-menu'), categoryValue: document.querySelector('#gift-category-value'),
   categoryOptions: [...document.querySelectorAll('[data-admin-category]')],
   description: document.querySelector('#gift-description'),
+  reason: document.querySelector('#gift-reason'), reasonCounter: document.querySelector('#reason-counter'),
+  surpriseToggle: document.querySelector('#surprise-toggle'),
   submit: document.querySelector('#submit-gift'), cancel: document.querySelector('#cancel-edit'),
   gifts: document.querySelector('#admin-gifts'), count: document.querySelector('#admin-count'),
   notice: document.querySelector('#admin-notice'), exportCsv: document.querySelector('#export-csv'),
@@ -39,13 +41,14 @@ const elements = {
 };
 
 const state = {
+  surprise: true,
   gifts: [], unsubscribe: null, unsubscribeGuidance: null,
   guidance: {...DEFAULT_GIFT_GUIDANCE}
 };
 
 function giftDraft() {
   return JSON.stringify([elements.giftId.value, elements.title.value, elements.price.value,
-    elements.category.value, elements.description.value, desireLevel()]);
+    elements.category.value, elements.description.value, elements.reason.value, desireLevel()]);
 }
 function guidanceDraft() {
   return JSON.stringify([elements.guidanceThings.value, elements.guidanceBrands.value]);
@@ -61,6 +64,17 @@ function allowDiscard() {
 }
 
 let descriptionWidth = 0;
+function updateReasonCounter() {
+  elements.reasonCounter.textContent = `${elements.reason.value.length} / 100`;
+}
+elements.reason.addEventListener('input', updateReasonCounter);
+elements.surpriseToggle.addEventListener('click', () => {
+  if (saving) return;
+  state.surprise = !state.surprise;
+  elements.surpriseToggle.setAttribute('aria-pressed', String(state.surprise));
+  elements.surpriseToggle.textContent = state.surprise ? 'Сюрприз: включён · показать брони' : 'Брони видны · скрыть';
+  render();
+});
 function resizeDescription() {
   const field = elements.description;
   if (!field.clientWidth) return;
@@ -195,6 +209,7 @@ function normalizeForm() {
   return {
     title,
     description: elements.description.value.trim(),
+    reason: elements.reason.value.trim(),
     desireLevel: desireLevel(),
     price: parseGiftPrice(elements.price.value),
     category: normalizeGiftCategory(elements.category.value)
@@ -204,6 +219,7 @@ function normalizeForm() {
 function validateGift(gift) {
   if (!gift.title || gift.title.length > 120) return 'Введите название длиной до 120 символов.';
   if (gift.description.length > 4000) return 'Описание не должно быть длиннее 4000 символов.';
+  if (gift.reason.length > 100) return 'Подпись не должна быть длиннее 100 символов.';
   if (!Number.isInteger(gift.desireLevel) || gift.desireLevel < 1 || gift.desireLevel > 5) return 'Выберите уровень желания от 1 до 5.';
   if (gift.price !== null && !isGiftPrice(gift.price)) return 'Цена должна содержать только цифры: от 0 до 9 999 999.';
   if (gift.category !== null && !GIFT_CATEGORIES.includes(gift.category)) return 'Выберите категорию из списка.';
@@ -222,6 +238,7 @@ function showNotice(message, error = false) {
 function resetForm() {
   if (saving) return;
   elements.form.reset();
+  updateReasonCounter();
   rememberPriceInput();
   resizeDescription();
   setCategoryValue('');
@@ -242,6 +259,8 @@ function startEdit(gift) {
   rememberPriceInput();
   setCategoryValue(gift.category);
   elements.description.value = gift.description || '';
+  elements.reason.value = gift.reason || '';
+  updateReasonCounter();
   resizeDescription();
   document.querySelector(`input[name="desire"][value="${gift.desireLevel}"]`).checked = true;
   elements.formTitle.textContent = 'Редактирование подарка';
@@ -272,15 +291,18 @@ function metadata(gift) {
     const tag = document.createElement('span');
     tag.className = 'category-tag';
     tag.textContent = giftCategoryLabel(category);
+    tag.title = tag.textContent;
     facts.append(tag);
   }
 
   const stateRow = document.createElement('div');
   stateRow.className = 'admin-gift__state';
-  const status = document.createElement('span');
-  status.className = `status-pill ${gift.status}`;
-  status.textContent = gift.status === 'reserved' ? 'Забронировано' : 'Доступно для брони';
-  stateRow.append(status);
+  if (!state.surprise) {
+    const status = document.createElement('span');
+    status.className = `status-pill ${gift.status}`;
+    status.textContent = gift.status === 'reserved' ? 'Забронировано' : 'Доступно для брони';
+    stateRow.append(status);
+  }
   if (gift.description?.trim()) {
     const description = document.createElement('span');
     description.className = 'admin-gift__description-tag';
@@ -313,7 +335,7 @@ function adminGift(gift) {
   remove.textContent = 'Удалить';
   remove.addEventListener('click', () => showDeleteConfirmation(actions, gift));
   actions.append(edit, remove);
-  if (gift.status === 'reserved') {
+  if (!state.surprise && gift.status === 'reserved') {
     const release = document.createElement('button');
     release.type = 'button';
     release.className = 'mini-button';

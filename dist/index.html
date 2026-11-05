@@ -13,7 +13,7 @@
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2306070a'/%3E%3Cpath d='M15 28h34v24H15z' fill='%23d9c08c'/%3E%3Cpath d='M32 22v30M13 22h38v10H13z' fill='none' stroke='%23fff' stroke-width='4'/%3E%3Cpath d='M32 22c-11 0-12-14-5-14 5 0 5 7 5 14Zm0 0c11 0 12-14 5-14-5 0-5 7-5 14Z' fill='none' stroke='%23d9c08c' stroke-width='4'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://firestore.googleapis.com">
-  <link rel="stylesheet" href="./assets/styles.css?v=20261105-owners">
+  <link rel="stylesheet" href="./assets/styles.css?v=20261105-wishes">
 </head>
 <body>
   <a class="skip-link" href="#wishlist">К списку подарков</a>
@@ -37,7 +37,14 @@
     <img class="ambient ambient--sphere" src="./assets/float_sphere.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
     <img class="ambient ambient--torus" src="./assets/float_torus.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
 
-    <section class="toolbar" aria-label="Управление списком">
+    <div class="catalog-heading">
+      <div class="catalog-modes" role="group" aria-label="Режим списка">
+        <button class="chip is-active" type="button" data-mode="catalog" aria-pressed="true">Каталог</button>
+        <button class="chip" type="button" data-mode="saved" aria-pressed="false">Отложенные</button>
+      </div>
+      <p id="saved-counter" class="counter" aria-live="polite" hidden></p>
+    </div>
+    <section class="toolbar" id="catalog-filters" aria-label="Управление списком">
       <div class="toolbar__meta">
         <p class="counter" id="counter" aria-live="polite">Загружаем подарки…</p>
         <div class="status-filter" role="group" aria-label="Фильтр по статусу">
@@ -127,6 +134,17 @@
   </dialog>
 
   <noscript><div class="noscript">Для работы списка нужен JavaScript.</div></noscript>
-  <script type="module" src="./assets/bootstrap.js?v=20261105-owners" data-entry="./assets/app.js?v=20261105-owners"></script>
+  <dialog class="reserve-dialog success-dialog" id="booking-success" aria-labelledby="success-title" aria-describedby="success-copy success-hint">
+    <form method="dialog" class="dialog-card">
+      <button class="dialog-close" value="close" aria-label="Закрыть">×</button>
+      <svg class="success-check" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="27"/><path d="m20 32 8 8 17-18"/></svg>
+      <h2 id="success-title">Подарок за вами</h2>
+      <p id="success-copy"></p>
+      <p id="success-hint">Другие гости уже увидят, что этот подарок занят.</p>
+      <p class="success-session">Снять вашу бронь можно в этом браузере. После очистки данных сайта поможет владелец списка.</p>
+      <button class="glass-button" value="done">Готово</button>
+    </form>
+  </dialog>
+  <script type="module" src="./assets/bootstrap.js?v=20261105-wishes" data-entry="./assets/app.js?v=20261105-wishes"></script>
 </body>
 </html>

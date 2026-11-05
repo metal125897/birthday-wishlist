@@ -31,6 +31,11 @@ const noOwner={...gift,status:{stringValue:'reserved'}};delete noOwner.reservedB
 await seed('missing-owner',noOwner,true);
 await update('missing owner cannot be cleared by guest','missing-owner',a,{status:'available',reservedBy:null},false);
 await update('admin can clear missing owner','missing-owner',admin,{status:'available',reservedBy:null},true);
+await update('admin may add 100 char reason','owned',admin,{reason:'я'.repeat(100)},true);
+await update('guest may not edit reason','owned',a,{reason:'changed'},false);
+await update('admin may clear reason','owned',admin,{reason:''},true);
+await update('reason cannot exceed 100 chars','owned',admin,{reason:'я'.repeat(101)},false);
+await update('reason cannot be a number','owned',admin,{reason:42},false);
 for(const [auth,allowed] of [[a,false],[outsider,false],[admin,true]]){
  const r=await fetch(base+'/gifts/new-'+(++count),{method:'PATCH',headers:headers(auth),body:JSON.stringify({fields:gift})});assert.equal(r.ok,allowed,'create role');
 }

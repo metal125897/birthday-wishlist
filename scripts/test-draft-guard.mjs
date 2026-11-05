@@ -4,12 +4,12 @@ import assert from 'node:assert/strict';
 const source=await readFile(new URL('../dist/assets/admin.js',import.meta.url),'utf8');
 const functions=source.slice(source.indexOf('function giftDraft()'),source.indexOf('\nlet descriptionWidth'));
 const field=()=>({value:''});
-const elements={giftId:field(),title:field(),price:field(),category:field(),description:field(),guidanceThings:field(),guidanceBrands:field(),guidanceDialog:{open:false}};
+const elements={giftId:field(),title:field(),price:field(),category:field(),description:field(),reason:field(),guidanceThings:field(),guidanceBrands:field(),guidanceDialog:{open:false}};
 let level=1,consent=false;
 const context=vm.createContext({elements,desireLevel:()=>level,window:{confirm:()=>consent}});
 vm.runInContext(functions,context);
 assert.equal(context.hasUnsavedDraft(),false);
-for(const name of ['title','description','price','category']){
+for(const name of ['title','description','reason','price','category']){
  elements[name].value='changed';assert.equal(context.hasUnsavedDraft(),true);assert.equal(context.allowDiscard(),false);
  consent=true;assert.equal(context.allowDiscard(),true);consent=false;elements[name].value='';assert.equal(context.hasUnsavedDraft(),false);
 }

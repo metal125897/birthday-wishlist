@@ -54,7 +54,8 @@ const distSources = await Promise.all([
   'dist/index.html', 'dist/admin/index.html', 'dist/assets/app.js',
   'dist/assets/admin.js', 'dist/assets/firebase-client.js', 'dist/assets/seed-data.js'
 ].map(path => readFile(resolve(root, path), 'utf8')));
-if (distSources.some(source => source.includes('localStorage'))) throw new Error('Данные нельзя хранить в localStorage.');
+if (distSources.filter((_, index) => index !== 2).some(source => source.includes('localStorage'))) throw new Error('Данные подарков нельзя хранить в localStorage.');
+if (!distSources[2].includes('readBookmarks(bookmarkStorage)')) throw new Error('Локальное хранение разрешено только для ID закладок.');
 
 const publicHtml = distSources[0];
 const adminHtml = distSources[1];
@@ -87,7 +88,7 @@ if ((styles.match(/inter-400-cyrillic\.woff2/g) || []).length !== 4) {
 
 const writeIndex = publicApp.indexOf('await runTransaction(db');
 const acknowledgementIndex = publicApp.indexOf('await waitForPendingWrites(db)', writeIndex);
-const successIndex = publicApp.indexOf("showNotice(status === 'reserved'", acknowledgementIndex);
+const successIndex = publicApp.indexOf("openBookingSuccess(gift.id)", acknowledgementIndex);
 if (writeIndex < 0 || acknowledgementIndex < writeIndex || successIndex < acknowledgementIndex) {
   throw new Error('Успех бронирования можно показывать только после подтверждения Firestore.');
 }

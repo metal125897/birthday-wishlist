@@ -10,6 +10,7 @@ if (!Array.isArray(snapshot.gifts) || !snapshot.gifts.length) throw new Error('�
 if (new Set(snapshot.gifts.map(gift => gift.id)).size !== snapshot.gifts.length) throw new Error('В снимке Firestore повторяются ID подарков.');
 for (const gift of snapshot.gifts) {
   if (!gift.id || !gift.title?.trim()) throw new Error('В снимке найден подарок без ID или названия.');
+  if (gift.reason !== undefined && (typeof gift.reason !== 'string' || gift.reason.length > 100)) throw new Error('Некорректная короткая подпись.');
   if (!Number.isInteger(gift.desireLevel) || gift.desireLevel < 1 || gift.desireLevel > 5) throw new Error(`Некорректное желание у ${gift.title}.`);
   if (!['available', 'reserved'].includes(gift.status)) throw new Error(`Некорректный статус у ${gift.title}.`);
   if (gift.reservedBy != null && (typeof gift.reservedBy !== 'string' || !gift.reservedBy.length || gift.reservedBy.length > 128)) throw new Error('Некорректный владелец брони.');

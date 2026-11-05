@@ -189,3 +189,52 @@ a{color:var(--gold)}
   .gift-side .glass-button{margin-top:11px}
   .gift-title-toggle{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
 }
+/* Catalog additions retain the established dark glass and compact cards. */
+.catalog-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 16px}
+.catalog-modes{display:inline-flex;padding:5px;border:1px solid var(--border);border-radius:16px;background:rgba(255,255,255,.025)}
+.catalog-modes .chip{min-height:44px}
+.featured-gifts{display:flex;flex-direction:column;gap:16px;padding:22px 14px 14px;border:1px solid rgba(223,199,143,.32);border-radius:28px;background:linear-gradient(180deg,rgba(223,199,143,.075),rgba(223,199,143,.018) 180px)}
+.featured-heading{text-align:center;padding:4px 12px 12px}
+.featured-heading h2{margin:0 0 6px;color:var(--gold);font-size:1.15rem;font-weight:600}
+.featured-heading p{margin:0;color:var(--muted);font-size:.85rem}
+.featured-gifts .gift-card.is-desire-5{border-color:rgba(255,255,255,.12);box-shadow:0 24px 72px rgba(0,0,0,.34)}
+.bookmark-button{display:grid;place-items:center;flex:none;width:44px;height:44px;padding:10px;border:0;border-radius:12px;background:transparent;color:#8e939e;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.bookmark-button svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linejoin:round}
+.bookmark-button[aria-pressed=true]{color:var(--gold)}
+.bookmark-button[aria-pressed=true] svg{fill:rgba(223,199,143,.16)}
+.gift-title-row{gap:10px}.gift-title{min-width:0;overflow-wrap:anywhere}
+.gift-reason{margin:12px 0 0;color:#cdbb96;font-size:.88rem;line-height:1.5;font-style:italic;overflow-wrap:anywhere}
+.gift-card .glass-button:active{transform:scale(.985)}
+.gift-card.is-saving .glass-button{position:relative;gap:8px}
+.gift-card.is-saving .glass-button::before{content:'';width:13px;height:13px;border:1.5px solid currentColor;border-right-color:transparent;border-radius:50%;animation:booking-wait .8s linear infinite}
+@keyframes booking-wait{to{transform:rotate(360deg)}}
+@media(min-width:621px){.desire-label{width:100%;flex-direction:row;align-items:center;justify-content:space-between;gap:8px;min-height:20px}.desire-copy{margin-left:auto}.admin-header{flex-wrap:wrap}.admin-header__actions{flex-wrap:wrap}}
+@media(max-width:620px){
+ .catalog-heading{align-items:flex-start;flex-direction:column;gap:10px}.catalog-modes .chip{font-size:.85rem}
+ .featured-gifts{padding:18px 7px 7px;gap:12px;border-radius:24px}.featured-heading{padding:0 7px 8px}.featured-heading p{font-size:.8rem}
+ .featured-gifts .gift-card{padding-inline:11px}
+ .gift-title-row{grid-template-columns:minmax(0,1fr) 34px 44px;gap:6px}
+ .bookmark-button{grid-column:3;grid-row:1;width:44px;height:44px;padding:10px;margin-top:-5px}
+ .gift-card:not(.has-description) .gift-title{grid-column:1/3}
+ .gift-chevron{grid-row:1}
+ .gift-card.has-reason:not(.is-open):not(.is-collapsing){height:auto;min-height:224px}
+ .gift-card.has-reason{grid-template-rows:minmax(66px,1fr) auto auto auto}
+ .gift-reason{grid-column:1/-1;grid-row:2;margin:10px 0 8px;font-size:.85rem}
+ .gift-card.has-reason .price,.gift-card.has-reason .desire{grid-row:3}
+ .gift-card.has-reason .gift-side .glass-button{grid-row:4}
+ .gift-card.has-reason .gift-description{grid-row:5}
+ .admin-header__actions #surprise-toggle{flex-basis:100%}
+ .admin-grid{grid-template-columns:minmax(0,1fr)}
+ .admin-panel,.admin-gift>div{min-width:0}
+ .admin-gift__facts .category-tag{min-width:0;display:block;overflow:hidden;text-overflow:ellipsis}
+}
+.success-dialog .dialog-card{text-align:center}
+.success-check{display:block;width:64px;height:64px;margin:6px auto 22px;fill:none;stroke:#cdbb96;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.success-check circle{stroke-dasharray:170;stroke-dashoffset:170;animation:success-draw .4s .08s ease-out forwards}
+.success-check path{stroke-dasharray:40;stroke-dashoffset:40;animation:success-draw .28s .35s ease-out forwards}
+@keyframes success-draw{to{stroke-dashoffset:0}}
+.success-dialog h2,.success-dialog p{animation:success-copy .3s .32s both}
+@keyframes success-copy{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.success-dialog .success-session{font-size:.8rem;color:var(--muted)}
+.success-dialog .glass-button{width:100%}
+@media(prefers-reduced-motion:reduce){.success-check circle,.success-check path{animation:none;stroke-dashoffset:0}.success-dialog h2,.success-dialog p{animation:none}.gift-card.is-saving .glass-button::before{animation:none}}

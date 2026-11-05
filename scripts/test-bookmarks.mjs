@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import {readBookmarks, writeBookmarks} from '../dist/assets/bookmarks.js';
+let saved;
+const storage = {getItem: () => saved, setItem: (_, value) => { saved = value; }};
+assert.deepEqual([...readBookmarks(storage)], []);
+assert.equal(writeBookmarks(storage, new Set(['gift-a', 'gift-b'])), true);
+assert.deepEqual([...readBookmarks(storage)], ['gift-a', 'gift-b']);
+assert.equal(writeBookmarks(undefined, new Set(['a'])), false);
+saved = '{broken'; assert.equal(readBookmarks(storage).size, 0);
+saved = '["a",{"status":"reserved"},null,12,"a"]';
+assert.deepEqual([...readBookmarks(storage)], ['a']);
+console.log('Bookmarks: ID-only persistence, deduplication, invalid data and storage failure passed.');

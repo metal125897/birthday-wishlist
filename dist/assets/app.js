@@ -4,6 +4,10 @@ import {reservationUpdate, ownsReservation} from './reservation-policy.js?v=2026
 import {giftCategoryLabel, normalizeGiftCategory} from './categories.js?v=20260917-category-labels';
 import {normalizeGiftGuidance} from './site-content.js?v=20260920-editable-guidance';
 import {isGiftPrice} from './gift-price.js';
+import {readBookmarks, writeBookmarks, bookmarkStorageKey} from './bookmarks.js';
+
+let bookmarkStorage;
+try { bookmarkStorage = window.localStorage; } catch { /* Bookmarks still work for this page. */ }
 
 const elements = {
   list: document.querySelector('#gift-list'), loading: document.querySelector('#loading'),
@@ -22,6 +26,7 @@ const elements = {
 };
 
 const state = {
+  mode: 'catalog', bookmarks: readBookmarks(bookmarkStorage),
   guestUid: null,
   gifts: [], filter: 'all', category: 'all', sort: 'desire-desc', expanded: new Set(), pendingUnreserve: null,
   unsubscribe: null, unsubscribeGuidance: null, pendingStatusIds: new Set(), confirmedStatuses: new Map()
@@ -88,12 +93,14 @@ function createdMillis(gift) {
 
 function sortedFilteredGifts() {
   const filtered = state.gifts.filter(gift => {
+    if (state.mode === 'saved') return state.bookmarks.has(gift.id);
     const matchesStatus = state.filter === 'all' || gift.status === state.filter;
     const matchesCategory = state.category === 'all' || normalizeGiftCategory(gift.category) === state.category;
     return matchesStatus && matchesCategory;
   });
   return filtered.sort((a, b) => {
     const byCreated = createdMillis(a) - createdMillis(b);
+    if (state.mode === 'saved') return b.desireLevel - a.desireLevel || byCreated;
     if (state.sort === 'desire-desc') return b.desireLevel - a.desireLevel || byCreated;
     if (state.sort === 'desire-asc') return a.desireLevel - b.desireLevel || byCreated;
     const aHasPrice = isGiftPrice(a.price);
@@ -154,6 +161,8 @@ function giftCard(gift) {
   const card = document.createElement('article');
   card.className = `gift-card${hasDescription ? ' has-description' : ''}${hasPrice ? ' has-price' : ''}${gift.status === 'reserved' ? ' is-reserved' : ''}${gift.desireLevel === 5 ? ' is-desire-5' : ''}${state.expanded.has(gift.id) ? ' is-open' : ''}${statusPending ? ' is-saving' : ''}`;
   card.dataset.id = gift.id;
+  const reasonText = typeof gift.reason === 'string' ? gift.reason.trim() : '';
+  card.classList.toggle('has-reason', Boolean(reasonText));
   if (statusPending) card.setAttribute('aria-busy', 'true');
   if (hasDescription) {
     card.setAttribute('aria-expanded', String(state.expanded.has(gift.id)));
@@ -163,6 +172,19 @@ function giftCard(gift) {
   main.className = 'gift-main';
   const titleRow = document.createElement('div');
   titleRow.className = 'gift-title-row';
+  const bookmark = document.createElement('button');
+  bookmark.type = 'button';
+  bookmark.className = 'bookmark-button';
+  const bookmarked = state.bookmarks.has(gift.id);
+  bookmark.setAttribute('aria-pressed', String(bookmarked));
+  bookmark.setAttribute('aria-label', bookmarked ? 'Убрать из отложенных' : 'Отложить подарок');
+  bookmark.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4z"/></svg>';
+  bookmark.addEventListener('click', event => {
+    event.stopPropagation();
+    if (state.bookmarks.has(gift.id)) state.bookmarks.delete(gift.id); else state.bookmarks.add(gift.id);
+    if (!writeBookmarks(bookmarkStorage, state.bookmarks)) showNotice('Изменение действует до закрытия страницы. Браузер не разрешает сохранить закладки.', true);
+    render();
+  });
   const title = document.createElement('h2');
   title.className = 'gift-title';
   title.textContent = gift.title;
@@ -208,7 +230,14 @@ function giftCard(gift) {
     else changeStatus(gift, 'reserved');
   });
   side.append(reserve);
+  titleRow.append(bookmark);
   card.append(main, side);
+  if (reasonText) {
+    const reason = document.createElement('p');
+    reason.className = 'gift-reason';
+    reason.textContent = reasonText;
+    main.append(reason);
+  }
 
   if (hasDescription) {
     const description = document.createElement('div');
@@ -267,15 +296,34 @@ function render() {
   elements.loading.hidden = true;
   elements.error.hidden = true;
   elements.counter.innerHTML = `В списке <b>${gifts.length} ${plural(gifts.length, ['подарок', 'подарка', 'подарков'])}</b>`;
+  document.querySelector('#saved-counter').textContent = `Отложено: ${gifts.length} ${plural(gifts.length, ['подарок', 'подарка', 'подарков'])}`;
   const focusedCard = document.activeElement?.closest('.gift-card');
   const focusedId = focusedCard?.dataset.id;
   const wasReserve = document.activeElement?.classList.contains('glass-button');
-  elements.list.replaceChildren(...gifts.map(giftCard));
-  if (focusedId) [...elements.list.children].find(card => card.dataset.id === focusedId)
-    ?.querySelector(wasReserve ? '.glass-button' : '.gift-title-toggle')?.focus({preventScroll: true});
+  const wasBookmark = document.activeElement?.classList.contains('bookmark-button');
+  const featured = state.mode === 'catalog' && state.sort === 'desire-desc' ? gifts.filter(gift => gift.desireLevel === 5) : [];
+  const nodes = [];
+  if (featured.length) {
+    const group = document.createElement('section');
+    group.className = 'featured-gifts';
+    group.setAttribute('aria-labelledby', 'featured-title');
+    const heading = document.createElement('header');
+    heading.className = 'featured-heading';
+    heading.innerHTML = '<h2 id="featured-title">Особенно хочется</h2><p>То, чему я буду особенно рад</p>';
+    group.append(heading, ...featured.map(giftCard));
+    nodes.push(group);
+  }
+  nodes.push(...gifts.filter(gift => !featured.length || gift.desireLevel !== 5).map(giftCard));
+  elements.list.replaceChildren(...nodes);
+  if (focusedId) {
+    const card = [...elements.list.querySelectorAll('.gift-card')].find(item => item.dataset.id === focusedId);
+    const target = card?.querySelector(wasBookmark ? '.bookmark-button' : wasReserve ? '.glass-button' : '.gift-title-toggle');
+    (target || document.querySelector(`[data-mode="${state.mode}"]`)).focus({preventScroll: true});
+  }
   elements.list.hidden = gifts.length === 0;
   elements.empty.hidden = gifts.length !== 0;
-  elements.emptyCopy.textContent = state.gifts.length
+  elements.empty.querySelector('h2').textContent = state.mode === 'saved' ? 'Пока нет отложенных подарков' : 'Пока нет подарков';
+  elements.emptyCopy.textContent = state.mode === 'saved' ? 'Нажмите на закладку у понравившегося подарка, чтобы вернуться к нему позже.' : state.gifts.length
     ? 'В этой категории ничего не нашлось по текущим фильтрам. Попробуйте изменить категорию или статус.'
     : 'Список ещё наполняется. Загляните чуть позже.';
 }
@@ -310,13 +358,14 @@ async function changeStatus(gift, status) {
     state.gifts = state.gifts.map(item => item.id === gift.id ? {...item, ...saved} : item);
     state.pendingStatusIds.delete(gift.id);
     render();
-    showNotice(status === 'reserved' ? 'Ваша бронь сохранена. Снять её можно в этом браузере. После очистки данных сайта поможет владелец списка.' : 'Бронь снята.');
+    if (status === 'reserved') openBookingSuccess(gift.id);
+    else showNotice('Бронь снята.');
   } catch (error) {
     console.error(error);
     state.pendingStatusIds.delete(gift.id);
     render();
     showNotice(error.message === 'status-conflict'
-      ? 'Статус уже изменился другим гостем. Проверьте список.'
+      ? (status === 'reserved' ? 'Это желание только что забронировано другим гостем. Выберите другой подарок.' : 'Статус уже изменился другим гостем. Проверьте список.')
       : error.message === 'persistent-storage-unavailable'
         ? 'Браузер не разрешает сохранить сессию. Разрешите хранение данных сайта и повторите.'
         : 'Не удалось сохранить бронь. Проверьте соединение или обновите страницу и повторите.', true);
@@ -329,6 +378,36 @@ function openUnreserveDialog(gift) {
   elements.dialogCopy.textContent = `Снять вашу бронь подарка «${gift.title}»? После подтверждения он снова станет доступен другим гостям.`;
   elements.dialog.showModal();
 }
+
+const gratitudeMessages = [
+  'Спасибо, что выбрали именно это желание. Мне уже очень приятно — даже если я пока об этом не знаю.',
+  'Кажется, кто-то только что сделал мой будущий день немного счастливее. И я даже не подозреваю об этом.',
+  'Отличный выбор. Официально подтверждаю, что у вас прекрасный вкус. Неофициально — огромное спасибо!',
+  'Маленький секрет между вами и этим сайтом. Я пока ничего не знаю, но уже заочно рад.',
+  'Один подарок забронирован, одна приятная неожиданность готовится. Спасибо, что вы в этом участвуете.'
+];
+const successDialog = document.querySelector('#booking-success');
+let successGiftId;
+function openBookingSuccess(id) {
+  successGiftId = id;
+  document.querySelector('#success-copy').textContent = gratitudeMessages[Math.floor(Math.random() * gratitudeMessages.length)];
+  // Another independent reservation may finish while this confirmation is open.
+  if (!successDialog.open) successDialog.showModal();
+}
+function closeBookingSuccess() {
+  if (!successDialog.open || successDialog.classList.contains('is-closing')) return;
+  const finish = () => { successDialog.close(); successDialog.classList.remove('is-closing'); };
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) finish();
+  else { successDialog.classList.add('is-closing'); setTimeout(finish, 180); }
+}
+successDialog.querySelector('form').addEventListener('submit', event => { event.preventDefault(); closeBookingSuccess(); });
+successDialog.addEventListener('cancel', event => { event.preventDefault(); closeBookingSuccess(); });
+successDialog.addEventListener('click', event => { if (event.target === successDialog) closeBookingSuccess(); });
+successDialog.addEventListener('close', () => {
+  const card = [...elements.list.querySelectorAll('.gift-card')].find(item => item.dataset.id === successGiftId);
+  const button = card?.querySelector('.glass-button:not(:disabled)');
+  (button || document.querySelector(`[data-mode="${state.mode}"]`)).focus({preventScroll: true});
+});
 
 function closeUnreserveDialog(onClosed) {
   if (!elements.dialog.open || elements.dialog.classList.contains('is-closing')) return;
@@ -360,6 +439,10 @@ function subscribe() {
       return {...gift, status: state.confirmedStatuses.get(item.id) ?? gift.status};
     });
     if (snapshot.metadata.fromCache && snapshot.empty) return;
+    if (!snapshot.metadata.fromCache && !snapshot.metadata.hasPendingWrites) {
+      const kept = new Set([...state.bookmarks].filter(id => currentIds.has(id)));
+      if (kept.size !== state.bookmarks.size) { state.bookmarks = kept; writeBookmarks(bookmarkStorage, kept); }
+    }
     render();
   }, error => {
     console.error(error);
@@ -489,6 +572,24 @@ const sortListbox = setupListbox({
   value: elements.sortValue,
   dataKey: 'sort',
   onChange: sort => { state.sort = sort; }
+});
+
+document.querySelectorAll('[data-mode]').forEach(button => button.addEventListener('click', () => {
+  categoryListbox.close(); sortListbox.close();
+  state.mode = button.dataset.mode;
+  document.querySelectorAll('[data-mode]').forEach(item => {
+    item.classList.toggle('is-active', item === button);
+    item.setAttribute('aria-pressed', String(item === button));
+  });
+  document.querySelector('#catalog-filters').hidden = state.mode === 'saved';
+  document.querySelector('#saved-counter').hidden = state.mode !== 'saved';
+  if (state.mode === 'catalog') updateStatusSlider();
+  render();
+}));
+window.addEventListener('storage', event => {
+  if (event.key !== bookmarkStorageKey && event.key !== null) return;
+  state.bookmarks = readBookmarks(bookmarkStorage);
+  render();
 });
 
 elements.categoryTrigger.addEventListener('click', () => sortListbox.close());

@@ -12,7 +12,7 @@ service cloud.firestore {
           'title', 'description', 'desireLevel', 'price', 'status', 'createdAt'
         ])
         && data.keys().hasOnly([
-          'title', 'description', 'desireLevel', 'price', 'category', 'status', 'createdAt', 'reservedBy'
+          'title', 'description', 'reason', 'desireLevel', 'price', 'category', 'status', 'createdAt', 'reservedBy'
         ]);
     }
 
@@ -23,6 +23,7 @@ service cloud.firestore {
         && data.title.size() <= 120
         && data.description is string
         && data.description.size() <= 4000
+        && (!('reason' in data) || (data.reason is string && data.reason.size() <= 100))
         && data.desireLevel is int
         && data.desireLevel >= 1
         && data.desireLevel <= 5

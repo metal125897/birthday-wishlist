@@ -7,10 +7,21 @@ const admin=await readFile(new URL('../dist/assets/admin.js',import.meta.url),'u
 const fn=app.slice(app.indexOf('async function changeStatus('),app.indexOf('\nfunction openUnreserveDialog'));
 let stored={status:'available',reservedBy:null},version=0,clientIndex=0;
 const transaction=async(db,callback)=>{for(let tries=0;tries<5;tries++){const seen=version;let next;await callback({get:async()=>({exists:()=>true,data:()=>({...stored})}),update:(ref,value)=>next=value});await new Promise(r=>setTimeout(r,5));if(seen!==version)continue;stored=next;version++;return;}throw Error('contention');};
-function client(){const uid='guest-'+(++clientIndex);const notices=[],state={pendingStatusIds:new Set(),confirmedStatuses:new Map(),gifts:[{id:'qa',status:'available'}]};const c=vm.createContext({state,db:{},doc:()=>({}),reservationUpdate,ensureGuest:async()=>({uid}),runTransaction:transaction,waitForPendingWrites:async()=>{},render:()=>{},showNotice:m=>notices.push(m),console:{error:()=>{}}});vm.runInContext(fn,c);return {c,notices,state};}
-const a=client(),b=client();await Promise.all([a.c.changeStatus({id:'qa',status:'available'},'reserved'),b.c.changeStatus({id:'qa',status:'available'},'reserved')]);assert.equal([...a.notices,...b.notices].filter(n=>n.startsWith('Ваша бронь сохранена')).length,1);assert.equal(stored.status,'reserved');assert.ok([...a.notices,...b.notices].some(n=>n.includes('другим гостем')));
+function client(){const uid='guest-'+(++clientIndex);const notices=[],state={pendingStatusIds:new Set(),confirmedStatuses:new Map(),gifts:[{id:'qa',status:'available'}]};const c=vm.createContext({state,db:{},doc:()=>({}),reservationUpdate,ensureGuest:async()=>({uid}),runTransaction:transaction,waitForPendingWrites:async()=>{},render:()=>{},openBookingSuccess:()=>notices.push('booking-success'),showNotice:m=>notices.push(m),console:{error:()=>{}}});vm.runInContext(fn,c);return {c,notices,state};}
+const a=client(),b=client();await Promise.all([a.c.changeStatus({id:'qa',status:'available'},'reserved'),b.c.changeStatus({id:'qa',status:'available'},'reserved')]);assert.equal([...a.notices,...b.notices].filter(n=>n === 'booking-success').length,1);assert.equal(stored.status,'reserved');assert.ok([...a.notices,...b.notices].some(n=>n.includes('другим гостем')));
 const winner=stored.reservedBy;assert.throws(()=>reservationUpdate(stored,'available','another'));assert.deepEqual(reservationUpdate(stored,'available',winner),{status:'available',reservedBy:null});assert.throws(()=>reservationUpdate({status:'reserved'},'available',winner));
 const failure=client();failure.c.runTransaction=async()=>{throw Error('offline');};await failure.c.changeStatus({id:'qa',status:'available'},'reserved');assert.equal(failure.state.pendingStatusIds.size,0);assert.equal(failure.state.gifts[0].status,'available');
+assert.ok(!failure.notices.includes('booking-success'));
+stored={status:'available',reservedBy:null};version++;
+const delayed=client();let acknowledge;
+delayed.c.waitForPendingWrites=()=>new Promise(resolve=>{acknowledge=resolve;});
+const awaiting=delayed.c.changeStatus({id:'qa',status:'available'},'reserved');
+while(!acknowledge)await new Promise(resolve=>setTimeout(resolve,1));
+assert.equal(delayed.state.pendingStatusIds.size,1);
+assert.ok(!delayed.notices.includes('booking-success'));
+acknowledge();await awaiting;
+assert.equal(delayed.state.pendingStatusIds.size,0);
+assert.equal(delayed.notices.filter(n=>n==='booking-success').length,1);
 const lock=admin.slice(admin.indexOf('function lockForm('),admin.indexOf('\nconst elements'));
 const startEdit=admin.slice(admin.indexOf('function startEdit('),admin.indexOf('\nfunction metadata('));
 let complete,resetCount=0;const elements={form:{},gifts:{},logout:{},giftId:{value:'A'},submit:{},title:{value:'original'}};
