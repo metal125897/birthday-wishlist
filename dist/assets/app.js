@@ -6,7 +6,7 @@ import {normalizeGiftGuidance} from './site-content.js?v=20260920-editable-guida
 import {isGiftPrice} from './gift-price.js';
 import {readBookmarks, writeBookmarks, bookmarkStorageKey} from './bookmarks.js';
 import {catalogSections} from './catalog-sections.js';
-import {descriptionParts} from './shop-links.js';
+import {descriptionParts} from './shop-links.js?v=20261107-polish';
 
 let bookmarkStorage;
 try { bookmarkStorage = window.localStorage; } catch { /* Bookmarks still work for this page. */ }
@@ -50,10 +50,14 @@ function setupDisclosureAnimation(details, content, onToggle = () => {}) {
     onToggle(expanded);
     heightAnimation?.cancel();
     fadeAnimation?.cancel();
+    // The browser otherwise anchors the footer while the list above it shrinks.
+    // Suppress that correction only while a disclosure is changing its height.
+    details.classList.add('is-disclosure-animating');
     details.classList.toggle('is-closing', !expanded);
     if (matchMedia('(prefers-reduced-motion: reduce)').matches || !details.animate) {
       details.open = expanded;
       details.classList.remove('is-closing');
+      requestAnimationFrame(() => details.classList.remove('is-disclosure-animating'));
       return;
     }
     details.open = true;
@@ -67,6 +71,7 @@ function setupDisclosureAnimation(details, content, onToggle = () => {}) {
       details.classList.remove('is-closing');
       fadeAnimation.cancel();
       heightAnimation = fadeAnimation = null;
+      requestAnimationFrame(() => details.classList.remove('is-disclosure-animating'));
     };
   });
 }
@@ -142,6 +147,17 @@ function desireScale(level, category) {
 }
 
 function appendLinkedText(container, text) {
+  const rows = text.split(/(\r?\n)/);
+  rows.forEach((row, index) => {
+    if (index % 2) { container.append(document.createTextNode(row)); return; }
+    const line = document.createElement('div');
+    line.className = 'description-line';
+    appendLinkedLine(line, row);
+    container.append(line);
+  });
+}
+
+function appendLinkedLine(container, text) {
   for (const part of descriptionParts(text)) {
     if (part.type === 'text') { container.append(document.createTextNode(part.value)); continue; }
     const link = document.createElement('a');

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "projectId": "wishlist-b3953",
-  "capturedAt": "2026-11-07T15:25:23.455Z",
+  "capturedAt": "2026-11-07T16:17:04.615Z",
   "giftGuidance": {
     "things": "Шампунь, гель для душа, бомбочки, пена и соль для ванны, свечи, диффузоры, посуда и приборы, цветы, полотенца, маски на основе глины и тканевые маски.",
     "brands": "Mixit, Aravia, Vois, Natura Siberica, Planeta Organica, Likato, Semily, kottur, HELDI.\nSokolov, SUNLIGHT, Kari",
@@ -28,11 +28,12 @@
       "description": "Мятный вкус. 3 или 5 штук\nhttps://ozon.ru/t/dwZeRuW\nhttps://www.wildberries.ru/catalog/194564381/detail.aspx\nhttps://market.yandex.ru/cc/B79NGj",
       "desireLevel": 4,
       "price": 650,
-      "reason": "Люблю мяту",
+      "reason": "Пусть свидания будут неожиданными, а дыхание предсказуемо свежим",
+      "reservationRequired": true,
       "reservedBy": null,
       "status": "available",
       "title": "Мятный спрей для рта GlobalWhite",
-      "firestoreUpdateTime": "2026-11-05T06:56:45.611999Z"
+      "firestoreUpdateTime": "2026-11-07T15:47:43.208549Z"
     },
     {
       "id": "whitening-strips",
@@ -151,10 +152,12 @@
       "description": "Вкус всё равно, какой дешевле выбирайте\nhttps://ozon.ru/t/D4ozTS2\nhttps://www.wildberries.ru/catalog/279293283/detail.aspx\nhttps://market.yandex.ru/cc/B4fNQ4",
       "desireLevel": 4,
       "price": 950,
+      "reason": "Мышцы просят поддержки. Я просто передаю их пожелание",
+      "reservationRequired": true,
       "reservedBy": null,
       "status": "available",
       "title": "EAA Bombbar",
-      "firestoreUpdateTime": "2026-11-05T06:56:19.159024Z"
+      "firestoreUpdateTime": "2026-11-07T15:42:44.865708Z"
     },
     {
       "id": "creatine",
@@ -174,10 +177,12 @@
       "description": "Бренды: Bombbar, Первый Русский Протеин, GeneticLab или BigWhey\nЛучше больше порций, вкус не так важен\nЛучше один из:\nhttps://ozon.ru/t/MnWzTMy\nhttps://ozon.ru/t/yeEUHt7\nhttps://www.wildberries.ru/catalog/1109787629/detail.aspx",
       "desireLevel": 5,
       "price": 1600,
+      "reason": "Мышцы сами себя не построят. Но вы можете стать спонсором этого проекта))",
+      "reservationRequired": true,
       "reservedBy": null,
       "status": "available",
       "title": "Протеин",
-      "firestoreUpdateTime": "2026-11-05T16:41:40.340572Z"
+      "firestoreUpdateTime": "2026-11-07T15:44:42.535885Z"
     },
     {
       "id": "randewoo-perfume",
@@ -219,9 +224,11 @@
       "description": "Размер M. С их сайта бесплатно доставляют в ПВЗ Я.Маркета и 5post\nОдни из:\n1. https://henderson.ru/product/uw2-1173-black/ (модал, шёлк, лайкра)\n2. https://henderson.ru/product/uw2-1354-dbrown/ (модал, лайкра)\n3. https://henderson.ru/product/uw2-0611-black/ (модал, лайкра)\n4. https://henderson.ru/product/uw2-1264-dnavy/ (модал, лайкра)\n5. https://henderson.ru/product/uw2-1123-lblue/ (модал, шёлк, лайкра)\n6. https://henderson.ru/product/uw2-1175-blue/ (модал, шёлк, лайкра)",
       "desireLevel": 4,
       "price": 1400,
+      "reason": "Комфорт начинается с мелочей. Особенно с тех, которые никто не видит",
+      "reservationRequired": true,
       "status": "available",
       "title": "Боксеры Henderson",
-      "firestoreUpdateTime": "2026-11-01T19:29:51.288132Z"
+      "firestoreUpdateTime": "2026-11-07T15:43:01.968775Z"
     },
     {
       "id": "silver-coin",
@@ -373,9 +380,11 @@
       "description": "",
       "desireLevel": 4,
       "price": null,
+      "reason": "Подарите удовольствие выбрать подарок самому. Обещаю наслаждаться процессом!",
+      "reservationRequired": true,
       "status": "available",
       "title": "Сертификат Ozon или Wildberries",
-      "firestoreUpdateTime": "2026-11-01T14:42:29.517838Z"
+      "firestoreUpdateTime": "2026-11-07T15:43:26.121775Z"
     },
     {
       "id": "fingerless-gloves",
@@ -406,9 +415,11 @@
       "description": "Примеры:\nhttps://ozon.ru/t/HqhNIhK\nhttps://yarcheplus.ru/product/konfityur-23084\nhttps://lenta.com/product/konfityur-inzhir-ekstra-germaniya-330g-350145/\nhttps://www.perekrestok.ru/cat/775/p/konfitur-zuegg-iz-inzira-ekstra-330g-3404165\nЕсли хотите на мне сэкономить: https://ozon.ru/t/bT6f4zE",
       "desireLevel": 4,
       "price": 250,
+      "reason": "Маленькая баночка большого счастья",
+      "reservationRequired": true,
       "status": "available",
       "title": "Конфитюр ZUEGG с инжиром",
-      "firestoreUpdateTime": "2026-11-01T14:42:31.888871Z"
+      "firestoreUpdateTime": "2026-11-07T15:43:48.371958Z"
     },
     {
       "id": "ostrich-egg",
@@ -538,9 +549,11 @@
       "description": "300-500г Не важно какой, смотрите отзывы и оценку. Примеры:\nhttps://ozon.ru/t/QWJhHzU\nhttps://ozon.ru/t/r9x623i\nhttps://www.wildberries.ru/catalog/995812646/detail.aspx https://www.wildberries.ru/catalog/1004157953/detail.aspx",
       "desireLevel": 4,
       "price": 300,
+      "reason": "Сладкий, но с кислинкой. Почти как я, только съедобный",
+      "reservationRequired": true,
       "status": "available",
       "title": "Кумкват сушёный",
-      "firestoreUpdateTime": "2026-11-01T14:42:39.053967Z"
+      "firestoreUpdateTime": "2026-11-07T15:45:13.597778Z"
     },
     {
       "id": "mnbVOeUEyQ1BzF9OjFXe",
@@ -593,10 +606,12 @@
       "description": "",
       "desireLevel": 5,
       "price": null,
+      "reason": "Универсальный размер, любимый цвет и 100% попадание в мои желания!",
+      "reservationRequired": false,
       "reservedBy": null,
       "status": "available",
-      "title": "Деньги (вне очередей и броней)",
-      "firestoreUpdateTime": "2026-11-05T11:23:28.723801Z"
+      "title": "Деньги",
+      "firestoreUpdateTime": "2026-11-07T15:44:14.884101Z"
     },
     {
       "id": "JoKIGNqtlMgwRfpgQlKh",

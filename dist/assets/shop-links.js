@@ -1,15 +1,15 @@
 const SHOPS = [
-  [['ozon.ru','ozon.com'], 'Ozon'],
-  [['wildberries.ru','wb.ru'], 'Wildberries'],
-  [['market.yandex.ru','market.yandex.com','yandex.market'], 'Яндекс Маркет'],
-  [['henderson.ru'], 'Henderson'],
-  [['goldapple.ru'], 'Золотое Яблоко'],
+  [['ozon.ru','ozon.com'], 'Ozon', 'ozon.svg'],
+  [['wildberries.ru','wb.ru'], 'Wildberries', 'wildberries.ico'],
+  [['market.yandex.ru','market.yandex.com','yandex.market'], 'Яндекс Маркет', 'yandex-market.png'],
+  [['henderson.ru'], 'Henderson', 'henderson.svg'],
+  [['goldapple.ru'], 'Золотое Яблоко', 'goldapple.png'],
   [['randewoo.ru'], 'Randewoo'],
-  [['rivegauche.ru'], 'РИВ ГОШ'],
+  [['rivegauche.ru'], 'РИВ ГОШ', 'rivegauche.svg'],
   [['lamoda.ru'], 'Lamoda'],
   [['sportmaster.ru'], 'Спортмастер'],
   [['letoile.ru'], 'ЛЭТУАЛЬ'],
-  [['maagfashion.ru'], 'MAAG'],
+  [['maagfashion.ru','maag-fashion.com'], 'MAAG', 'maag.png'],
   [['dns-shop.ru'], 'DNS']
 ];
 
@@ -20,7 +20,8 @@ export function shopLink(raw) {
     const host = url.hostname.toLowerCase();
     const known = SHOPS.find(([domains]) => domains.some(domain => host === domain || host.endsWith('.'+domain)));
     const originalHost = raw.match(/^https?:\/\/([^/?#]+)/i)?.[1].split('@').at(-1).replace(/^www\./i,'');
-    return {type:'link', url:raw, label:known?.[1] || originalHost || host, iconUrl:url.origin+'/favicon.ico'};
+    const iconUrl = known?.[2] ? new URL('./shop-icons/'+known[2], import.meta.url).href : url.origin+'/favicon.ico';
+    return {type:'link', url:raw, label:known?.[1] || originalHost || host, iconUrl};
   } catch { return null; }
 }
 

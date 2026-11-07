@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {access} from 'node:fs/promises';
 import {catalogSections} from '../dist/assets/catalog-sections.js';
 import {descriptionParts, shopLink} from '../dist/assets/shop-links.js';
 import {requiresReservation, publicGiftStatus, reservationUpdate} from '../dist/assets/reservation-policy.js';
@@ -24,5 +25,12 @@ assert.equal(tokens.find(p=>p.type==='link').url,'https://m.ozon.ru/a?q=тест
 assert.equal(shopLink('https://ozon.ru.evil.example/a').label,'ozon.ru.evil.example');
 assert.equal(shopLink('https://m.market.yandex.ru/cc/ABC').label,'Яндекс Маркет');assert.equal(shopLink('https://henderson.ru/a').label,'Henderson');
 assert.equal(shopLink('javascript:alert(1)'),null);
+// Bundled icons must exist under the module, including the actual MAAG domain.
+for (const domain of ['ozon.ru','wildberries.ru','market.yandex.ru','henderson.ru','goldapple.ru','rivegauche.ru','maag-fashion.com']) {
+  const link = shopLink(`https://${domain}/product`);
+  assert.ok(link.iconUrl.includes('/shop-icons/'), domain);
+  await access(new URL(link.iconUrl));
+}
+assert.equal(shopLink('https://maag-fashion.com/product/4101820800/').label,'MAAG');
 assert.deepEqual(descriptionParts('Без ссылок\nПодробности'),[{type:'text',value:'Без ссылок\nПодробности'}]);
 console.log('Future grouping, old/new booking semantics, shop labels, exact URLs, Unicode/parameters and preserved description text passed.');
