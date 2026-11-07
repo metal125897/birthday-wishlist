@@ -3,6 +3,7 @@ import vm from 'node:vm';
 import assert from 'node:assert/strict';
 import {isGiftPrice} from '../dist/assets/gift-price.js';
 import {normalizeGiftCategory} from '../dist/assets/categories.js';
+import {publicGiftStatus} from '../dist/assets/reservation-policy.js';
 const source = await readFile(new URL('../dist/assets/app.js', import.meta.url), 'utf8');
 const state = {mode:'catalog', filter:'all', category:'all', sort:'desire-desc', bookmarks:new Set(['b','c']), gifts:[
   {id:'a', desireLevel:5, price:null, category:'Sport', status:'available'},
@@ -10,7 +11,7 @@ const state = {mode:'catalog', filter:'all', category:'all', sort:'desire-desc',
   {id:'c', desireLevel:5, price:9999999, category:'Sport', status:'available'},
   {id:'d', desireLevel:1, price:123, category:null, status:'available'}
 ]};
-const context = vm.createContext({state, isGiftPrice, normalizeGiftCategory, createdMillis:()=>0});
+const context = vm.createContext({state, isGiftPrice, normalizeGiftCategory, publicGiftStatus, createdMillis:()=>0});
 vm.runInContext(source.slice(source.indexOf('function sortedFilteredGifts()'), source.indexOf('\nfunction desireScale')), context);
 const ids=()=>Array.from(context.sortedFilteredGifts(), gift=>gift.id);
 assert.deepEqual(ids(), ['a','c','b','d']);

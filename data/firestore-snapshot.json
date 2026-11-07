@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "projectId": "wishlist-b3953",
-  "capturedAt": "2026-11-05T16:29:13.475Z",
+  "capturedAt": "2026-11-07T15:25:23.455Z",
   "giftGuidance": {
     "things": "Шампунь, гель для душа, бомбочки, пена и соль для ванны, свечи, диффузоры, посуда и приборы, цветы, полотенца, маски на основе глины и тканевые маски.",
     "brands": "Mixit, Aravia, Vois, Natura Siberica, Planeta Organica, Likato, Semily, kottur, HELDI.\nSokolov, SUNLIGHT, Kari",
@@ -177,7 +177,7 @@
       "reservedBy": null,
       "status": "available",
       "title": "Протеин",
-      "firestoreUpdateTime": "2026-11-05T07:30:11.304320Z"
+      "firestoreUpdateTime": "2026-11-05T16:41:40.340572Z"
     },
     {
       "id": "randewoo-perfume",

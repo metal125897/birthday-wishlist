@@ -100,8 +100,8 @@ if (!resetFormSource.includes('elements.submit.disabled = false')) {
   throw new Error('После сохранения форма администратора должна снова разблокировать submit-кнопку.');
 }
 if (adminHtml.includes('aria-hidden="true">*</span>')) throw new Error('Лишняя звёздочка у названия подарка не должна возвращаться.');
-if (!publicHtml.includes('Цены примерные. Стрелка у названия раскрывает комментарии')) {
-  throw new Error('Не найден актуальный текст подсказки в hero-зоне.');
+if (publicHtml.includes('hero__note') || !publicHtml.includes('Нажмите на название подарка, чтобы увидеть детали') || !publicHtml.includes('Новый год')) {
+  throw new Error('Инструкция должна быть в диалоге, а старая техническая подсказка удалена из hero.');
 }
 if (!styles.includes('right:calc(-1 * max(32px,(100vw - 1180px)/2))') || !styles.includes('left:54%')) {
   throw new Error('Правая маска hero должна плавно доходить до края viewport.');

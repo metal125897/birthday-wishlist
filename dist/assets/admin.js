@@ -30,6 +30,7 @@ const elements = {
   categoryOptions: [...document.querySelectorAll('[data-admin-category]')],
   description: document.querySelector('#gift-description'),
   reason: document.querySelector('#gift-reason'), reasonCounter: document.querySelector('#reason-counter'),
+  reservationRequired: document.querySelector('#gift-reservation-required'),
   surpriseToggle: document.querySelector('#surprise-toggle'),
   submit: document.querySelector('#submit-gift'), cancel: document.querySelector('#cancel-edit'),
   gifts: document.querySelector('#admin-gifts'), count: document.querySelector('#admin-count'),
@@ -48,7 +49,7 @@ const state = {
 
 function giftDraft() {
   return JSON.stringify([elements.giftId.value, elements.title.value, elements.price.value,
-    elements.category.value, elements.description.value, elements.reason.value, desireLevel()]);
+    elements.category.value, elements.description.value, elements.reason.value, desireLevel(), elements.reservationRequired.checked]);
 }
 function guidanceDraft() {
   return JSON.stringify([elements.guidanceThings.value, elements.guidanceBrands.value]);
@@ -212,6 +213,7 @@ function normalizeForm() {
     title,
     description: elements.description.value.trim(),
     reason: elements.reason.value.trim(),
+    reservationRequired: elements.reservationRequired.checked,
     desireLevel: desireLevel(),
     price: parseGiftPrice(elements.price.value),
     category: normalizeGiftCategory(elements.category.value)
@@ -262,6 +264,7 @@ function startEdit(gift) {
   setCategoryValue(gift.category);
   elements.description.value = gift.description || '';
   elements.reason.value = gift.reason || '';
+  elements.reservationRequired.checked = gift.reservationRequired !== false;
   updateReasonCounter();
   resizeDescription();
   document.querySelector(`input[name="desire"][value="${gift.desireLevel}"]`).checked = true;
@@ -302,7 +305,7 @@ function metadata(gift) {
   if (!state.surprise) {
     const status = document.createElement('span');
     status.className = `status-pill ${gift.status}`;
-    status.textContent = gift.status === 'reserved' ? 'Забронировано' : 'Доступно для брони';
+    status.textContent = gift.reservationRequired === false ? 'Без бронирования' : gift.status === 'reserved' ? 'Забронировано' : 'Доступно для брони';
     stateRow.append(status);
   }
   if (gift.description?.trim()) {
@@ -541,6 +544,10 @@ elements.form.addEventListener('submit', async event => {
   event.preventDefault();
   if (saving) return;
   const gift = normalizeForm();
+  if (gift.reservationRequired === false && state.gifts.find(item => item.id === elements.giftId.value)?.status === 'reserved') {
+    showNotice('Сначала снимите существующую бронь подарка, затем отключите бронирование.', true);
+    return;
+  }
   const errorMessage = validateGift(gift);
   if (errorMessage) return showNotice(errorMessage, true);
   lockForm(true);

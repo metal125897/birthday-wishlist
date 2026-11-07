@@ -12,7 +12,7 @@ service cloud.firestore {
           'title', 'description', 'desireLevel', 'price', 'status', 'createdAt'
         ])
         && data.keys().hasOnly([
-          'title', 'description', 'reason', 'desireLevel', 'price', 'category', 'status', 'createdAt', 'reservedBy'
+          'title', 'description', 'reason', 'desireLevel', 'price', 'category', 'status', 'createdAt', 'reservedBy', 'reservationRequired'
         ]);
     }
 
@@ -24,6 +24,8 @@ service cloud.firestore {
         && data.description is string
         && data.description.size() <= 4000
         && (!('reason' in data) || (data.reason is string && data.reason.size() <= 100))
+        && (!('reservationRequired' in data) || data.reservationRequired is bool)
+        && (data.get('reservationRequired', true) || (data.status == 'available' && data.get('reservedBy', null) == null))
         && data.desireLevel is int
         && data.desireLevel >= 1
         && data.desireLevel <= 5
@@ -54,6 +56,7 @@ service cloud.firestore {
       allow update: if (
           isAdmin()
           || (request.auth != null
+            && resource.data.get('reservationRequired', true)
             && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'reservedBy'])
             && ((resource.data.status == 'available' && resource.data.get('reservedBy', null) == null
               && request.resource.data.status == 'reserved' && request.resource.data.reservedBy == request.auth.uid)

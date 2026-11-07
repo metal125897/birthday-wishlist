@@ -1,10 +1,12 @@
 import {collection, onSnapshot, runTransaction, doc, waitForPendingWrites} from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js';
 import {db, firebaseConfigured, ensureGuest, watchGuest} from './guest-client.js?v=20261104-owners';
-import {reservationUpdate, ownsReservation} from './reservation-policy.js?v=20261104-owners';
+import {reservationUpdate, ownsReservation, requiresReservation, publicGiftStatus} from './reservation-policy.js?v=20261107-catalog';
 import {giftCategoryLabel, normalizeGiftCategory} from './categories.js?v=20260917-category-labels';
 import {normalizeGiftGuidance} from './site-content.js?v=20260920-editable-guidance';
 import {isGiftPrice} from './gift-price.js';
 import {readBookmarks, writeBookmarks, bookmarkStorageKey} from './bookmarks.js';
+import {catalogSections} from './catalog-sections.js';
+import {descriptionParts} from './shop-links.js';
 
 let bookmarkStorage;
 try { bookmarkStorage = window.localStorage; } catch { /* Bookmarks still work for this page. */ }
@@ -28,15 +30,14 @@ const elements = {
 const state = {
   mode: 'catalog', bookmarks: readBookmarks(bookmarkStorage),
   guestUid: null,
+  futureOpen: false,
   gifts: [], filter: 'all', category: 'all', sort: 'desire-desc', expanded: new Set(), pendingUnreserve: null,
   unsubscribe: null, unsubscribeGuidance: null, pendingStatusIds: new Set(), confirmedStatuses: new Map()
 };
 let bookmarkGradientSequence = 0;
 
-function setupGuidanceAnimation() {
-  const details = document.querySelector('.gift-guidance');
+function setupDisclosureAnimation(details, content, onToggle = () => {}) {
   const summary = details.querySelector('summary');
-  const content = details.querySelector('.gift-guidance__content');
   let expanded = details.open;
   let heightAnimation;
   let fadeAnimation;
@@ -45,6 +46,8 @@ function setupGuidanceAnimation() {
     const startHeight = details.getBoundingClientRect().height;
     const startOpacity = details.open ? getComputedStyle(content).opacity : '0';
     expanded = !expanded;
+    summary.setAttribute('aria-expanded', String(expanded));
+    onToggle(expanded);
     heightAnimation?.cancel();
     fadeAnimation?.cancel();
     details.classList.toggle('is-closing', !expanded);
@@ -68,7 +71,7 @@ function setupGuidanceAnimation() {
   });
 }
 
-setupGuidanceAnimation();
+setupDisclosureAnimation(document.querySelector('.gift-guidance'), document.querySelector('.gift-guidance__content'));
 
 function subscribeToGuidance() {
   state.unsubscribeGuidance?.();
@@ -95,7 +98,7 @@ function createdMillis(gift) {
 function sortedFilteredGifts() {
   const filtered = state.gifts.filter(gift => {
     if (state.mode === 'saved') return state.bookmarks.has(gift.id);
-    const matchesStatus = state.filter === 'all' || gift.status === state.filter;
+    const matchesStatus = state.filter === 'all' || publicGiftStatus(gift) === state.filter;
     const matchesCategory = state.category === 'all' || normalizeGiftCategory(gift.category) === state.category;
     return matchesStatus && matchesCategory;
   });
@@ -139,27 +142,38 @@ function desireScale(level, category) {
 }
 
 function appendLinkedText(container, text) {
-  const urlPattern = /(https?:\/\/[^\s]+)/g;
-  let cursor = 0;
-  for (const match of text.matchAll(urlPattern)) {
-    container.append(document.createTextNode(text.slice(cursor, match.index)));
+  for (const part of descriptionParts(text)) {
+    if (part.type === 'text') { container.append(document.createTextNode(part.value)); continue; }
     const link = document.createElement('a');
-    link.href = match[0];
-    link.textContent = match[0];
+    link.className = 'shop-link';
+    link.setAttribute('href', part.url);
     link.target = '_blank';
     link.rel = 'noopener noreferrer';
+    const icon = document.createElement('span');
+    icon.className = 'shop-link__icon';
+    icon.setAttribute('aria-hidden','true');
+    icon.innerHTML = '<svg viewBox="0 0 24 24"><path d="m10 13 4-4m-6 7-1 1a4 4 0 0 1-6-6l4-4a4 4 0 0 1 6 0m2-2 1-1a4 4 0 0 1 6 6l-4 4a4 4 0 0 1-6 0"/></svg>';
+    const img = document.createElement('img');
+    img.alt = ''; img.dataset.src = part.iconUrl; img.referrerPolicy = 'no-referrer'; img.decoding = 'async';
+    img.addEventListener('load', () => icon.classList.add('is-loaded'));
+    img.addEventListener('error', () => img.remove(), {once:true});
+    icon.append(img);
+    const label = document.createElement('span'); label.textContent = part.label;
+    link.append(icon,label);
     link.addEventListener('click', event => event.stopPropagation());
     container.append(link);
-    cursor = match.index + match[0].length;
   }
-  container.append(document.createTextNode(text.slice(cursor)));
+}
+
+function loadShopIcons(container) {
+  container.querySelectorAll('img[data-src]').forEach(img => { img.src = img.dataset.src; delete img.dataset.src; });
 }
 
 function updateBookmarkButton(button, id) {
   const selected = state.bookmarks.has(id);
   button.classList.toggle('glass-button--quiet', selected);
   button.setAttribute('aria-pressed', String(selected));
-  button.setAttribute('aria-label', selected ? 'Убрать из отложенных' : 'Отложить подарок');
+  button.setAttribute('aria-label', selected ? 'Убрать из избранного' : 'Добавить в избранное');
 }
 
 function refreshBookmarks() {
@@ -192,8 +206,10 @@ function giftCard(gift) {
   const hasDescription = Boolean(gift.description?.trim());
   const hasPrice = isGiftPrice(gift.price);
   const statusPending = state.pendingStatusIds.has(gift.id);
+  const needsReservation = requiresReservation(gift);
+  const reserved = needsReservation && gift.status === 'reserved';
   const card = document.createElement('article');
-  card.className = `gift-card${hasDescription ? ' has-description' : ''}${hasPrice ? ' has-price' : ''}${gift.status === 'reserved' ? ' is-reserved' : ''}${gift.desireLevel === 5 ? ' is-desire-5' : ''}${state.expanded.has(gift.id) ? ' is-open' : ''}${statusPending ? ' is-saving' : ''}`;
+  card.className = `gift-card${hasDescription ? ' has-description' : ''}${hasPrice ? ' has-price' : ''}${reserved ? ' is-reserved' : ''}${gift.desireLevel === 5 ? ' is-desire-5' : ''}${state.expanded.has(gift.id) ? ' is-open' : ''}${statusPending ? ' is-saving' : ''}`;
   card.dataset.id = gift.id;
   const reasonText = typeof gift.reason === 'string' ? gift.reason.trim() : '';
   card.classList.toggle('has-reason', Boolean(reasonText));
@@ -250,7 +266,8 @@ function giftCard(gift) {
   const side = document.createElement('div');
   side.className = 'gift-side';
   side.append(desireScale(gift.desireLevel, gift.category));
-  const reserve = document.createElement('button');
+  const reserve = document.createElement(needsReservation ? 'button' : 'span');
+  if (needsReservation) {
   reserve.type = 'button';
   reserve.className = `glass-button${gift.status === 'reserved' ? ' glass-button--quiet' : ''}`;
   const owned = ownsReservation(gift, state.guestUid);
@@ -263,6 +280,10 @@ function giftCard(gift) {
     if (gift.status === 'reserved') openUnreserveDialog(gift);
     else changeStatus(gift, 'reserved');
   });
+  } else {
+    reserve.className = 'booking-note';
+    reserve.textContent = 'Можно дарить без брони';
+  }
   const actions = document.createElement('div');
   actions.className = 'gift-actions';
   actions.append(reserve, bookmark);
@@ -286,7 +307,7 @@ function giftCard(gift) {
     appendLinkedText(inner, gift.description);
     description.append(inner);
     card.append(description);
-    if (state.expanded.has(gift.id)) description.style.height = 'auto';
+    if (state.expanded.has(gift.id)) { description.style.height = 'auto'; loadShopIcons(description); }
     description.addEventListener('transitionend', event => {
       if (event.propertyName !== 'height') return;
       if (card.classList.contains('is-open')) description.style.height = 'auto';
@@ -319,6 +340,7 @@ function toggleCard(card, id) {
   card.setAttribute('aria-expanded', String(open));
   card.querySelector('.gift-title-toggle').setAttribute('aria-expanded', String(open));
   description.inert = !open;
+  if (open) loadShopIcons(description);
   description.setAttribute('aria-hidden', String(!open));
   description.style.height = open ? `${description.scrollHeight}px` : '0px';
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -335,7 +357,8 @@ function render() {
   const focusedId = focusedCard?.dataset.id;
   const wasReserve = document.activeElement?.classList.contains('glass-button');
   const wasBookmark = document.activeElement?.classList.contains('bookmark-button');
-  const featured = state.mode === 'catalog' && state.sort === 'desire-desc' ? gifts.filter(gift => gift.desireLevel === 5) : [];
+  const focusedFuture = document.activeElement?.matches('.future-gifts summary');
+  const {featured, main, future} = catalogSections(gifts, state);
   const nodes = [];
   if (featured.length) {
     const group = document.createElement('section');
@@ -351,8 +374,25 @@ function render() {
     group.append(heading, ...featured.map(giftCard), ending);
     nodes.push(group);
   }
-  nodes.push(...gifts.filter(gift => !featured.length || gift.desireLevel !== 5).map(giftCard));
+  nodes.push(...main.map(giftCard));
+  if (future.length) {
+    const group = document.createElement('details');
+    group.className = 'future-gifts'; group.open = state.futureOpen;
+    const summary = document.createElement('summary');
+    summary.setAttribute('aria-expanded', String(state.futureOpen));
+    const heading = document.createElement('span'); heading.className = 'future-heading';
+    const title = document.createElement('span'); title.className = 'future-title';
+    title.textContent = `Идеи на будущее · ${future.length} ${plural(future.length, ['подарок','подарка','подарков'])}`;
+    const copy = document.createElement('span'); copy.className = 'future-copy'; copy.textContent = 'То, что мне интересно, но сейчас не в приоритете';
+    heading.append(title,copy);
+    const arrow = document.createElement('span'); arrow.className = 'gift-guidance__chevron'; arrow.setAttribute('aria-hidden','true');
+    summary.append(heading,arrow);
+    const content = document.createElement('div'); content.className = 'future-gifts__content';
+    content.append(...future.map(giftCard)); group.append(summary,content); nodes.push(group);
+    setupDisclosureAnimation(group, content, open => { state.futureOpen = open; });
+  }
   elements.list.replaceChildren(...nodes);
+  if (focusedFuture) (elements.list.querySelector('.future-gifts summary') || document.querySelector('[data-mode="catalog"]')).focus({preventScroll:true});
   if (focusedId) {
     const card = [...elements.list.querySelectorAll('.gift-card')].find(item => item.dataset.id === focusedId);
     const target = card?.querySelector(wasBookmark ? '.bookmark-button' : wasReserve ? '.glass-button' : '.gift-title-toggle');
@@ -363,11 +403,11 @@ function render() {
 
 function updateListSummary(gifts) {
   elements.counter.innerHTML = `В списке <b>${gifts.length} ${plural(gifts.length, ['подарок', 'подарка', 'подарков'])}</b>`;
-  document.querySelector('#saved-counter').textContent = `Отложено: ${gifts.length} ${plural(gifts.length, ['подарок', 'подарка', 'подарков'])}`;
+  document.querySelector('#saved-counter').textContent = `В избранном: ${gifts.length} ${plural(gifts.length, ['подарок', 'подарка', 'подарков'])}`;
   elements.list.hidden = gifts.length === 0;
   elements.empty.hidden = gifts.length !== 0;
-  elements.empty.querySelector('h2').textContent = state.mode === 'saved' ? 'Пока нет отложенных подарков' : 'Пока нет подарков';
-  elements.emptyCopy.textContent = state.mode === 'saved' ? 'Нажмите на закладку у понравившегося подарка, чтобы вернуться к нему позже.' : state.gifts.length
+  elements.empty.querySelector('h2').textContent = state.mode === 'saved' ? 'В избранном пока пусто' : 'Пока нет подарков';
+  elements.emptyCopy.textContent = state.mode === 'saved' ? 'Нажмите на значок закладки у подарка, чтобы добавить его в избранное и вернуться к нему позже.' : state.gifts.length
     ? 'В этой категории ничего не нашлось по текущим фильтрам. Попробуйте изменить категорию или статус.'
     : 'Список ещё наполняется. Загляните чуть позже.';
 }
@@ -408,7 +448,7 @@ async function changeStatus(gift, status) {
     console.error(error);
     state.pendingStatusIds.delete(gift.id);
     render();
-    showNotice(error.message === 'status-conflict'
+    showNotice(error.message === 'reservation-not-required' ? 'Этот подарок теперь можно дарить без брони.' : error.message === 'status-conflict'
       ? (status === 'reserved' ? 'Это желание только что забронировано другим гостем. Выберите другой подарок.' : 'Статус уже изменился другим гостем. Проверьте список.')
       : error.message === 'persistent-storage-unavailable'
         ? 'Браузер не разрешает сохранить сессию. Разрешите хранение данных сайта и повторите.'
@@ -431,6 +471,22 @@ const gratitudeMessages = [
   'Один подарок забронирован, одна приятная неожиданность готовится. Спасибо, что вы в этом участвуете.'
 ];
 const successDialog = document.querySelector('#booking-success');
+const instructionsDialog = document.querySelector('#instructions-dialog');
+const instructionsTrigger = document.querySelector('#instructions-trigger');
+instructionsTrigger.addEventListener('click', () => {
+  instructionsDialog.showModal();
+  instructionsTrigger.setAttribute('aria-expanded','true');
+});
+function closeInstructions() {
+  if (!instructionsDialog.open || instructionsDialog.classList.contains('is-closing')) return;
+  const finish = () => { instructionsDialog.close(); instructionsDialog.classList.remove('is-closing'); };
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) finish();
+  else { instructionsDialog.classList.add('is-closing'); setTimeout(finish,180); }
+}
+instructionsDialog.querySelector('form').addEventListener('submit', event => { event.preventDefault(); closeInstructions(); });
+instructionsDialog.addEventListener('cancel', event => { event.preventDefault(); closeInstructions(); });
+instructionsDialog.addEventListener('click', event => { if (event.target === instructionsDialog) closeInstructions(); });
+instructionsDialog.addEventListener('close', () => { instructionsTrigger.setAttribute('aria-expanded','false'); instructionsTrigger.focus({preventScroll:true}); });
 let successGiftId;
 function openBookingSuccess(id) {
   successGiftId = id;
