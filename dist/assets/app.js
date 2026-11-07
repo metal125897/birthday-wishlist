@@ -6,7 +6,7 @@ import {normalizeGiftGuidance} from './site-content.js?v=20260920-editable-guida
 import {isGiftPrice} from './gift-price.js';
 import {readBookmarks, writeBookmarks, bookmarkStorageKey} from './bookmarks.js';
 import {catalogSections} from './catalog-sections.js';
-import {descriptionParts} from './shop-links.js?v=20261107-polish';
+import {descriptionParts} from './shop-links.js?v=20261107-links-v2';
 
 let bookmarkStorage;
 try { bookmarkStorage = window.localStorage; } catch { /* Bookmarks still work for this page. */ }
@@ -153,6 +153,8 @@ function appendLinkedText(container, text) {
     const line = document.createElement('div');
     line.className = 'description-line';
     appendLinkedLine(line, row);
+    const linkOnly = line.children.length === 1 && [...line.childNodes].every(node => node.nodeType !== Node.TEXT_NODE || !node.textContent.trim());
+    line.classList.toggle('description-line--link', linkOnly);
     container.append(line);
   });
 }
@@ -401,7 +403,7 @@ function render() {
     title.textContent = `Идеи на будущее · ${future.length} ${plural(future.length, ['подарок','подарка','подарков'])}`;
     const copy = document.createElement('span'); copy.className = 'future-copy'; copy.textContent = 'То, что мне интересно, но сейчас не в приоритете';
     heading.append(title,copy);
-    const arrow = document.createElement('span'); arrow.className = 'gift-guidance__chevron'; arrow.setAttribute('aria-hidden','true');
+    const arrow = document.createElement('span'); arrow.className = 'gift-chevron'; arrow.setAttribute('aria-hidden','true');
     summary.append(heading,arrow);
     const content = document.createElement('div'); content.className = 'future-gifts__content';
     content.append(...future.map(giftCard)); group.append(summary,content); nodes.push(group);

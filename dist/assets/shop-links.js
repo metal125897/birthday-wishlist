@@ -1,5 +1,5 @@
 const SHOPS = [
-  [['ozon.ru','ozon.com'], 'Ozon', 'ozon.svg'],
+  [['ozon.ru','ozon.com'], 'Ozon', 'ozon.ico'],
   [['wildberries.ru','wb.ru'], 'Wildberries', 'wildberries.ico'],
   [['market.yandex.ru','market.yandex.com','yandex.market'], 'Яндекс Маркет', 'yandex-market.png'],
   [['henderson.ru'], 'Henderson', 'henderson.svg'],
@@ -9,6 +9,7 @@ const SHOPS = [
   [['lamoda.ru'], 'Lamoda'],
   [['sportmaster.ru'], 'Спортмастер'],
   [['letoile.ru'], 'ЛЭТУАЛЬ'],
+  [['perekrestok.ru'], 'Перекрёсток', 'perekrestok.svg'],
   [['maagfashion.ru','maag-fashion.com'], 'MAAG', 'maag.png'],
   [['dns-shop.ru'], 'DNS']
 ];

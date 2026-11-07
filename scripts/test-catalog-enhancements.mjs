@@ -26,11 +26,12 @@ assert.equal(shopLink('https://ozon.ru.evil.example/a').label,'ozon.ru.evil.exam
 assert.equal(shopLink('https://m.market.yandex.ru/cc/ABC').label,'Яндекс Маркет');assert.equal(shopLink('https://henderson.ru/a').label,'Henderson');
 assert.equal(shopLink('javascript:alert(1)'),null);
 // Bundled icons must exist under the module, including the actual MAAG domain.
-for (const domain of ['ozon.ru','wildberries.ru','market.yandex.ru','henderson.ru','goldapple.ru','rivegauche.ru','maag-fashion.com']) {
+for (const domain of ['ozon.ru','wildberries.ru','market.yandex.ru','henderson.ru','goldapple.ru','rivegauche.ru','maag-fashion.com','perekrestok.ru']) {
   const link = shopLink(`https://${domain}/product`);
   assert.ok(link.iconUrl.includes('/shop-icons/'), domain);
   await access(new URL(link.iconUrl));
 }
 assert.equal(shopLink('https://maag-fashion.com/product/4101820800/').label,'MAAG');
+assert.equal(shopLink('https://www.perekrestok.ru/product').label,'Перекрёсток');
 assert.deepEqual(descriptionParts('Без ссылок\nПодробности'),[{type:'text',value:'Без ссылок\nПодробности'}]);
 console.log('Future grouping, old/new booking semantics, shop labels, exact URLs, Unicode/parameters and preserved description text passed.');

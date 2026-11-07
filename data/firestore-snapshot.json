@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "projectId": "wishlist-b3953",
-  "capturedAt": "2026-11-07T16:21:13.002Z",
+  "capturedAt": "2026-11-07T16:39:56.992Z",
   "giftGuidance": {
     "things": "Шампунь, гель для душа, бомбочки, пена и соль для ванны, свечи, диффузоры, посуда и приборы, цветы, полотенца, маски на основе глины и тканевые маски.",
     "brands": "Mixit, Aravia, Vois, Natura Siberica, Planeta Organica, Likato, Semily, kottur, HELDI.\nSokolov, SUNLIGHT, Kari",
@@ -199,12 +199,14 @@
       "id": "maag-tote",
       "category": "Just Pleasure",
       "createdAt": "2026-09-13T00:00:20Z",
-      "description": "Чтобы как Шапокляк с ней в Чижик ходить\nhttps://maag-fashion.com/product/4101820800/",
+      "description": "https://maag-fashion.com/product/4101820800/",
       "desireLevel": 1,
       "price": 3999,
+      "reason": "Чтобы как Шапокляк с ней в Чижик ходить",
+      "reservationRequired": true,
       "status": "available",
       "title": "Шоппер из кожзама MAAG",
-      "firestoreUpdateTime": "2026-09-18T13:57:29.158957Z"
+      "firestoreUpdateTime": "2026-11-07T16:21:40.382008Z"
     },
     {
       "id": "zelinski",
@@ -381,10 +383,10 @@
       "desireLevel": 4,
       "price": null,
       "reason": "Подарите удовольствие выбрать подарок самому. Обещаю наслаждаться процессом!",
-      "reservationRequired": true,
+      "reservationRequired": false,
       "status": "available",
       "title": "Сертификат Ozon или Wildberries",
-      "firestoreUpdateTime": "2026-11-07T15:43:26.121775Z"
+      "firestoreUpdateTime": "2026-11-07T16:21:23.563360Z"
     },
     {
       "id": "fingerless-gloves",
@@ -412,14 +414,14 @@
       "id": "zuegg-fig",
       "category": "Food",
       "createdAt": "2026-09-13T00:00:44Z",
-      "description": "Примеры:\nhttps://ozon.ru/t/HqhNIhK\nhttps://yarcheplus.ru/product/konfityur-23084\nhttps://lenta.com/product/konfityur-inzhir-ekstra-germaniya-330g-350145/\nhttps://www.perekrestok.ru/cat/775/p/konfitur-zuegg-iz-inzira-ekstra-330g-3404165\nЕсли хотите на мне сэкономить: https://ozon.ru/t/bT6f4zE",
+      "description": "Примеры:\nhttps://ozon.ru/t/HqhNIhK\nhttps://lenta.com/product/konfityur-inzhir-ekstra-germaniya-330g-350145/\nhttps://www.perekrestok.ru/cat/775/p/konfitur-zuegg-iz-inzira-ekstra-330g-3404165\nhttps://ozon.ru/t/bT6f4zE",
       "desireLevel": 4,
       "price": 250,
       "reason": "Маленькая баночка большого счастья",
       "reservationRequired": true,
       "status": "available",
       "title": "Конфитюр ZUEGG с инжиром",
-      "firestoreUpdateTime": "2026-11-07T15:43:48.371958Z"
+      "firestoreUpdateTime": "2026-11-07T16:21:17.563799Z"
     },
     {
       "id": "ostrich-egg",
@@ -516,9 +518,11 @@
       "description": "Protein Rex Strong ≈1,5к\nhttps://ozon.ru/t/l1VdSv5\nFitnessShock ≈800\nРыжие https://ozon.ru/t/1f2wgZA и https://www.wildberries.ru/catalog/29597992/detail.aspx\nБелые https://ozon.ru/t/j7X30xs\nМикс https://ozon.ru/t/hig9Zzl и https://www.wildberries.ru/catalog/316698987/detail.aspx",
       "desireLevel": 3,
       "price": 800,
+      "reason": "",
+      "reservationRequired": true,
       "status": "available",
       "title": "Набор протеиновых батончиков",
-      "firestoreUpdateTime": "2026-11-01T14:42:44.688778Z"
+      "firestoreUpdateTime": "2026-11-07T16:22:55.410509Z"
     },
     {
       "id": "dried-fruit-candy",
@@ -546,14 +550,14 @@
       "id": "dried-kumquat",
       "category": "Food",
       "createdAt": "2026-09-13T00:00:56Z",
-      "description": "300-500г Не важно какой, смотрите отзывы и оценку. Примеры:\nhttps://ozon.ru/t/QWJhHzU\nhttps://ozon.ru/t/r9x623i\nhttps://www.wildberries.ru/catalog/995812646/detail.aspx https://www.wildberries.ru/catalog/1004157953/detail.aspx",
+      "description": "300-500г Не важно какой, смотрите отзывы и оценку. Примеры:\nhttps://ozon.ru/t/QWJhHzU\nhttps://ozon.ru/t/r9x623i\nhttps://www.wildberries.ru/catalog/995812646/detail.aspx\nhttps://www.wildberries.ru/catalog/1004157953/detail.aspx",
       "desireLevel": 4,
       "price": 300,
       "reason": "Сладкий, но с кислинкой. Почти как я, только съедобный",
       "reservationRequired": true,
       "status": "available",
       "title": "Кумкват сушёный",
-      "firestoreUpdateTime": "2026-11-07T15:45:13.597778Z"
+      "firestoreUpdateTime": "2026-11-07T16:22:05.688999Z"
     },
     {
       "id": "mnbVOeUEyQ1BzF9OjFXe",
