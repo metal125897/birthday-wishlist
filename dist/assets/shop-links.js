@@ -4,12 +4,13 @@ const SHOPS = [
   [['market.yandex.ru','market.yandex.com','yandex.market'], 'Яндекс Маркет', 'yandex-market.png'],
   [['henderson.ru'], 'Henderson', 'henderson.svg'],
   [['goldapple.ru'], 'Золотое Яблоко', 'goldapple.png'],
-  [['randewoo.ru'], 'Randewoo'],
+  [['randewoo.ru'], 'Randewoo', 'randewoo.ico'],
   [['rivegauche.ru'], 'РИВ ГОШ', 'rivegauche.svg'],
   [['lamoda.ru'], 'Lamoda'],
   [['sportmaster.ru'], 'Спортмастер'],
   [['letoile.ru'], 'ЛЭТУАЛЬ'],
   [['perekrestok.ru'], 'Перекрёсток', 'perekrestok.svg'],
+  [['lenta.com','lenta.ru'], 'Лента'],
   [['maagfashion.ru','maag-fashion.com'], 'MAAG', 'maag.png'],
   [['dns-shop.ru'], 'DNS']
 ];

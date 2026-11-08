@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "projectId": "wishlist-b3953",
-  "capturedAt": "2026-11-07T16:39:56.992Z",
+  "capturedAt": "2026-11-08T05:44:45.175Z",
   "giftGuidance": {
     "things": "Шампунь, гель для душа, бомбочки, пена и соль для ванны, свечи, диффузоры, посуда и приборы, цветы, полотенца, маски на основе глины и тканевые маски.",
     "brands": "Mixit, Aravia, Vois, Natura Siberica, Planeta Organica, Likato, Semily, kottur, HELDI.\nSokolov, SUNLIGHT, Kari",
@@ -33,7 +33,7 @@
       "reservedBy": null,
       "status": "available",
       "title": "Мятный спрей для рта GlobalWhite",
-      "firestoreUpdateTime": "2026-11-07T15:47:43.208549Z"
+      "firestoreUpdateTime": "2026-11-07T17:27:33.730357Z"
     },
     {
       "id": "whitening-strips",
@@ -75,9 +75,11 @@
       "description": "Например Art&Fact и другие\nhttps://ozon.ru/t/EI8WvFD\nhttps://market.yandex.ru/cc/B4fQNv",
       "desireLevel": 3,
       "price": 550,
+      "reason": "",
+      "reservationRequired": true,
       "status": "available",
       "title": "Крем или сыворотка с витамином C",
-      "firestoreUpdateTime": "2026-09-18T13:57:29.158957Z"
+      "firestoreUpdateTime": "2026-11-07T18:58:36.114210Z"
     },
     {
       "id": "niacinamide-care",
@@ -357,12 +359,14 @@
       "id": "vitamins-one",
       "category": "Needs",
       "createdAt": "2026-09-13T00:00:39Z",
-      "description": "Пока только Витамин C, один из:\nhttps://ozon.ru/t/OyfpFAi\nhttps://ozon.ru/t/RhJtOyj\nhttps://www.wildberries.ru/catalog/529860263/detail.aspx",
+      "description": "Всё не надо, можно один из них:\nВитамин C\nhttps://ozon.ru/t/OyfpFAi\nhttps://ozon.ru/t/RhJtOyj\nhttps://www.wildberries.ru/catalog/529860263/detail.aspx",
       "desireLevel": 4,
       "price": 500,
+      "reason": "",
+      "reservationRequired": true,
       "status": "available",
       "title": "D3, Omega 3, витамин C, цинк или B-комплекс",
-      "firestoreUpdateTime": "2026-11-01T14:42:27.309776Z"
+      "firestoreUpdateTime": "2026-11-07T18:54:12.235534Z"
     },
     {
       "id": "supplements-two",
@@ -483,11 +487,13 @@
       "category": "Food",
       "createdAt": "2026-09-13T00:00:50Z",
       "description": "https://ozon.ru/t/GAHoxwZ\nhttps://www.wildberries.ru/catalog/214686162/detail.aspx\nhttps://market.yandex.ru/cc/B4ep8u",
-      "desireLevel": 2,
+      "desireLevel": 4,
       "price": 400,
+      "reason": "",
+      "reservationRequired": true,
       "status": "available",
       "title": "Яблочный уксус Kühne",
-      "firestoreUpdateTime": "2026-09-18T13:57:29.158957Z"
+      "firestoreUpdateTime": "2026-11-07T18:56:26.877634Z"
     },
     {
       "id": "premium-chocolate",
@@ -574,12 +580,14 @@
       "id": "TCi56WJuRSMqcwz2vFeI",
       "category": "Self Care & Cosmetics",
       "createdAt": "2026-09-14T12:06:48.463Z",
-      "description": "So cute на зимний сезон.\nhttps://ozon.ru/t/1f2KKEX\nhttps://ozon.ru/t/ukf22Kc\nhttps://www.wildberries.ru/catalog/580182431/detail.aspx",
+      "description": "https://ozon.ru/t/1f2KKEX\nhttps://ozon.ru/t/ukf22Kc\nhttps://www.wildberries.ru/catalog/580182431/detail.aspx",
       "desireLevel": 3,
       "price": 300,
+      "reason": "Очень мило на холодное время года",
+      "reservationRequired": true,
       "status": "available",
       "title": "Набор бальзамов для губ",
-      "firestoreUpdateTime": "2026-09-17T10:37:34.534807Z"
+      "firestoreUpdateTime": "2026-11-07T18:46:39.982334Z"
     },
     {
       "id": "WlAWmqDbzK6rgiSPzbzN",

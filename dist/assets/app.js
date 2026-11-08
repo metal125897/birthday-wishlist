@@ -6,7 +6,7 @@ import {normalizeGiftGuidance} from './site-content.js?v=20260920-editable-guida
 import {isGiftPrice} from './gift-price.js';
 import {readBookmarks, writeBookmarks, bookmarkStorageKey} from './bookmarks.js';
 import {catalogSections} from './catalog-sections.js';
-import {descriptionParts} from './shop-links.js?v=20261107-links-v2';
+import {descriptionParts} from './shop-links.js?v=20261108-mobile-meta';
 
 let bookmarkStorage;
 try { bookmarkStorage = window.localStorage; } catch { /* Bookmarks still work for this page. */ }
@@ -132,6 +132,7 @@ function desireScale(level, category) {
     const tag = document.createElement('span');
     tag.className = 'category-tag';
     tag.textContent = giftCategoryLabel(validCategory);
+    tag.title = tag.textContent;
     label.append(tag);
   }
   const desireCopy = document.createElement('span');
