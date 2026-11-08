@@ -5,7 +5,7 @@ const SHOPS = [
   [['henderson.ru'], 'Henderson', 'henderson.svg'],
   [['goldapple.ru'], 'Золотое Яблоко', 'goldapple.png'],
   [['randewoo.ru'], 'Randewoo', 'randewoo.ico'],
-  [['rivegauche.ru'], 'РИВ ГОШ', 'rivegauche.svg'],
+  [['rivegauche.ru'], 'РИВ ГОШ', 'rivegauche.svg?v=20261108-native'],
   [['lamoda.ru'], 'Lamoda'],
   [['sportmaster.ru'], 'Спортмастер'],
   [['letoile.ru'], 'ЛЭТУАЛЬ'],

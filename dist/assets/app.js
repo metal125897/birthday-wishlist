@@ -6,7 +6,7 @@ import {normalizeGiftGuidance} from './site-content.js?v=20260920-editable-guida
 import {isGiftPrice} from './gift-price.js';
 import {readBookmarks, writeBookmarks, bookmarkStorageKey} from './bookmarks.js';
 import {catalogSections} from './catalog-sections.js';
-import {descriptionParts} from './shop-links.js?v=20261108-mobile-meta';
+import {descriptionParts} from './shop-links.js?v=20261108-mobile-meta-v2';
 
 let bookmarkStorage;
 try { bookmarkStorage = window.localStorage; } catch { /* Bookmarks still work for this page. */ }
