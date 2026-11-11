@@ -423,8 +423,8 @@ function exportGiftsToCsv() {
   if (!state.gifts.length) return;
   const gifts = [...state.gifts].sort((a, b) => (a.createdAt?.seconds ?? 0) - (b.createdAt?.seconds ?? 0));
   const rows = [
-    ['Название', 'Описание', 'Уровень желания', 'Цена', 'Категория', 'Цитата'],
-    ...gifts.map(gift => [gift.title, gift.description || '', gift.desireLevel, Number.isFinite(gift.price) ? gift.price : null, giftCategoryLabel(gift.category) || '', gift.reason || ''])
+    ['Название', 'Описание', 'Уровень желания', 'Цена', 'Категория', 'Цитата', 'Требуется бронирование'],
+    ...gifts.map(gift => [gift.title, gift.description || '', gift.desireLevel, Number.isFinite(gift.price) ? gift.price : null, giftCategoryLabel(gift.category) || '', gift.reason || '', gift.reservationRequired === false ? 'Нет' : 'Да'])
   ];
   const csv = `\uFEFF${rows.map(row => row.map(csvCell).join(';')).join('\r\n')}`;
   const url = URL.createObjectURL(new Blob([csv], {type: 'text/csv;charset=utf-8'}));

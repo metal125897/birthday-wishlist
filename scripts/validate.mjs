@@ -121,8 +121,8 @@ if (adminApp.includes('seedInitialGifts') || adminApp.includes('INITIAL_GIFTS'))
 if (!styles.includes('.delete-confirm__button{min-width:100px;min-height:48px')) {
   throw new Error('Кнопки подтверждения удаления должны иметь стандартную высоту.');
 }
-if (!adminHtml.includes('id="export-csv"') || !adminApp.includes("['Название', 'Описание', 'Уровень желания', 'Цена', 'Категория', 'Цитата']") || !adminApp.includes("gift.reason || ''") || !adminApp.includes('giftCategoryLabel(gift.category)') || !adminApp.includes("type: 'text/csv;charset=utf-8'")) {
-  throw new Error('Админка должна экспортировать шесть столбцов в UTF-8 CSV, включая категорию и цитату.');
+if (!adminHtml.includes('id="export-csv"') || !adminApp.includes("['Название', 'Описание', 'Уровень желания', 'Цена', 'Категория', 'Цитата', 'Требуется бронирование']") || !adminApp.includes("gift.reason || ''") || !adminApp.includes('giftCategoryLabel(gift.category)') || !adminApp.includes("type: 'text/csv;charset=utf-8'")) {
+  throw new Error('Админка должна экспортировать семь столбцов в UTF-8 CSV, включая категорию, цитату и необходимость брони.');
 }
 if (!publicHtml.includes('<details class="gift-guidance">') || !publicHtml.includes('id="guidance-things"') || !publicHtml.includes('id="guidance-brands"') || !publicApp.includes("doc(db, 'siteContent', 'giftGuidance')")) {
   throw new Error('Не найден редактируемый раскрываемый блок с нежелательными подарками.');

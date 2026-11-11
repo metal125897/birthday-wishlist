@@ -6,7 +6,7 @@ import {normalizeGiftGuidance} from './site-content.js?v=20260920-editable-guida
 import {isGiftPrice} from './gift-price.js';
 import {readBookmarks, writeBookmarks, bookmarkStorageKey} from './bookmarks.js';
 import {catalogSections} from './catalog-sections.js';
-import {descriptionParts} from './shop-links.js?v=20261108-mobile-meta-v2';
+import {descriptionParts} from './shop-links.js?v=20261111-navigation';
 
 let bookmarkStorage;
 try { bookmarkStorage = window.localStorage; } catch { /* Bookmarks still work for this page. */ }
@@ -15,6 +15,7 @@ const elements = {
   list: document.querySelector('#gift-list'), loading: document.querySelector('#loading'),
   empty: document.querySelector('#empty-state'), error: document.querySelector('#error-state'),
   emptyCopy: document.querySelector('#empty-copy'),
+  emptyAction: document.querySelector('#view-available'), emptyEyebrow: document.querySelector('#empty-state .eyebrow'),
   retry: document.querySelector('#retry-button'), counter: document.querySelector('#counter'),
   categoryControl: document.querySelector('#category-control'), categoryTrigger: document.querySelector('#category-trigger'),
   categoryMenu: document.querySelector('#category-menu'), categoryValue: document.querySelector('#category-value'),
@@ -429,6 +430,17 @@ function updateListSummary(gifts) {
   elements.emptyCopy.textContent = state.mode === 'saved' ? 'Нажмите на значок закладки у подарка, чтобы добавить его в избранное и вернуться к нему позже.' : state.gifts.length
     ? 'В этой категории ничего не нашлось по текущим фильтрам. Попробуйте изменить категорию или статус.'
     : 'Список ещё наполняется. Загляните чуть позже.';
+  const emptyReserved = state.mode === 'catalog' && state.filter === 'reserved' && gifts.length === 0;
+  if (elements.emptyAction) elements.emptyAction.hidden = !emptyReserved;
+  elements.emptyEyebrow.hidden = emptyReserved;
+  if (emptyReserved) {
+    if (state.gifts.some(gift => gift.status === 'reserved')) {
+      elements.emptyCopy.textContent = 'В этой категории пока нет забронированных подарков';
+    } else {
+      elements.empty.querySelector('h2').textContent = 'Кажется, вы опередили всех!';
+      elements.emptyCopy.textContent = 'Все желания пока свободны. Можно выбирать без компромиссов – редкая роскошь!';
+    }
+  }
 }
 
 function showNotice(message, isError = false) {
@@ -495,6 +507,20 @@ const instructionsTrigger = document.querySelector('#instructions-trigger');
 instructionsTrigger.addEventListener('click', () => {
   instructionsDialog.showModal();
   instructionsTrigger.setAttribute('aria-expanded','true');
+});
+function scrollToSection(target, block = 'start') {
+  target?.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block});
+}
+document.querySelector('#hero-instructions-link')?.addEventListener('click', event => {
+  event.preventDefault();
+  scrollToSection(instructionsTrigger, 'center');
+  instructionsTrigger.focus({preventScroll:true});
+});
+document.querySelector('#hero-gifts-link')?.addEventListener('click', event => {
+  event.preventDefault();
+  const target = !elements.error.hidden ? elements.error : !elements.loading.hidden ? elements.loading : !elements.empty.hidden ? elements.empty
+    : elements.list.querySelector('.featured-heading h2') || [...elements.list.children].find(child => child.matches('.gift-card,.future-gifts') && !child.hidden) || elements.list;
+  scrollToSection(target);
 });
 function closeInstructions() {
   if (!instructionsDialog.open || instructionsDialog.classList.contains('is-closing')) return;
@@ -597,14 +623,17 @@ statusButtons.forEach(button => statusSliderObserver.observe(button));
 const modeSliderObserver = new ResizeObserver(updateModeSlider);
 modeButtons.forEach(button => modeSliderObserver.observe(button));
 
-statusButtons.forEach(button => button.addEventListener('click', () => {
-  state.filter = button.dataset.filter;
+function setStatusFilter(filter) {
+  state.filter = filter;
   statusButtons.forEach(item => {
-    const active = item === button;
+    const active = item.dataset.filter === filter;
     item.classList.toggle('is-active', active);
     item.setAttribute('aria-pressed', String(active));
   });
   updateStatusSlider();
+}
+statusButtons.forEach(button => button.addEventListener('click', () => {
+  setStatusFilter(button.dataset.filter);
   render();
 }));
 
@@ -628,7 +657,7 @@ function setupListbox({control, trigger, menu, options, value, dataKey, onChange
     }
   }
 
-  function select(option) {
+  function applySelection(option) {
     value.textContent = option.textContent;
     options.forEach(item => {
       const selected = item === option;
@@ -636,6 +665,9 @@ function setupListbox({control, trigger, menu, options, value, dataKey, onChange
       item.setAttribute('aria-selected', String(selected));
     });
     onChange(option.dataset[dataKey]);
+  }
+  function select(option) {
+    applySelection(option);
     close({restoreFocus: true});
     elements.list.classList.add('suppress-hover');
     render();
@@ -673,7 +705,11 @@ function setupListbox({control, trigger, menu, options, value, dataKey, onChange
   document.addEventListener('click', event => {
     if (!control.contains(event.target) && !menu.hidden) close();
   });
-  return {close};
+  return {close, setValue(nextValue) {
+    const option = options.find(item => item.dataset[dataKey] === nextValue);
+    if (option) applySelection(option);
+    close();
+  }};
 }
 
 elements.list.addEventListener('pointermove', event => {
@@ -700,6 +736,15 @@ const sortListbox = setupListbox({
   value: elements.sortValue,
   dataKey: 'sort',
   onChange: sort => { state.sort = sort; }
+});
+
+elements.emptyAction?.addEventListener('click', () => {
+  setStatusFilter('available');
+  categoryListbox.setValue('all');
+  sortListbox.setValue('desire-desc');
+  state.futureOpen = false;
+  render();
+  statusButtons.find(button => button.dataset.filter === 'available').focus({preventScroll:true});
 });
 
 document.querySelectorAll('[data-mode]').forEach(button => button.addEventListener('click', () => {

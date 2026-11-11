@@ -1,25 +1,26 @@
 {
   "schemaVersion": 1,
   "projectId": "wishlist-b3953",
-  "capturedAt": "2026-11-08T05:46:17.339Z",
+  "capturedAt": "2026-11-11T14:36:21.029Z",
   "giftGuidance": {
-    "things": "Шампунь, гель для душа, бомбочки, пена и соль для ванны, свечи, диффузоры, посуда и приборы, цветы, полотенца, маски на основе глины и тканевые маски.",
+    "things": "Шампунь, гель для душа, бомбочки, пена и соль для ванны, свечи и диффузоры, посуда и приборы, чай, цветы, полотенца, маски на основе глины и тканевые маски.",
     "brands": "Mixit, Aravia, Vois, Natura Siberica, Planeta Organica, Likato, Semily, kottur, HELDI.\nSokolov, SUNLIGHT, Kari",
-    "updatedAt": "2026-09-20T14:25:47.279Z",
-    "firestoreUpdateTime": "2026-09-20T14:25:47.315170Z"
+    "updatedAt": "2026-11-09T19:21:17.631Z",
+    "firestoreUpdateTime": "2026-11-09T19:21:17.665136Z"
   },
   "gifts": [
     {
       "id": "tiswell-nano",
       "category": "Self Care & Cosmetics",
       "createdAt": "2026-09-13T00:00:01Z",
-      "description": "https://ozon.ru/t/D4oTsJt\nhttps://www.wildberries.ru/catalog/329620584/detail.aspx",
+      "description": "https://ozon.ru/t/D4oTsJt\nhttps://www.wildberries.ru/catalog/329620584/detail.aspx\nhttps://market.yandex.ru/cc/BW2z38",
       "desireLevel": 2,
       "price": 300,
-      "reason": "Чтобы было...",
+      "reason": "",
+      "reservationRequired": true,
       "status": "available",
       "title": "Гель Tiswell NANO «Пломба»",
-      "firestoreUpdateTime": "2026-11-05T06:50:42.910342Z"
+      "firestoreUpdateTime": "2026-11-08T11:27:25.029418Z"
     },
     {
       "id": "globalwhite-spray",
@@ -61,12 +62,14 @@
       "id": "enzyme-powder",
       "category": "Self Care & Cosmetics",
       "createdAt": "2026-09-13T00:00:05Z",
-      "description": "Например Art&Fact, The Act и другие.",
-      "desireLevel": 2,
-      "price": null,
+      "description": "https://ozon.ru/t/qt8yYrw\nhttps://www.wildberries.ru/catalog/529881431/detail.aspx\nhttps://market.yandex.ru/cc/BWF3T3",
+      "desireLevel": 3,
+      "price": 500,
+      "reason": "",
+      "reservationRequired": true,
       "status": "available",
       "title": "Энзимная пудра",
-      "firestoreUpdateTime": "2026-09-18T13:57:29.158957Z"
+      "firestoreUpdateTime": "2026-11-08T18:42:28.372780Z"
     },
     {
       "id": "vitamin-c-care",
@@ -130,11 +133,13 @@
       "category": "Self Care & Cosmetics",
       "createdAt": "2026-09-13T00:00:12Z",
       "description": "Не пробовал, поэтому 200мл хватит попробовать",
-      "desireLevel": 3,
+      "desireLevel": 2,
       "price": 500,
+      "reason": "",
+      "reservationRequired": true,
       "status": "available",
       "title": "Сухой шампунь Batiste",
-      "firestoreUpdateTime": "2026-10-22T04:15:43.054247Z"
+      "firestoreUpdateTime": "2026-11-08T18:42:54.967600Z"
     },
     {
       "id": "spf-50",
@@ -177,14 +182,14 @@
       "category": "Sport",
       "createdAt": "2026-09-13T00:00:17Z",
       "description": "Бренды: Bombbar, Первый Русский Протеин, GeneticLab или BigWhey\nЛучше больше порций, вкус не так важен\nЛучше один из:\nhttps://ozon.ru/t/MnWzTMy\nhttps://ozon.ru/t/yeEUHt7\nhttps://www.wildberries.ru/catalog/1109787629/detail.aspx",
-      "desireLevel": 5,
+      "desireLevel": 3,
       "price": 1600,
       "reason": "Мышцы сами себя не построят. Но вы можете стать спонсором этого проекта))",
       "reservationRequired": true,
       "reservedBy": null,
       "status": "available",
       "title": "Протеин",
-      "firestoreUpdateTime": "2026-11-07T15:44:42.535885Z"
+      "firestoreUpdateTime": "2026-11-08T18:56:00.358744Z"
     },
     {
       "id": "randewoo-perfume",
@@ -193,9 +198,11 @@
       "description": "Только 1,5 или 8/10 мл\nНа WB есть их официальный магазин и они продают 1,5 мл дешевле, чем на сайте https://www.wildberries.ru/seller/randewoo\n\nTrussardi Hidden Corner Of Fontana Dei Baci https://randewoo.ru/product/hidden-corner-of-fontana-dei-baci?coupon_code=REF-LVXSFYN5\nVilhelm Parfumerie Purple Fig https://randewoo.ru/product/vilhelm-parfumerie-purple-fig?coupon_code=REF-LVXSFYN5\nAkro Ink https://randewoo.ru/product/ink?preferred=421802&coupon_code=REF-LVXSFYN5\nXerjoff Zefiro https://randewoo.ru/product/xerjoff-xj-1861-zefiro?preferred=66846&coupon_code=REF-LVXSFYN5\nThe House of Oud Dates Delight https://randewoo.ru/product/the-house-of-oud-dates-delight?coupon_code=REF-LVXSFYN5\nBDK Creme De Cuir https://randewoo.ru/product/parfums-bdk-paris-creme-de-cuir?coupon_code=REF-LVXSFYN5\nMax Philip Mandarin https://randewoo.ru/product/mandarin?coupon_code=REF-LVXSFYN5\nNectar Olfactif Supreme Nectar https://randewoo.ru/product/supreme-nectar?coupon_code=REF-LVXSFYN5\nChabaud Maison de ParfumLait Concentre https://randewoo.ru/product/chabaud-maison-de-parfum-lait-concentre?coupon_code=REF-LVXSFYN5\nRosendo Mateu №5 https://randewoo.ru/product/5-floral-amber-sensual-musk?coupon_code=REF-LVXSFYN5\nMajda Bekkali Mon Nom Est Rouge https://randewoo.ru/product/majda-bekkali-mon-nom-est-rouge?coupon_code=REF-LVXSFYN5\nAfnan Turathi Electric https://randewoo.ru/product/turathi-electric?coupon_code=REF-LVXSFYN5\nLattafa Art Of Universe https://randewoo.ru/product/art-of-universe?coupon_code=REF-LVXSFYN5",
       "desireLevel": 3,
       "price": null,
+      "reason": "Хочу пахнуть загадочно: немного влажного асфальта, немного заблудившейся пчелы",
+      "reservationRequired": true,
       "status": "available",
       "title": "Духи с Randewoo",
-      "firestoreUpdateTime": "2026-10-16T04:59:22.983489Z"
+      "firestoreUpdateTime": "2026-11-09T18:25:08.454523Z"
     },
     {
       "id": "maag-tote",
@@ -214,25 +221,14 @@
       "id": "zelinski",
       "category": "Just Pleasure",
       "createdAt": "2026-09-13T00:00:21Z",
-      "description": "10 или 50 мл\nhttps://zielinskiandrozen.ru/product/duhi-kontsentrirovannye-ambra-pachuli\nhttps://goldapple.ru/19000021493-moss\nhttps://rivegauche.ru/product/zielinski--rozen-amber-patchouli-perfume-10",
-      "desireLevel": 2,
-      "price": 2000,
-      "status": "available",
-      "title": "Zielinski & Rozen Amber, Patchouli",
-      "firestoreUpdateTime": "2026-09-20T10:06:49.149672Z"
-    },
-    {
-      "id": "puma-boxers",
-      "category": "Needs",
-      "createdAt": "2026-09-13T00:00:23Z",
-      "description": "Размер M. С их сайта бесплатно доставляют в ПВЗ Я.Маркета и 5post\nОдни из:\n1. https://henderson.ru/product/uw2-1173-black/ (модал, шёлк, лайкра)\n2. https://henderson.ru/product/uw2-1354-dbrown/ (модал, лайкра)\n3. https://henderson.ru/product/uw2-0611-black/ (модал, лайкра)\n4. https://henderson.ru/product/uw2-1264-dnavy/ (модал, лайкра)\n5. https://henderson.ru/product/uw2-1123-lblue/ (модал, шёлк, лайкра)\n6. https://henderson.ru/product/uw2-1175-blue/ (модал, шёлк, лайкра)",
-      "desireLevel": 4,
-      "price": 1400,
-      "reason": "Комфорт начинается с мелочей. Особенно с тех, которые никто не видит",
+      "description": "10 или 50 мл\nРанее назывались Moss\nhttps://zielinskiandrozen.ru/product/duhi-kontsentrirovannye-ambra-pachuli\nhttps://goldapple.ru/19000021493-moss\nhttps://rivegauche.ru/product/zielinski--rozen-amber-patchouli-perfume-10",
+      "desireLevel": 3,
+      "price": 2200,
+      "reason": "",
       "reservationRequired": true,
       "status": "available",
-      "title": "Боксеры Henderson",
-      "firestoreUpdateTime": "2026-11-07T15:43:01.968775Z"
+      "title": "Zielinski & Rozen Amber, Patchouli",
+      "firestoreUpdateTime": "2026-11-08T18:56:59.737517Z"
     },
     {
       "id": "silver-coin",
@@ -360,37 +356,39 @@
       "category": "Needs",
       "createdAt": "2026-09-13T00:00:39Z",
       "description": "Всё не надо, можно один из них:\nВитамин C\nhttps://ozon.ru/t/OyfpFAi\nhttps://ozon.ru/t/RhJtOyj\nhttps://www.wildberries.ru/catalog/529860263/detail.aspx",
-      "desireLevel": 4,
+      "desireLevel": 2,
       "price": 500,
       "reason": "",
       "reservationRequired": true,
       "status": "available",
       "title": "D3, Omega 3, витамин C, цинк или B-комплекс",
-      "firestoreUpdateTime": "2026-11-07T18:54:12.235534Z"
+      "firestoreUpdateTime": "2026-11-08T18:43:52.687127Z"
     },
     {
       "id": "supplements-two",
       "category": "Needs",
       "createdAt": "2026-09-13T00:00:40Z",
-      "description": "",
+      "description": "Ежовик\nhttps://ozon.ru/t/4KqXZYy = https://www.wildberries.ru/catalog/437391719/detail.aspx\nhttps://ozon.ru/t/sXvRwZC",
       "desireLevel": 1,
       "price": null,
+      "reason": "",
+      "reservationRequired": true,
       "status": "available",
       "title": "Магний, GABA, триптофан или ежовик гребенчатый",
-      "firestoreUpdateTime": "2026-09-18T13:57:29.158957Z"
+      "firestoreUpdateTime": "2026-11-09T19:12:13.092724Z"
     },
     {
       "id": "marketplace-certificate",
       "category": "Needs",
       "createdAt": "2026-09-13T00:00:41Z",
       "description": "",
-      "desireLevel": 4,
+      "desireLevel": 5,
       "price": null,
       "reason": "Подарите удовольствие выбрать подарок самому. Обещаю наслаждаться процессом!",
       "reservationRequired": false,
       "status": "available",
       "title": "Сертификат Ozon или Wildberries",
-      "firestoreUpdateTime": "2026-11-07T16:21:23.563360Z"
+      "firestoreUpdateTime": "2026-11-09T19:21:57.898371Z"
     },
     {
       "id": "fingerless-gloves",
@@ -418,14 +416,14 @@
       "id": "zuegg-fig",
       "category": "Food",
       "createdAt": "2026-09-13T00:00:44Z",
-      "description": "Примеры:\nhttps://ozon.ru/t/HqhNIhK\nhttps://lenta.com/product/konfityur-inzhir-ekstra-germaniya-330g-350145/\nhttps://www.perekrestok.ru/cat/775/p/konfitur-zuegg-iz-inzira-ekstra-330g-3404165\nhttps://ozon.ru/t/bT6f4zE",
+      "description": "Примеры:\nhttps://ozon.ru/t/HqhNIhK\nhttps://magnit.ru/product/1000104416-konfityur_zuegg_ekstra_inzhir_330g\nhttps://lenta.com/product/konfityur-inzhir-ekstra-germaniya-330g-350145/\nhttps://www.perekrestok.ru/cat/775/p/konfitur-zuegg-iz-inzira-ekstra-330g-3404165\nhttps://ozon.ru/t/bT6f4zE",
       "desireLevel": 4,
       "price": 250,
-      "reason": "Маленькая баночка большого счастья",
+      "reason": "Мой внутренний аристократ требует достойного сопровождения к тостам",
       "reservationRequired": true,
       "status": "available",
       "title": "Конфитюр ZUEGG с инжиром",
-      "firestoreUpdateTime": "2026-11-07T16:21:17.563799Z"
+      "firestoreUpdateTime": "2026-11-08T19:32:19.757352Z"
     },
     {
       "id": "ostrich-egg",
@@ -464,23 +462,27 @@
       "id": "liquorice",
       "category": "Food",
       "createdAt": "2026-09-13T00:00:48Z",
-      "description": "Мармеладыч, Haribo или любой с хлрошей оценкой и отзывами. Большую упаковку не надо",
+      "description": "Мармеладыч, Haribo или любой с хорошей оценкой и отзывами. Большую упаковку не надо",
       "desireLevel": 2,
       "price": 300,
+      "reason": "",
+      "reservationRequired": true,
       "status": "available",
       "title": "Лакрица",
-      "firestoreUpdateTime": "2026-11-01T14:42:52.900591Z"
+      "firestoreUpdateTime": "2026-11-09T19:20:06.638996Z"
     },
     {
       "id": "nut-butters",
       "category": "Food",
       "createdAt": "2026-09-13T00:00:49Z",
-      "description": "Не фундучные.\nМожно с мёдом, шоколадом, джемом, кокосом и любыми другими добавками.\nНекоторые примеры, но можно вообще любую кроме фундука:\nhttps://ozon.ru/t/CrA4hsF\nhttps://ozon.ru/t/a83g987\nhttps://ozon.ru/t/yeEqx9m",
+      "description": "Не фундучные.\nМожно с мёдом, шоколадом, джемом, кокосом и любыми другими вкусами/добавками.\nНекоторые примеры, но можно вообще любую без фундука:\nШоколад\nhttps://ozon.ru/t/yeEqx9m\nКокос\nhttps://ozon.ru/t/CrA4hsF\nhttps://ozon.ru/t/dw68g2D\nФрукты/ягоды\nhttps://ozon.ru/t/QWjDaxP\nhttps://ozon.ru/t/ivQugcH\nПротеин\nhttps://ozon.ru/t/J5Xou2a\nhttps://ozon.ru/t/qt80PpL",
       "desireLevel": 3,
       "price": 400,
+      "reason": "",
+      "reservationRequired": true,
       "status": "available",
       "title": "Ореховые пасты",
-      "firestoreUpdateTime": "2026-09-18T13:57:29.158957Z"
+      "firestoreUpdateTime": "2026-11-09T19:02:00.964559Z"
     },
     {
       "id": "kuhne-vinegar",
@@ -489,33 +491,37 @@
       "description": "https://ozon.ru/t/GAHoxwZ\nhttps://www.wildberries.ru/catalog/214686162/detail.aspx\nhttps://market.yandex.ru/cc/B4ep8u",
       "desireLevel": 4,
       "price": 400,
-      "reason": "",
+      "reason": "Не спрашивайте. У меня большие гастрономические планы на эту кислоту",
       "reservationRequired": true,
       "status": "available",
       "title": "Яблочный уксус Kühne",
-      "firestoreUpdateTime": "2026-11-07T18:56:26.877634Z"
+      "firestoreUpdateTime": "2026-11-10T10:58:36.351095Z"
     },
     {
       "id": "premium-chocolate",
       "category": "Food",
       "createdAt": "2026-09-13T00:00:51Z",
-      "description": "",
-      "desireLevel": 1,
+      "description": "Было бы здорово такой https://fix-price.com/catalog/produkty-i-napitki/p-1900418-shokolad-molochnyy-s-proteinom-semenami-chia-i-lna-port-ucheron-70-g",
+      "desireLevel": 3,
       "price": null,
+      "reason": "",
+      "reservationRequired": true,
       "status": "available",
       "title": "Шоколад или конфеты BUCHERON / Lindt",
-      "firestoreUpdateTime": "2026-09-18T13:57:29.158957Z"
+      "firestoreUpdateTime": "2026-11-08T18:34:13.056362Z"
     },
     {
       "id": "merci-coffee",
       "category": "Food",
       "createdAt": "2026-09-13T00:00:52Z",
-      "description": "",
+      "description": "Не важно откуда, вот чтобы понять как выглядит:\nhttps://market.yandex.ru/cc/BWFP7h\nhttps://magnit.ru/product/1000212057-merci_shokolad_molochn_kofeyn_100g_k_up_storck_15\nhttps://www.perekrestok.ru/cat/195/p/sokolad-molocnyj-merci-s-kofe-i-slivkami-100g-3425950\nhttps://lenta.com/product/shokolad-kofe-germaniya-100g-238699/",
       "desireLevel": 2,
-      "price": null,
+      "price": 200,
+      "reason": "",
+      "reservationRequired": true,
       "status": "available",
       "title": "Шоколадка Merci «Кофе и сливки»",
-      "firestoreUpdateTime": "2026-09-18T13:57:29.158957Z"
+      "firestoreUpdateTime": "2026-11-08T19:05:55.171272Z"
     },
     {
       "id": "protein-bars",
@@ -535,11 +541,13 @@
       "category": "Food",
       "createdAt": "2026-09-13T00:00:54Z",
       "description": "Пример: \nhttps://ozon.ru/t/l1b1Wbh\nhttps://www.wildberries.ru/catalog/437823063/detail.aspx\nhttps://www.wildberries.ru/catalog/220085921/detail.aspx\nhttps://www.wildberries.ru/catalog/170873491/detail.aspx",
-      "desireLevel": 2,
+      "desireLevel": 3,
       "price": 400,
+      "reason": "",
+      "reservationRequired": true,
       "status": "available",
       "title": "Конфеты из сухофруктов в шоколаде",
-      "firestoreUpdateTime": "2026-09-18T13:57:29.158957Z"
+      "firestoreUpdateTime": "2026-11-08T19:10:31.784107Z"
     },
     {
       "id": "coconut-condensed-milk",
@@ -581,13 +589,13 @@
       "category": "Self Care & Cosmetics",
       "createdAt": "2026-09-14T12:06:48.463Z",
       "description": "https://ozon.ru/t/1f2KKEX\nhttps://ozon.ru/t/ukf22Kc\nhttps://www.wildberries.ru/catalog/580182431/detail.aspx",
-      "desireLevel": 3,
+      "desireLevel": 2,
       "price": 300,
       "reason": "Очень мило на холодное время года",
       "reservationRequired": true,
       "status": "available",
       "title": "Набор бальзамов для губ",
-      "firestoreUpdateTime": "2026-11-07T18:46:39.982334Z"
+      "firestoreUpdateTime": "2026-11-08T19:23:01.370599Z"
     },
     {
       "id": "WlAWmqDbzK6rgiSPzbzN",
@@ -607,9 +615,11 @@
       "description": "Одну из:\nhttps://www.wildberries.ru/catalog/866011013/detail.aspx\nhttps://www.wildberries.ru/catalog/863856437/detail.aspx\nhttps://www.wildberries.ru/catalog/866185105/detail.aspx\nhttps://www.wildberries.ru/catalog/866094232/detail.aspx",
       "desireLevel": 3,
       "price": 200,
+      "reason": "",
+      "reservationRequired": true,
       "status": "available",
       "title": "Гранола",
-      "firestoreUpdateTime": "2026-11-01T14:42:46.984198Z"
+      "firestoreUpdateTime": "2026-11-08T19:12:33.709119Z"
     },
     {
       "id": "5QnwxV0tEICbKcRdl9WO",
@@ -632,9 +642,11 @@
       "description": "Platina https://t.me/vpnplatina_bot?start=TpuXwZP\n(Там можно купить в подарок, 365 дней, 3 устройства)",
       "desireLevel": 4,
       "price": 2100,
+      "reason": "Для поддержания отношений на расстоянии. Между мной и нейросетями",
+      "reservationRequired": true,
       "status": "available",
       "title": "Подписка BПH на год",
-      "firestoreUpdateTime": "2026-11-02T15:58:43.463317Z"
+      "firestoreUpdateTime": "2026-11-10T11:00:40.717551Z"
     },
     {
       "id": "WMuLm0S22hDJIWimt2cA",
@@ -651,12 +663,14 @@
       "id": "aRT2XYrmFVcp7i1DeWmW",
       "category": "Needs",
       "createdAt": "2026-10-25T16:20:47.810Z",
-      "description": "Чёрные, 10 пар, размер 44\nОдни из:\nhttps://ozon.ru/t/dw4ZKF9\nhttps://www.wildberries.ru/catalog/13738272/detail.aspx",
-      "desireLevel": 1,
+      "description": "Чёрные, 10 пар, размер 44\nОдни из:\n1. https://ozon.ru/t/9oRwLpF https://www.wildberries.ru/catalog/13738272/detail.aspx\n2. https://ozon.ru/t/dw4ZKF9 https://www.wildberries.ru/catalog/13738266/detail.aspx?targetUrl=SN",
+      "desireLevel": 4,
       "price": 1000,
+      "reason": "Взрослая жизнь - это когда 10 пар носков радуют больше, чем должны",
+      "reservationRequired": true,
       "status": "available",
       "title": "Носки Omsa 10 пар",
-      "firestoreUpdateTime": "2026-10-25T16:20:47.882128Z"
+      "firestoreUpdateTime": "2026-11-09T06:44:41.258628Z"
     },
     {
       "id": "8K6uhSfcj1qWCFVQvOK3",
@@ -668,6 +682,48 @@
       "status": "available",
       "title": "Массаж",
       "firestoreUpdateTime": "2026-11-02T16:07:36.609274Z"
+    },
+    {
+      "id": "dnZaEhTP4vVpmIwCyCuB",
+      "category": "Food",
+      "createdAt": "2026-11-08T17:55:36.836Z",
+      "description": "https://ozon.ru/t/5DJ5xhb\nhttps://www.wildberries.ru/catalog/771031076/detail.aspx\nhttps://market.yandex.ru/cc/BWDybk",
+      "desireLevel": 4,
+      "price": 250,
+      "reason": "Счастье бывает разным. Иногда оно сводит скулы",
+      "reservationRequired": true,
+      "reservedBy": null,
+      "status": "available",
+      "title": "Мармеладки Fini",
+      "firestoreUpdateTime": "2026-11-08T19:28:11.599269Z"
+    },
+    {
+      "id": "dyNwZ0ESasdu2HtjI5Bw",
+      "category": "Food",
+      "createdAt": "2026-11-08T17:57:55.160Z",
+      "description": "https://ozon.ru/t/3Qk3rpH",
+      "desireLevel": 3,
+      "price": 300,
+      "reason": "",
+      "reservationRequired": true,
+      "reservedBy": null,
+      "status": "available",
+      "title": "Шелковица сушёная",
+      "firestoreUpdateTime": "2026-11-08T17:57:55.201164Z"
+    },
+    {
+      "id": "MG78PR4ArKCXelB5WZe5",
+      "category": "Needs",
+      "createdAt": "2026-11-10T04:40:57.490Z",
+      "description": "Размер M. С их сайта бесплатно доставляют в ПВЗ Я.Маркета и 5post\nОдни из:\nНормисный хлопок:\n1. https://henderson.ru/product/uw2-0326-black/ (хлопок, лайкра)\n2. https://henderson.ru/product/uw2-0326-white/ (хлопок, лайкра)\nМодал:\n3. https://henderson.ru/product/uw2-0611-black/ (модал, лайкра)\n4. https://henderson.ru/product/uw2-1354-dbrown/ (модал, лайкра)\n5. https://henderson.ru/product/uw2-1264-dnavy/ (модал, лайкра)\nС шёлком:\n6. https://henderson.ru/product/uw2-1173-black/ (модал, шёлк, лайкра)\n7. https://henderson.ru/product/uw2-1209-navy/ (модал, шёлк, лайкра)\n8. https://henderson.ru/product/uw2-1285-lbeige/ (модал, шёлк, лайкра)",
+      "desireLevel": 5,
+      "price": 1500,
+      "reason": "Комфорт начинается с мелочей. Особенно с тех, которые никто не видит",
+      "reservationRequired": true,
+      "reservedBy": null,
+      "status": "available",
+      "title": "Боксеры Henderson",
+      "firestoreUpdateTime": "2026-11-10T04:46:25.060087Z"
     }
   ]
 }

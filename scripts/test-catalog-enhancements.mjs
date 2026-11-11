@@ -34,5 +34,7 @@ for (const domain of ['ozon.ru','wildberries.ru','market.yandex.ru','henderson.r
 assert.equal(shopLink('https://maag-fashion.com/product/4101820800/').label,'MAAG');
 assert.equal(shopLink('https://www.perekrestok.ru/product').label,'Перекрёсток');
 assert.equal(shopLink('https://lenta.com/product').label,'Лента');
+assert.equal(shopLink('https://magnit.ru/product').label,'Магнит');
+assert.equal(shopLink('https://shop.fix-price.com/product').label,'FixPrice');
 assert.deepEqual(descriptionParts('Без ссылок\nПодробности'),[{type:'text',value:'Без ссылок\nПодробности'}]);
 console.log('Future grouping, old/new booking semantics, shop labels, exact URLs, Unicode/parameters and preserved description text passed.');
