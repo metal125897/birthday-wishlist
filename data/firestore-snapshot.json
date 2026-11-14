@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "projectId": "wishlist-b3953",
-  "capturedAt": "2026-11-11T14:36:21.029Z",
+  "capturedAt": "2026-11-14T12:27:30.124Z",
   "giftGuidance": {
     "things": "Шампунь, гель для душа, бомбочки, пена и соль для ванны, свечи и диффузоры, посуда и приборы, чай, цветы, полотенца, маски на основе глины и тканевые маски.",
     "brands": "Mixit, Aravia, Vois, Natura Siberica, Planeta Organica, Likato, Semily, kottur, HELDI.\nSokolov, SUNLIGHT, Kari",
@@ -195,14 +195,15 @@
       "id": "randewoo-perfume",
       "category": "Just Pleasure",
       "createdAt": "2026-09-13T00:00:19Z",
-      "description": "Только 1,5 или 8/10 мл\nНа WB есть их официальный магазин и они продают 1,5 мл дешевле, чем на сайте https://www.wildberries.ru/seller/randewoo\n\nTrussardi Hidden Corner Of Fontana Dei Baci https://randewoo.ru/product/hidden-corner-of-fontana-dei-baci?coupon_code=REF-LVXSFYN5\nVilhelm Parfumerie Purple Fig https://randewoo.ru/product/vilhelm-parfumerie-purple-fig?coupon_code=REF-LVXSFYN5\nAkro Ink https://randewoo.ru/product/ink?preferred=421802&coupon_code=REF-LVXSFYN5\nXerjoff Zefiro https://randewoo.ru/product/xerjoff-xj-1861-zefiro?preferred=66846&coupon_code=REF-LVXSFYN5\nThe House of Oud Dates Delight https://randewoo.ru/product/the-house-of-oud-dates-delight?coupon_code=REF-LVXSFYN5\nBDK Creme De Cuir https://randewoo.ru/product/parfums-bdk-paris-creme-de-cuir?coupon_code=REF-LVXSFYN5\nMax Philip Mandarin https://randewoo.ru/product/mandarin?coupon_code=REF-LVXSFYN5\nNectar Olfactif Supreme Nectar https://randewoo.ru/product/supreme-nectar?coupon_code=REF-LVXSFYN5\nChabaud Maison de ParfumLait Concentre https://randewoo.ru/product/chabaud-maison-de-parfum-lait-concentre?coupon_code=REF-LVXSFYN5\nRosendo Mateu №5 https://randewoo.ru/product/5-floral-amber-sensual-musk?coupon_code=REF-LVXSFYN5\nMajda Bekkali Mon Nom Est Rouge https://randewoo.ru/product/majda-bekkali-mon-nom-est-rouge?coupon_code=REF-LVXSFYN5\nAfnan Turathi Electric https://randewoo.ru/product/turathi-electric?coupon_code=REF-LVXSFYN5\nLattafa Art Of Universe https://randewoo.ru/product/art-of-universe?coupon_code=REF-LVXSFYN5",
+      "description": "Только 1,5 или 8-15 мл\nНа WB есть их официальный магазин и они продают 1,5 мл дешевле, чем на сайте https://www.wildberries.ru/seller/randewoo\n\nОсобо интересные:\nTrussardi Hidden Corner Of Fontana Dei Baci https://randewoo.ru/product/hidden-corner-of-fontana-dei-baci?coupon_code=REF-LVXSFYN5\nVilhelm Parfumerie Purple Fig https://randewoo.ru/product/vilhelm-parfumerie-purple-fig?coupon_code=REF-LVXSFYN5\nAkro Ink https://randewoo.ru/product/ink?preferred=421802&coupon_code=REF-LVXSFYN5\nXerjoff Zefiro https://randewoo.ru/product/xerjoff-xj-1861-zefiro?preferred=66846&coupon_code=REF-LVXSFYN5\nThe House of Oud Dates Delight https://randewoo.ru/product/the-house-of-oud-dates-delight?coupon_code=REF-LVXSFYN5\nBDK Creme De Cuir https://randewoo.ru/product/parfums-bdk-paris-creme-de-cuir?coupon_code=REF-LVXSFYN5\nMax Philip Mandarin https://randewoo.ru/product/mandarin?coupon_code=REF-LVXSFYN5\nNectar Olfactif Supreme Nectar https://randewoo.ru/product/supreme-nectar?coupon_code=REF-LVXSFYN5\nChabaud Maison de Parfum Lait Concentre https://randewoo.ru/product/chabaud-maison-de-parfum-lait-concentre?coupon_code=REF-LVXSFYN5\nRosendo Mateu №5 https://randewoo.ru/product/5-floral-amber-sensual-musk?coupon_code=REF-LVXSFYN5\nMajda Bekkali Mon Nom Est Rouge https://randewoo.ru/product/majda-bekkali-mon-nom-est-rouge?coupon_code=REF-LVXSFYN5\nAfnan Turathi Electric https://randewoo.ru/product/turathi-electric?coupon_code=REF-LVXSFYN5\nLattafa Art Of Universe https://randewoo.ru/product/art-of-universe?coupon_code=REF-LVXSFYN5\nFugazzi NoCologne Extrait De Parfum https://randewoo.ru/product/nocologne-extrait-de-parfum?coupon_code=REF-LVXSFYN5\nAl Haramain Perfumes Amber Oud Aqua Dubai https://randewoo.ru/product/amber-oud-aqua-dubai?coupon_code=REF-LVXSFYN5\nGuerlain Cuir Beluga https://randewoo.ru/product/guerlain-cuir-beluga?coupon_code=REF-LVXSFYN5\nLes Eaux Primordiales Ambre Supermassive https://randewoo.ru/product/ambre-supermassive?coupon_code=REF-LVXSFYN5\n27 87 Perfumes Sonar https://randewoo.ru/product/27-87-perfumes-sonar?coupon_code=REF-LVXSFYN5",
       "desireLevel": 3,
       "price": null,
       "reason": "Хочу пахнуть загадочно: немного влажного асфальта, немного заблудившейся пчелы",
       "reservationRequired": true,
+      "reservedBy": null,
       "status": "available",
       "title": "Духи с Randewoo",
-      "firestoreUpdateTime": "2026-11-09T18:25:08.454523Z"
+      "firestoreUpdateTime": "2026-11-14T12:09:33.790245Z"
     },
     {
       "id": "maag-tote",
@@ -394,12 +395,14 @@
       "id": "fingerless-gloves",
       "category": "Sport",
       "createdAt": "2026-09-13T00:00:42Z",
-      "description": "Размер L\nhttps://ozon.ru/t/EIUgseY\nhttps://ozon.ru/t/yevhwKd",
+      "description": "",
       "desireLevel": 1,
-      "price": 400,
+      "price": null,
+      "reason": "",
+      "reservationRequired": true,
       "status": "available",
       "title": "Перчатки без пальцев для спорта",
-      "firestoreUpdateTime": "2026-11-01T19:23:35.271716Z"
+      "firestoreUpdateTime": "2026-11-14T12:13:10.858711Z"
     },
     {
       "id": "rashguard",
@@ -514,14 +517,14 @@
       "id": "merci-coffee",
       "category": "Food",
       "createdAt": "2026-09-13T00:00:52Z",
-      "description": "Не важно откуда, вот чтобы понять как выглядит:\nhttps://market.yandex.ru/cc/BWFP7h\nhttps://magnit.ru/product/1000212057-merci_shokolad_molochn_kofeyn_100g_k_up_storck_15\nhttps://www.perekrestok.ru/cat/195/p/sokolad-molocnyj-merci-s-kofe-i-slivkami-100g-3425950\nhttps://lenta.com/product/shokolad-kofe-germaniya-100g-238699/",
+      "description": "Не важно откуда, вот чтобы понять как выглядит:\nhttps://market.yandex.ru/cc/BWFP7h\nhttps://magnit.ru/product/1000212057-merci_shokolad_molochn_kofeyn_100g_k_up_storck_15\nhttps://5ka.ru/product/shokolad-molochnyy-merci-s-kofe-i-slivkami-100g--3425950/\nhttps://www.perekrestok.ru/cat/195/p/sokolad-molocnyj-merci-s-kofe-i-slivkami-100g-3425950\nhttps://lenta.com/product/shokolad-kofe-germaniya-100g-238699/",
       "desireLevel": 2,
       "price": 200,
       "reason": "",
       "reservationRequired": true,
       "status": "available",
       "title": "Шоколадка Merci «Кофе и сливки»",
-      "firestoreUpdateTime": "2026-11-08T19:05:55.171272Z"
+      "firestoreUpdateTime": "2026-11-14T12:14:37.536788Z"
     },
     {
       "id": "protein-bars",
@@ -591,11 +594,11 @@
       "description": "https://ozon.ru/t/1f2KKEX\nhttps://ozon.ru/t/ukf22Kc\nhttps://www.wildberries.ru/catalog/580182431/detail.aspx",
       "desireLevel": 2,
       "price": 300,
-      "reason": "Очень мило на холодное время года",
+      "reason": "",
       "reservationRequired": true,
       "status": "available",
       "title": "Набор бальзамов для губ",
-      "firestoreUpdateTime": "2026-11-08T19:23:01.370599Z"
+      "firestoreUpdateTime": "2026-11-14T11:40:16.452603Z"
     },
     {
       "id": "WlAWmqDbzK6rgiSPzbzN",
@@ -724,6 +727,20 @@
       "status": "available",
       "title": "Боксеры Henderson",
       "firestoreUpdateTime": "2026-11-10T04:46:25.060087Z"
+    },
+    {
+      "id": "mbiHiOE24uNeMwMFDHGe",
+      "category": "Needs",
+      "createdAt": "2026-11-12T16:56:55.965Z",
+      "description": "",
+      "desireLevel": 1,
+      "price": null,
+      "reason": "",
+      "reservationRequired": true,
+      "reservedBy": null,
+      "status": "available",
+      "title": "Подставка для ноутбука",
+      "firestoreUpdateTime": "2026-11-12T16:56:56.012739Z"
     }
   ]
 }

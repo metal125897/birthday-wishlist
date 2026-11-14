@@ -6,7 +6,7 @@ import {normalizeGiftGuidance} from './site-content.js?v=20260920-editable-guida
 import {isGiftPrice} from './gift-price.js';
 import {readBookmarks, writeBookmarks, bookmarkStorageKey} from './bookmarks.js';
 import {catalogSections} from './catalog-sections.js';
-import {descriptionParts} from './shop-links.js?v=20261111-navigation';
+import {descriptionParts} from './shop-links.js?v=20261114-links';
 
 let bookmarkStorage;
 try { bookmarkStorage = window.localStorage; } catch { /* Bookmarks still work for this page. */ }
@@ -154,7 +154,16 @@ function appendLinkedText(container, text) {
     if (index % 2) { container.append(document.createTextNode(row)); return; }
     const line = document.createElement('div');
     line.className = 'description-line';
-    appendLinkedLine(line, row);
+    const numbered = row.match(/^(\s*\d+[.)])\s+/);
+    if (numbered) {
+      line.classList.add('description-line--numbered');
+      const number = document.createElement('span');
+      number.className = 'description-number';
+      number.textContent = numbered[1].trim();
+      const content = document.createElement('span');
+      appendLinkedLine(content, row.slice(numbered[0].length));
+      line.append(number, content);
+    } else appendLinkedLine(line, row);
     const linkOnly = line.children.length === 1 && [...line.childNodes].every(node => node.nodeType !== Node.TEXT_NODE || !node.textContent.trim());
     line.classList.toggle('description-line--link', linkOnly);
     container.append(line);
@@ -175,6 +184,7 @@ function appendLinkedLine(container, text) {
     icon.innerHTML = '<svg viewBox="0 0 24 24"><path d="m10 13 4-4m-6 7-1 1a4 4 0 0 1-6-6l4-4a4 4 0 0 1 6 0m2-2 1-1a4 4 0 0 1 6 6l-4 4a4 4 0 0 1-6 0"/></svg>';
     const img = document.createElement('img');
     img.alt = ''; img.dataset.src = part.iconUrl; img.referrerPolicy = 'no-referrer'; img.decoding = 'async';
+    if (new URL(part.url).hostname.replace(/^www\./, '') === '5ka.ru') img.classList.add('shop-icon--round');
     img.addEventListener('load', () => icon.classList.add('is-loaded'));
     img.addEventListener('error', () => img.remove(), {once:true});
     icon.append(img);
@@ -433,6 +443,7 @@ function updateListSummary(gifts) {
   const emptyReserved = state.mode === 'catalog' && state.filter === 'reserved' && gifts.length === 0;
   if (elements.emptyAction) elements.emptyAction.hidden = !emptyReserved;
   elements.emptyEyebrow.hidden = emptyReserved;
+  elements.emptyEyebrow.textContent = emptyReserved ? '' : 'Скоро здесь станет интереснее';
   if (emptyReserved) {
     if (state.gifts.some(gift => gift.status === 'reserved')) {
       elements.emptyCopy.textContent = 'В этой категории пока нет забронированных подарков';

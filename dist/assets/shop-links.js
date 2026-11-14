@@ -12,6 +12,7 @@ const SHOPS = [
   [['perekrestok.ru'], 'Перекрёсток', 'perekrestok.svg'],
   [['lenta.com','lenta.ru'], 'Лента'],
   [['magnit.ru'], 'Магнит'],
+  [['5ka.ru'], 'Пятёрочка'],
   [['fix-price.com'], 'FixPrice'],
   [['maagfashion.ru','maag-fashion.com'], 'MAAG', 'maag.png'],
   [['dns-shop.ru'], 'DNS']

@@ -292,6 +292,8 @@ html:has(.future-gifts),html:has(.is-disclosure-animating){overflow-anchor:none}
 .form-stack .checkbox-field input{flex:none;width:19px;height:19px;min-height:19px;margin:0;padding:0;accent-color:var(--gold)}
 .gift-description__inner{display:flex;flex-direction:column;gap:8px;white-space:normal}
 .description-line{white-space:pre-wrap;overflow-wrap:anywhere}
+.description-line--numbered{display:grid;grid-template-columns:2ch minmax(0,1fr);gap:6px;align-items:baseline}
+.description-number{font-variant-numeric:tabular-nums}
 .description-line--link{display:flex;align-items:center}
 .description-line:empty{min-height:1em}
 .gift-description a.shop-link{display:inline-flex;align-items:center;gap:8px;max-width:100%;padding:7px 10px;margin:0;border:1px solid rgba(223,199,143,.2);border-radius:10px;background:linear-gradient(135deg,rgba(223,199,143,.1),rgba(255,255,255,.035));font-size:.88rem;font-weight:500;line-height:1.4;white-space:normal;vertical-align:middle;text-decoration:none;text-shadow:none}
@@ -300,6 +302,7 @@ html:has(.future-gifts),html:has(.is-disclosure-animating){overflow-anchor:none}
 .shop-link__icon svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round}
 .shop-link__icon img{border-radius:4px;position:absolute;inset:0;width:16px;height:16px;object-fit:contain;opacity:0}
 .shop-link__icon.is-loaded img{opacity:1}.shop-link__icon.is-loaded svg{visibility:hidden}
+.shop-link__icon img.shop-icon--round{border-radius:50%}
 @media(max-width:620px){
  .catalog-heading{flex-direction:column;align-items:flex-start;gap:10px}
  .catalog-heading .help-trigger{order:-1}
