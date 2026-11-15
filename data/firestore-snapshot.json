@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "projectId": "wishlist-b3953",
-  "capturedAt": "2026-11-15T11:39:15.795Z",
+  "capturedAt": "2026-11-15T16:32:15.740Z",
   "giftGuidance": {
     "things": "Шампунь, гель для душа, бомбочки, пена и соль для ванны, свечи и диффузоры, посуда и приборы, чай, цветы, полотенца, маски на основе глины и тканевые маски.",
     "brands": "Mixit, Aravia, Vois, Natura Siberica, Planeta Organica, Likato, Semily, kottur, HELDI.\nSokolov, SUNLIGHT, Kari",
@@ -75,36 +75,40 @@
       "id": "vitamin-c-care",
       "category": "Self Care & Cosmetics",
       "createdAt": "2026-09-13T00:00:06Z",
-      "description": "Например Art&Fact и другие\nhttps://ozon.ru/t/EI8WvFD\nhttps://market.yandex.ru/cc/B4fQNv",
+      "description": "Например Art&Fact и другие\nhttps://ozon.ru/t/EI8WvFD\nhttps://ozon.ru/t/1f7Qpqb\nhttps://market.yandex.ru/cc/B4fQNv",
       "desireLevel": 3,
       "price": 550,
       "reason": "",
       "reservationRequired": true,
       "status": "available",
       "title": "Крем или сыворотка с витамином C",
-      "firestoreUpdateTime": "2026-11-07T18:58:36.114210Z"
+      "firestoreUpdateTime": "2026-11-15T12:34:43.336128Z"
     },
     {
       "id": "niacinamide-care",
       "category": "Self Care & Cosmetics",
       "createdAt": "2026-09-13T00:00:07Z",
-      "description": "Подойдёт также сочетание ниацинамида с цинком.",
+      "description": "Подойдёт также сочетание ниацинамид + цинк\nhttps://ozon.ru/t/l1jj5qf\nhttps://ozon.ru/t/dw3R7Ut\nhttps://ozon.ru/t/cFNfY22\nhttps://ozon.ru/t/hildsoh\nhttps://ozon.ru/t/AxvNtp3",
       "desireLevel": 1,
       "price": null,
+      "reason": "",
+      "reservationRequired": true,
       "status": "available",
       "title": "Крем или сыворотка с ниацинамидом",
-      "firestoreUpdateTime": "2026-09-18T13:57:29.158957Z"
+      "firestoreUpdateTime": "2026-11-15T13:06:03.233268Z"
     },
     {
       "id": "retinol-one-percent",
       "category": "Self Care & Cosmetics",
       "createdAt": "2026-09-13T00:00:08Z",
-      "description": "Липосомальный ретинол 1% или ретиналь\nhttps://ozon.ru/t/MnWzgp8\nhttps://www.wildberries.ru/catalog/16939061/detail.aspx\nhttps://market.yandex.ru/cc/B4dhLy",
+      "description": "Липосомальный ретинол 1% или ретиналь\nhttps://ozon.ru/t/MnWzgp8\nhttps://ozon.ru/t/MnDUEJS\nhttps://www.wildberries.ru/catalog/16939061/detail.aspx\nhttps://market.yandex.ru/cc/B4dhLy",
       "desireLevel": 2,
       "price": 450,
+      "reason": "",
+      "reservationRequired": true,
       "status": "available",
       "title": "Крем или сыворотка с ретинолом от 1%",
-      "firestoreUpdateTime": "2026-09-18T13:57:29.158957Z"
+      "firestoreUpdateTime": "2026-11-15T12:34:17.705799Z"
     },
     {
       "id": "aravia-cc",
@@ -156,7 +160,7 @@
       "id": "eaa-bombbar",
       "category": "Sport",
       "createdAt": "2026-09-13T00:00:15Z",
-      "description": "Вкус всё равно, какой дешевле выбирайте\nhttps://ozon.ru/t/D4ozTS2\nhttps://www.wildberries.ru/catalog/279293283/detail.aspx\nhttps://market.yandex.ru/cc/B4fNQ4",
+      "description": "Вкус не важен, какой дешевле выбирайте\nhttps://ozon.ru/t/D4ozTS2\nhttps://ozon.ru/t/hillq3x\nhttps://www.wildberries.ru/catalog/279293283/detail.aspx\nhttps://market.yandex.ru/cc/B4fNQ4",
       "desireLevel": 4,
       "price": 950,
       "reason": "Мышцы просят поддержки. Я просто передаю их пожелание",
@@ -164,7 +168,7 @@
       "reservedBy": null,
       "status": "available",
       "title": "EAA Bombbar",
-      "firestoreUpdateTime": "2026-11-07T15:42:44.865708Z"
+      "firestoreUpdateTime": "2026-11-15T13:06:45.373548Z"
     },
     {
       "id": "creatine",
@@ -478,14 +482,14 @@
       "id": "nut-butters",
       "category": "Food",
       "createdAt": "2026-09-13T00:00:49Z",
-      "description": "Не фундучные.\nМожно с мёдом, шоколадом, джемом, кокосом и любыми другими вкусами/добавками.\nНекоторые примеры, но можно вообще любую без фундука:\nШоколад\nhttps://ozon.ru/t/yeEqx9m\nКокос\nhttps://ozon.ru/t/CrA4hsF\nhttps://ozon.ru/t/dw68g2D\nФрукты/ягоды\nhttps://ozon.ru/t/QWjDaxP\nhttps://ozon.ru/t/ivQugcH\nПротеин\nhttps://ozon.ru/t/J5Xou2a\nhttps://ozon.ru/t/qt80PpL",
+      "description": "Не фундучные.\nМожно с мёдом, шоколадом, джемом, кокосом и любыми другими вкусами/добавками.\nНекоторые примеры, но можно вообще любую без фундука:\nПротеин\nhttps://ozon.ru/t/J5Xou2a\nhttps://ozon.ru/t/qt80PpL\nКокос\nhttps://ozon.ru/t/Rh6KPVw ❤️\nhttps://ozon.ru/t/dw68g2D\nФрукты/ягоды\nhttps://ozon.ru/t/QWjDaxP\nhttps://ozon.ru/t/ivQugcH\nМёд\nhttps://ozon.ru/t/gmVZdUj\nШоколад\nhttps://ozon.ru/t/yeEqx9m",
       "desireLevel": 3,
       "price": 400,
       "reason": "",
       "reservationRequired": true,
       "status": "available",
       "title": "Ореховые пасты",
-      "firestoreUpdateTime": "2026-11-09T19:02:00.964559Z"
+      "firestoreUpdateTime": "2026-11-15T12:38:59.371223Z"
     },
     {
       "id": "kuhne-vinegar",
@@ -615,14 +619,14 @@
       "id": "Gs43bKHIrbDq6YUY4r6s",
       "category": "Food",
       "createdAt": "2026-09-15T05:20:41.860Z",
-      "description": "Одну из:\nhttps://www.wildberries.ru/catalog/866011013/detail.aspx\nhttps://www.wildberries.ru/catalog/863856437/detail.aspx\nhttps://www.wildberries.ru/catalog/866185105/detail.aspx\nhttps://www.wildberries.ru/catalog/866094232/detail.aspx",
+      "description": "Одну из:\nhttps://www.wildberries.ru/catalog/866011013/detail.aspx\nhttps://www.wildberries.ru/catalog/863856437/detail.aspx\nhttps://www.wildberries.ru/catalog/866185105/detail.aspx\nhttps://www.wildberries.ru/catalog/866094232/detail.aspx\nhttps://ozon.ru/t/dw3RNin\nhttps://ozon.ru/t/2zpJzwm",
       "desireLevel": 3,
       "price": 200,
       "reason": "",
       "reservationRequired": true,
       "status": "available",
       "title": "Гранола",
-      "firestoreUpdateTime": "2026-11-08T19:12:33.709119Z"
+      "firestoreUpdateTime": "2026-11-15T12:27:38.346815Z"
     },
     {
       "id": "5QnwxV0tEICbKcRdl9WO",
@@ -741,6 +745,20 @@
       "status": "available",
       "title": "Подставка для ноутбука",
       "firestoreUpdateTime": "2026-11-12T16:56:56.012739Z"
+    },
+    {
+      "id": "sdkMop5IpaC1ibNjuN8j",
+      "category": "Needs",
+      "createdAt": "2026-11-15T13:09:40.684Z",
+      "description": "пиджак укороченный кроп оверсайз,  https://www.wildberries.ru/catalog/1565573211/detail.aspx",
+      "desireLevel": 4,
+      "price": 3000,
+      "reason": "",
+      "reservationRequired": true,
+      "reservedBy": null,
+      "status": "available",
+      "title": "Пиджак",
+      "firestoreUpdateTime": "2026-11-15T13:09:40.724287Z"
     }
   ]
 }

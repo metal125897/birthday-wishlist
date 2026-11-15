@@ -238,8 +238,9 @@ a{color:var(--gold)}
  .gift-actions{grid-row:3;grid-column:1/-1;margin-top:9px}
  .gift-actions .glass-button{grid-row:auto;grid-column:auto;margin:0;height:48px;min-height:48px;padding-block:0}
  .gift-chevron{grid-row:1}
- .gift-card.has-reason:not(.is-open):not(.is-collapsing){height:auto;min-height:208px}
- .gift-card.has-reason{grid-template-rows:minmax(74px,1fr) auto auto auto}
+ .gift-card.has-reason:not(.is-open):not(.is-collapsing){height:auto;min-height:0}
+ .gift-card.has-reason{grid-template-rows:auto auto auto auto;align-content:start;min-height:0}
+ .gift-card.has-reason .gift-actions{align-self:end}
  .gift-reason{grid-column:1/-1;grid-row:2;margin:10px 0 8px;font-size:.85rem}
  .gift-card.has-reason .price,.gift-card.has-reason .desire{grid-row:3}
  .gift-card.has-reason .gift-actions{grid-row:4}
