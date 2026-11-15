@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "projectId": "wishlist-b3953",
-  "capturedAt": "2026-11-14T12:27:30.124Z",
+  "capturedAt": "2026-11-15T11:39:15.795Z",
   "giftGuidance": {
     "things": "Шампунь, гель для душа, бомбочки, пена и соль для ванны, свечи и диффузоры, посуда и приборы, чай, цветы, полотенца, маски на основе глины и тканевые маски.",
     "brands": "Mixit, Aravia, Vois, Natura Siberica, Planeta Organica, Likato, Semily, kottur, HELDI.\nSokolov, SUNLIGHT, Kari",
@@ -492,13 +492,13 @@
       "category": "Food",
       "createdAt": "2026-09-13T00:00:50Z",
       "description": "https://ozon.ru/t/GAHoxwZ\nhttps://www.wildberries.ru/catalog/214686162/detail.aspx\nhttps://market.yandex.ru/cc/B4ep8u",
-      "desireLevel": 4,
+      "desireLevel": 1,
       "price": 400,
       "reason": "Не спрашивайте. У меня большие гастрономические планы на эту кислоту",
       "reservationRequired": true,
       "status": "available",
       "title": "Яблочный уксус Kühne",
-      "firestoreUpdateTime": "2026-11-10T10:58:36.351095Z"
+      "firestoreUpdateTime": "2026-11-14T14:44:37.909903Z"
     },
     {
       "id": "premium-chocolate",
@@ -530,14 +530,14 @@
       "id": "protein-bars",
       "category": "Sport",
       "createdAt": "2026-09-13T00:00:53Z",
-      "description": "Protein Rex Strong ≈1,5к\nhttps://ozon.ru/t/l1VdSv5\nFitnessShock ≈800\nРыжие https://ozon.ru/t/1f2wgZA и https://www.wildberries.ru/catalog/29597992/detail.aspx\nБелые https://ozon.ru/t/j7X30xs\nМикс https://ozon.ru/t/hig9Zzl и https://www.wildberries.ru/catalog/316698987/detail.aspx",
-      "desireLevel": 3,
+      "description": "Protein Rex Strong ≈1,5к\nhttps://ozon.ru/t/l1VdSv5\nhttps://market.yandex.ru/cc/BZJJpL\nFitnessShock ≈800\nРыжие https://ozon.ru/t/1f2wgZA и https://www.wildberries.ru/catalog/29597992/detail.aspx\nБелые https://ozon.ru/t/j7X30xs\nМикс https://ozon.ru/t/hig9Zzl и https://www.wildberries.ru/catalog/316698987/detail.aspx",
+      "desireLevel": 4,
       "price": 800,
       "reason": "",
       "reservationRequired": true,
       "status": "available",
       "title": "Набор протеиновых батончиков",
-      "firestoreUpdateTime": "2026-11-07T16:22:55.410509Z"
+      "firestoreUpdateTime": "2026-11-14T12:34:56.620061Z"
     },
     {
       "id": "dried-fruit-candy",
