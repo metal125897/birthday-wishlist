@@ -9,7 +9,7 @@ export const GIFT_CATEGORIES = Object.freeze([
 export const GIFT_CATEGORY_LABELS = Object.freeze({
   'Self Care & Cosmetics': 'Забота о себе',
   Sport: 'Жопу качат',
-  'Just Pleasure': 'Дофаминовый всплеск',
+  'Just Pleasure': 'Дофаминово',
   Food: 'Еда',
   Needs: 'Практичное'
 });

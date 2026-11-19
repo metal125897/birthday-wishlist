@@ -1,7 +1,7 @@
 import {collection, onSnapshot, runTransaction, doc, waitForPendingWrites} from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js';
 import {db, firebaseConfigured, ensureGuest, watchGuest} from './guest-client.js?v=20261104-owners';
 import {reservationUpdate, ownsReservation, requiresReservation, publicGiftStatus} from './reservation-policy.js?v=20261107-catalog';
-import {giftCategoryLabel, normalizeGiftCategory} from './categories.js?v=20260917-category-labels';
+import {giftCategoryLabel, normalizeGiftCategory} from './categories.js?v=20261119-category-labels';
 import {normalizeGiftGuidance} from './site-content.js?v=20260920-editable-guidance';
 import {isGiftPrice} from './gift-price.js';
 import {readBookmarks, writeBookmarks, bookmarkStorageKey} from './bookmarks.js';

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "projectId": "wishlist-b3953",
-  "capturedAt": "2026-11-15T16:32:15.740Z",
+  "capturedAt": "2026-11-19T13:11:29.397Z",
   "giftGuidance": {
     "things": "Шампунь, гель для душа, бомбочки, пена и соль для ванны, свечи и диффузоры, посуда и приборы, чай, цветы, полотенца, маски на основе глины и тканевые маски.",
     "brands": "Mixit, Aravia, Vois, Natura Siberica, Planeta Organica, Likato, Semily, kottur, HELDI.\nSokolov, SUNLIGHT, Kari",
@@ -111,26 +111,17 @@
       "firestoreUpdateTime": "2026-11-15T12:34:17.705799Z"
     },
     {
-      "id": "aravia-cc",
-      "category": "Self Care & Cosmetics",
-      "createdAt": "2026-09-13T00:00:10Z",
-      "description": "50 мл\nhttps://ozon.ru/t/zL78VTm\nhttps://www.wildberries.ru/catalog/11259851/detail.aspx",
-      "desireLevel": 1,
-      "price": 500,
-      "status": "available",
-      "title": "CC-крем Aravia",
-      "firestoreUpdateTime": "2026-09-18T13:57:29.158957Z"
-    },
-    {
       "id": "hair-mask",
       "category": "Self Care & Cosmetics",
       "createdAt": "2026-09-13T00:00:11Z",
-      "description": "Lador, EPICA, TaShe и другие",
+      "description": "Lador, EPICA, TaShe и другие\nНапример EPICA Keratin PRO:\nhttps://ozon.ru/t/IYAXa1y\nhttps://www.wildberries.ru/catalog/57499735/detail.aspx\nhttps://market.yandex.ru/cc/BZwD7n",
       "desireLevel": 1,
       "price": null,
+      "reason": "",
+      "reservationRequired": true,
       "status": "available",
       "title": "Маска для волос",
-      "firestoreUpdateTime": "2026-09-18T13:57:29.158957Z"
+      "firestoreUpdateTime": "2026-11-15T16:41:15.986495Z"
     },
     {
       "id": "batiste-dry-shampoo",
@@ -162,13 +153,13 @@
       "createdAt": "2026-09-13T00:00:15Z",
       "description": "Вкус не важен, какой дешевле выбирайте\nhttps://ozon.ru/t/D4ozTS2\nhttps://ozon.ru/t/hillq3x\nhttps://www.wildberries.ru/catalog/279293283/detail.aspx\nhttps://market.yandex.ru/cc/B4fNQ4",
       "desireLevel": 4,
-      "price": 950,
+      "price": 990,
       "reason": "Мышцы просят поддержки. Я просто передаю их пожелание",
       "reservationRequired": true,
       "reservedBy": null,
       "status": "available",
       "title": "EAA Bombbar",
-      "firestoreUpdateTime": "2026-11-15T13:06:45.373548Z"
+      "firestoreUpdateTime": "2026-11-15T16:41:32.293631Z"
     },
     {
       "id": "creatine",
@@ -187,27 +178,27 @@
       "createdAt": "2026-09-13T00:00:17Z",
       "description": "Бренды: Bombbar, Первый Русский Протеин, GeneticLab или BigWhey\nЛучше больше порций, вкус не так важен\nЛучше один из:\nhttps://ozon.ru/t/MnWzTMy\nhttps://ozon.ru/t/yeEUHt7\nhttps://www.wildberries.ru/catalog/1109787629/detail.aspx",
       "desireLevel": 3,
-      "price": 1600,
+      "price": 1800,
       "reason": "Мышцы сами себя не построят. Но вы можете стать спонсором этого проекта))",
       "reservationRequired": true,
       "reservedBy": null,
       "status": "available",
       "title": "Протеин",
-      "firestoreUpdateTime": "2026-11-08T18:56:00.358744Z"
+      "firestoreUpdateTime": "2026-11-15T16:41:42.457826Z"
     },
     {
       "id": "randewoo-perfume",
       "category": "Just Pleasure",
       "createdAt": "2026-09-13T00:00:19Z",
       "description": "Только 1,5 или 8-15 мл\nНа WB есть их официальный магазин и они продают 1,5 мл дешевле, чем на сайте https://www.wildberries.ru/seller/randewoo\n\nОсобо интересные:\nTrussardi Hidden Corner Of Fontana Dei Baci https://randewoo.ru/product/hidden-corner-of-fontana-dei-baci?coupon_code=REF-LVXSFYN5\nVilhelm Parfumerie Purple Fig https://randewoo.ru/product/vilhelm-parfumerie-purple-fig?coupon_code=REF-LVXSFYN5\nAkro Ink https://randewoo.ru/product/ink?preferred=421802&coupon_code=REF-LVXSFYN5\nXerjoff Zefiro https://randewoo.ru/product/xerjoff-xj-1861-zefiro?preferred=66846&coupon_code=REF-LVXSFYN5\nThe House of Oud Dates Delight https://randewoo.ru/product/the-house-of-oud-dates-delight?coupon_code=REF-LVXSFYN5\nBDK Creme De Cuir https://randewoo.ru/product/parfums-bdk-paris-creme-de-cuir?coupon_code=REF-LVXSFYN5\nMax Philip Mandarin https://randewoo.ru/product/mandarin?coupon_code=REF-LVXSFYN5\nNectar Olfactif Supreme Nectar https://randewoo.ru/product/supreme-nectar?coupon_code=REF-LVXSFYN5\nChabaud Maison de Parfum Lait Concentre https://randewoo.ru/product/chabaud-maison-de-parfum-lait-concentre?coupon_code=REF-LVXSFYN5\nRosendo Mateu №5 https://randewoo.ru/product/5-floral-amber-sensual-musk?coupon_code=REF-LVXSFYN5\nMajda Bekkali Mon Nom Est Rouge https://randewoo.ru/product/majda-bekkali-mon-nom-est-rouge?coupon_code=REF-LVXSFYN5\nAfnan Turathi Electric https://randewoo.ru/product/turathi-electric?coupon_code=REF-LVXSFYN5\nLattafa Art Of Universe https://randewoo.ru/product/art-of-universe?coupon_code=REF-LVXSFYN5\nFugazzi NoCologne Extrait De Parfum https://randewoo.ru/product/nocologne-extrait-de-parfum?coupon_code=REF-LVXSFYN5\nAl Haramain Perfumes Amber Oud Aqua Dubai https://randewoo.ru/product/amber-oud-aqua-dubai?coupon_code=REF-LVXSFYN5\nGuerlain Cuir Beluga https://randewoo.ru/product/guerlain-cuir-beluga?coupon_code=REF-LVXSFYN5\nLes Eaux Primordiales Ambre Supermassive https://randewoo.ru/product/ambre-supermassive?coupon_code=REF-LVXSFYN5\n27 87 Perfumes Sonar https://randewoo.ru/product/27-87-perfumes-sonar?coupon_code=REF-LVXSFYN5",
-      "desireLevel": 3,
+      "desireLevel": 4,
       "price": null,
       "reason": "Хочу пахнуть загадочно: немного влажного асфальта, немного заблудившейся пчелы",
       "reservationRequired": true,
       "reservedBy": null,
       "status": "available",
       "title": "Духи с Randewoo",
-      "firestoreUpdateTime": "2026-11-14T12:09:33.790245Z"
+      "firestoreUpdateTime": "2026-11-18T17:03:34.573390Z"
     },
     {
       "id": "maag-tote",
@@ -232,8 +223,8 @@
       "reason": "",
       "reservationRequired": true,
       "status": "available",
-      "title": "Zielinski & Rozen Amber, Patchouli",
-      "firestoreUpdateTime": "2026-11-08T18:56:59.737517Z"
+      "title": "Духи Zielinski & Rozen Amber, Patchouli",
+      "firestoreUpdateTime": "2026-11-18T17:07:41.295637Z"
     },
     {
       "id": "silver-coin",
@@ -508,14 +499,14 @@
       "id": "premium-chocolate",
       "category": "Food",
       "createdAt": "2026-09-13T00:00:51Z",
-      "description": "Было бы здорово такой https://fix-price.com/catalog/produkty-i-napitki/p-1900418-shokolad-molochnyy-s-proteinom-semenami-chia-i-lna-port-ucheron-70-g",
+      "description": "Такой найдёте, буду в восторге https://fix-price.com/catalog/produkty-i-napitki/p-1900418-shokolad-molochnyy-s-proteinom-semenami-chia-i-lna-port-ucheron-70-g",
       "desireLevel": 3,
       "price": null,
       "reason": "",
       "reservationRequired": true,
       "status": "available",
       "title": "Шоколад или конфеты BUCHERON / Lindt",
-      "firestoreUpdateTime": "2026-11-08T18:34:13.056362Z"
+      "firestoreUpdateTime": "2026-11-18T17:10:55.776399Z"
     },
     {
       "id": "merci-coffee",
@@ -560,12 +551,14 @@
       "id": "coconut-condensed-milk",
       "category": "Food",
       "createdAt": "2026-09-13T00:00:55Z",
-      "description": "https://ozon.ru/t/BSLI3Iq\nhttps://ozon.ru/t/TOd2BG9\nhttps://www.wildberries.ru/catalog/874923315/detail.aspx",
+      "description": "https://ozon.ru/t/hi9WlAz\nhttps://ozon.ru/t/TO2UJWS\nhttps://ozon.ru/t/tP46uxD\nhttps://www.wildberries.ru/catalog/874923315/detail.aspx",
       "desireLevel": 3,
       "price": 250,
+      "reason": "",
+      "reservationRequired": true,
       "status": "available",
       "title": "Кокосовая сгущёнка",
-      "firestoreUpdateTime": "2026-09-18T13:57:29.158957Z"
+      "firestoreUpdateTime": "2026-11-15T16:35:38.328865Z"
     },
     {
       "id": "dried-kumquat",
@@ -750,15 +743,15 @@
       "id": "sdkMop5IpaC1ibNjuN8j",
       "category": "Needs",
       "createdAt": "2026-11-15T13:09:40.684Z",
-      "description": "пиджак укороченный кроп оверсайз,  https://www.wildberries.ru/catalog/1565573211/detail.aspx",
+      "description": "Размер 48\nhttps://www.wildberries.ru/catalog/1565573211/detail.aspx",
       "desireLevel": 4,
       "price": 3000,
       "reason": "",
-      "reservationRequired": true,
+      "reservationRequired": false,
       "reservedBy": null,
       "status": "available",
       "title": "Пиджак",
-      "firestoreUpdateTime": "2026-11-15T13:09:40.724287Z"
+      "firestoreUpdateTime": "2026-11-15T16:38:53.910356Z"
     }
   ]
 }

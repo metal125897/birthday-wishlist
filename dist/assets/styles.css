@@ -238,6 +238,7 @@ a{color:var(--gold)}
  .gift-actions{grid-row:3;grid-column:1/-1;margin-top:9px}
  .gift-actions .glass-button{grid-row:auto;grid-column:auto;margin:0;height:48px;min-height:48px;padding-block:0}
  .gift-chevron{grid-row:1}
+ .gift-card:not(.has-reason){grid-template-rows:minmax(79px,auto) auto auto;align-content:start}
  .gift-card.has-reason:not(.is-open):not(.is-collapsing){height:auto;min-height:0}
  .gift-card.has-reason{grid-template-rows:auto auto auto auto;align-content:start;min-height:0}
  .gift-card.has-reason .gift-actions{align-self:end}
@@ -315,4 +316,14 @@ html:has(.future-gifts),html:has(.is-disclosure-animating){overflow-anchor:none}
  .future-gifts summary{padding:18px 16px}
  .future-title{font-size:.95rem}.future-copy{font-size:.8rem}
  .future-gifts__content{padding:16px 7px 7px}
+}
+
+@media(max-width:620px){
+ .gift-card{column-gap:8px}
+ .price{margin-right:0}
+ .desire-label .category-tag{display:block;white-space:nowrap;overflow-wrap:normal;text-overflow:ellipsis}
+}
+@media(max-width:360px){
+ .desire,.gift-card.has-price .desire{column-gap:4px}
+ .desire-label .category-tag{padding-inline:3px;font-size:11px}
 }

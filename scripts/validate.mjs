@@ -28,7 +28,7 @@ const expectedCategories = ['Self Care & Cosmetics', 'Sport', 'Just Pleasure', '
 const expectedCategoryLabels = {
   'Self Care & Cosmetics': 'Забота о себе',
   Sport: 'Жопу качат',
-  'Just Pleasure': 'Дофаминовый всплеск',
+  'Just Pleasure': 'Дофаминово',
   Food: 'Еда',
   Needs: 'Практичное'
 };

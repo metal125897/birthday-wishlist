@@ -1,7 +1,7 @@
 import {onAuthStateChanged, signInWithEmailAndPassword, signOut} from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js';
 import {collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc, runTransaction, serverTimestamp, waitForPendingWrites} from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js';
 import {auth, db, firebaseConfigured} from './firebase-client.js';
-import {GIFT_CATEGORIES, giftCategoryLabel, normalizeGiftCategory} from './categories.js?v=20260917-category-labels';
+import {GIFT_CATEGORIES, giftCategoryLabel, normalizeGiftCategory} from './categories.js?v=20261119-category-labels';
 import {DEFAULT_GIFT_GUIDANCE, normalizeGiftGuidance} from './site-content.js?v=20260920-editable-guidance';
 import {isGiftPrice, parseGiftPrice} from './gift-price.js';
 
